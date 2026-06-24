@@ -1,0 +1,19 @@
+# Xcode
+# Build artifacts
+build/
+DerivedData/
+
+# Xcode user settings
+*.mode1v3
+*.mode2v3
+*.nib
+*.xcuserstate
+xcuserdata/
+
+# Xcode personal settings
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# System Files
+.DS_Store
