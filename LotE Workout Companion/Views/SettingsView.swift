@@ -55,8 +55,14 @@ struct SettingsView: View {
                                     .font(.caption2)
                                     .foregroundColor(.gray)
                                 TextField("Enter Name", text: $profileManager.characterName)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .foregroundColor(.black)
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.04))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                    )
                             }
                             
                             // Short Term Goal Input
@@ -65,8 +71,14 @@ struct SettingsView: View {
                                     .font(.caption2)
                                     .foregroundColor(.gray)
                                 TextField("e.g. 5,000 steps daily", text: $profileManager.shortTermGoal)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .foregroundColor(.black)
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.04))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                    )
                             }
                             
                             // Long Term Goal Input
@@ -75,8 +87,14 @@ struct SettingsView: View {
                                     .font(.caption2)
                                     .foregroundColor(.gray)
                                 TextField("e.g. Run 5k in under 25 mins", text: $profileManager.longTermGoal)
-                                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                                    .foregroundColor(.black)
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.04))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                    )
                             }
                         }
                     }
@@ -179,8 +197,14 @@ struct SettingsView: View {
                                         .font(.caption2)
                                         .foregroundColor(.gray)
                                     TextField("", text: $mockSteps)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                                        .foregroundColor(.black)
+                                        .padding(8)
+                                        .background(Color.white.opacity(0.04))
+                                        .cornerRadius(8)
+                                        .foregroundColor(.white)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                        )
                                 }
                                 
                                 VStack(alignment: .leading) {
@@ -188,8 +212,14 @@ struct SettingsView: View {
                                         .font(.caption2)
                                         .foregroundColor(.gray)
                                     TextField("", text: $mockCalories)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                                        .foregroundColor(.black)
+                                        .padding(8)
+                                        .background(Color.white.opacity(0.04))
+                                        .cornerRadius(8)
+                                        .foregroundColor(.white)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                        )
                                 }
                                 
                                 VStack(alignment: .leading) {
@@ -197,8 +227,14 @@ struct SettingsView: View {
                                         .font(.caption2)
                                         .foregroundColor(.gray)
                                     TextField("", text: $mockMinutes)
-                                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                                        .foregroundColor(.black)
+                                        .padding(8)
+                                        .background(Color.white.opacity(0.04))
+                                        .cornerRadius(8)
+                                        .foregroundColor(.white)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                        )
                                 }
                             }
                             
