@@ -68,7 +68,7 @@ struct DashboardView: View {
                                 .foregroundColor(.white)
                                 .tracking(2)
                             
-                            Text(profileManager.currentTier.rawValue)
+                            Text(profileManager.currentTier.displayName(for: profileManager.currentElement.name))
                                 .font(.custom("Orbitron-Bold", size: 11).bold())
                                 .foregroundColor(profileManager.currentElement.primaryColor)
                             
@@ -288,7 +288,7 @@ struct DashboardView: View {
         VStack(spacing: 12) {
             // Structured Checklist
             VStack(alignment: .leading, spacing: 10) {
-                Text("DAILY ENERGY ALIGNMENT CHECKLIST")
+                Text("DAILY FITNESS PERFORMANCE CHECKLIST")
                     .font(.custom("Orbitron-Bold", size: 11).bold())
                     .foregroundColor(.white)
                     .padding(.bottom, 5)
@@ -314,7 +314,7 @@ struct DashboardView: View {
                     .font(.custom("Exo2-Medium", size: 11))
                     .foregroundColor(.white)
                 
-                Text("Wavelength Sho Frequency matches elemental parameters exactly. Consistent execution keeps alignment perfect.")
+                Text("Training frequency matches physical parameters exactly. Consistent execution keeps performance high.")
                     .font(.custom("Exo2-Regular", size: 10))
                     .foregroundColor(.gray)
             }
@@ -398,22 +398,33 @@ struct DashboardView: View {
                     .font(.custom("Orbitron-Bold", size: 11).bold())
                     .foregroundColor(profileManager.currentElement.primaryColor)
                 
-                HStack {
-                    Text("Short Term:")
-                        .font(.custom("Exo2-Bold", size: 11))
-                        .foregroundColor(.gray)
-                    Text(profileManager.shortTermGoal)
-                        .font(.custom("Exo2-Medium", size: 11))
-                        .foregroundColor(.white)
-                }
-                
-                HStack {
-                    Text("Long Term:")
-                        .font(.custom("Exo2-Bold", size: 11))
-                        .foregroundColor(.gray)
-                    Text(profileManager.longTermGoal)
-                        .font(.custom("Exo2-Medium", size: 11))
-                        .foregroundColor(.white)
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack(alignment: .top) {
+                        Text("Calisthenics:")
+                            .font(.custom("Exo2-Bold", size: 11))
+                            .foregroundColor(.gray)
+                        Text(profileManager.calisthenicsGoal)
+                            .font(.custom("Exo2-Medium", size: 11))
+                            .foregroundColor(.white)
+                    }
+                    
+                    HStack(alignment: .top) {
+                        Text("Lifting:")
+                            .font(.custom("Exo2-Bold", size: 11))
+                            .foregroundColor(.gray)
+                        Text(profileManager.liftingGoal)
+                            .font(.custom("Exo2-Medium", size: 11))
+                            .foregroundColor(.white)
+                    }
+                    
+                    HStack(alignment: .top) {
+                        Text("Custom:")
+                            .font(.custom("Exo2-Bold", size: 11))
+                            .foregroundColor(.gray)
+                        Text(profileManager.customGoal)
+                            .font(.custom("Exo2-Medium", size: 11))
+                            .foregroundColor(.white)
+                    }
                 }
             }
             .padding()

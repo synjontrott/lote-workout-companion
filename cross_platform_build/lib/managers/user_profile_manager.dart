@@ -21,6 +21,19 @@ class UserProfileManager extends ChangeNotifier {
   String _longTermGoal = 'Reach Krenpowen Apprentice tier rank.';
   bool _hasCompletedInitialQuiz = false;
   int _healthyMealsLoggedToday = 0;
+  String _homePlanet = 'Warrion';
+  String _calisthenicsGoal = 'Perform 20 mins of handstands or pulls.';
+  String _liftingGoal = 'Deadlift 2x bodyweight milestone.';
+  String _customGoal = 'Complete 3 flexibility routines.';
+  
+  List<TrainingFocus> _selectedFocuses = [TrainingFocus.calisthenics, TrainingFocus.cardio, TrainingFocus.cutting];
+  double _height = 70.0;
+  double _weight = 160.0;
+  double _chest = 38.0;
+  double _arms = 13.0;
+  double _waist = 32.0;
+  double _hips = 40.0;
+  double _legs = 22.0;
 
   // Getters
   String get characterName => _characterName;
@@ -39,10 +52,23 @@ class UserProfileManager extends ChangeNotifier {
   String get longTermGoal => _longTermGoal;
   bool get hasCompletedInitialQuiz => _hasCompletedInitialQuiz;
   int get healthyMealsLoggedToday => _healthyMealsLoggedToday;
+  String get homePlanet => _homePlanet;
+  String get calisthenicsGoal => _calisthenicsGoal;
+  String get liftingGoal => _liftingGoal;
+  String get customGoal => _customGoal;
+  
+  List<TrainingFocus> get selectedFocuses => _selectedFocuses;
+  double get height => _height;
+  double get weight => _weight;
+  double get chest => _chest;
+  double get arms => _arms;
+  double get waist => _waist;
+  double get hips => _hips;
+  double get legs => _legs;
 
   // Setters with save trigger
   set characterName(String val) { _characterName = val; _save(); notifyListeners(); }
-  set selectedElementIndex(int val) { _selectedElementIndex = val; _save(); notifyListeners(); }
+  set selectedElementIndex(int val) { _selectedElementIndex = val; _save(); regenerateDailyQuests(); notifyListeners(); }
   set expressionStyle(ExpressionStyle val) { _expressionStyle = val; _save(); notifyListeners(); }
   set cognitiveProfile(CognitiveProfile? val) { _cognitiveProfile = val; _save(); notifyListeners(); }
   set stats(DNDStats val) { _stats = val; _save(); notifyListeners(); }
@@ -57,6 +83,19 @@ class UserProfileManager extends ChangeNotifier {
   set longTermGoal(String val) { _longTermGoal = val; _save(); notifyListeners(); }
   set hasCompletedInitialQuiz(bool val) { _hasCompletedInitialQuiz = val; _save(); notifyListeners(); }
   set healthyMealsLoggedToday(int val) { _healthyMealsLoggedToday = val; _save(); notifyListeners(); }
+  set homePlanet(String val) { _homePlanet = val; _save(); notifyListeners(); }
+  set calisthenicsGoal(String val) { _calisthenicsGoal = val; _save(); notifyListeners(); }
+  set liftingGoal(String val) { _liftingGoal = val; _save(); notifyListeners(); }
+  set customGoal(String val) { _customGoal = val; _save(); notifyListeners(); }
+  
+  set selectedFocuses(List<TrainingFocus> val) { _selectedFocuses = val; _save(); regenerateDailyQuests(); notifyListeners(); }
+  set height(double val) { _height = val; _save(); notifyListeners(); }
+  set weight(double val) { _weight = val; _save(); notifyListeners(); }
+  set chest(double val) { _chest = val; _save(); notifyListeners(); }
+  set arms(double val) { _arms = val; _save(); notifyListeners(); }
+  set waist(double val) { _waist = val; _save(); notifyListeners(); }
+  set hips(double val) { _hips = val; _save(); notifyListeners(); }
+  set legs(double val) { _legs = val; _save(); notifyListeners(); }
 
   // Available Elements Lore Database
   static const List<LotEElement> availableElements = [
@@ -267,7 +306,7 @@ class UserProfileManager extends ChangeNotifier {
       primaryColorHex: "#263238",
       accentColorHex: "#311B92",
       planetOfOrigin: "Battacaria",
-      inherentDark: true,
+      inherentDark: false,
     )
   ];
 
@@ -338,16 +377,38 @@ class UserProfileManager extends ChangeNotifier {
       _currentLevel = prefs.getInt('lote_current_level') ?? 1;
       _crystals = prefs.getInt('lote_crystals') ?? 100;
 
+      final focusesJson = prefs.getString('lote_selected_focuses');
+      if (focusesJson != null) {
+        try {
+          final List<dynamic> raw = jsonDecode(focusesJson);
+          _selectedFocuses = raw.map((f) => TrainingFocus.values.firstWhere((e) => e.name == f)).toList();
+        } catch (_) {
+          _selectedFocuses = [TrainingFocus.calisthenics, TrainingFocus.cardio, TrainingFocus.cutting];
+        }
+      } else {
+        _selectedFocuses = [TrainingFocus.calisthenics, TrainingFocus.cardio, TrainingFocus.cutting];
+      }
+
+      _height = prefs.getDouble('lote_body_height') ?? 70.0;
+      _weight = prefs.getDouble('lote_body_weight') ?? 160.0;
+      _chest = prefs.getDouble('lote_body_chest') ?? 38.0;
+      _arms = prefs.getDouble('lote_body_arms') ?? 13.0;
+      _waist = prefs.getDouble('lote_body_waist') ?? 32.0;
+      _hips = prefs.getDouble('lote_body_hips') ?? 40.0;
+      _legs = prefs.getDouble('lote_body_legs') ?? 22.0;
+
       final questsJson = prefs.getString('lote_daily_quests');
       if (questsJson != null) {
         try {
           final List<dynamic> raw = jsonDecode(questsJson);
           _dailyQuests = raw.map((q) => LotEQuest.fromJson(q)).toList();
         } catch (_) {
-          _dailyQuests = LotEQuest.dailyDefaults;
+          final elementName = availableElements[_selectedElementIndex].name;
+          _dailyQuests = generateQuests(elementName, _selectedFocuses);
         }
       } else {
-        _dailyQuests = LotEQuest.dailyDefaults;
+        final elementName = availableElements[_selectedElementIndex].name;
+        _dailyQuests = generateQuests(elementName, _selectedFocuses);
       }
 
       _streak = prefs.getInt('lote_streak') ?? 0;
@@ -363,6 +424,11 @@ class UserProfileManager extends ChangeNotifier {
       _longTermGoal = prefs.getString('lote_long_goal') ?? 'Reach Krenpowen Apprentice tier rank.';
       _hasCompletedInitialQuiz = prefs.getBool('lote_has_quiz') ?? false;
       _healthyMealsLoggedToday = prefs.getInt('lote_meals_today') ?? 0;
+      _calisthenicsGoal = prefs.getString('lote_calisthenics_goal') ?? 'Perform 20 mins of handstands or pulls.';
+      _liftingGoal = prefs.getString('lote_lifting_goal') ?? 'Deadlift 2x bodyweight milestone.';
+      _customGoal = prefs.getString('lote_custom_goal') ?? 'Complete 3 flexibility routines.';
+      final defaultPlanet = availableElements[_selectedElementIndex].planetOfOrigin;
+      _homePlanet = prefs.getString('lote_home_planet') ?? defaultPlanet;
 
       checkNewDayRefresh();
     } catch (_) {
@@ -390,6 +456,19 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setString('lote_long_goal', _longTermGoal);
       await prefs.setBool('lote_has_quiz', _hasCompletedInitialQuiz);
       await prefs.setInt('lote_meals_today', _healthyMealsLoggedToday);
+      await prefs.setString('lote_home_planet', _homePlanet);
+      await prefs.setString('lote_calisthenics_goal', _calisthenicsGoal);
+      await prefs.setString('lote_lifting_goal', _liftingGoal);
+      await prefs.setString('lote_custom_goal', _customGoal);
+      
+      await prefs.setDouble('lote_body_height', _height);
+      await prefs.setDouble('lote_body_weight', _weight);
+      await prefs.setDouble('lote_body_chest', _chest);
+      await prefs.setDouble('lote_body_arms', _arms);
+      await prefs.setDouble('lote_body_waist', _waist);
+      await prefs.setDouble('lote_body_hips', _hips);
+      await prefs.setDouble('lote_body_legs', _legs);
+      await prefs.setString('lote_selected_focuses', jsonEncode(_selectedFocuses.map((f) => f.name).toList()));
 
       await prefs.setString('lote_dnd_stats', jsonEncode(_stats.toJson()));
       await prefs.setString('lote_character_sprite', jsonEncode(_sprite.toJson()));
@@ -473,7 +552,7 @@ class UserProfileManager extends ChangeNotifier {
 
       if (diff > 0) {
         _healthyMealsLoggedToday = 0;
-        _dailyQuests = LotEQuest.dailyDefaults;
+        _dailyQuests = generateQuests(currentElement.name, _selectedFocuses);
         if (diff > 1) {
           _streak = 0;
         }
@@ -511,6 +590,12 @@ class UserProfileManager extends ChangeNotifier {
 
   void updatePixelGrid(int row, int col, int value) {
     _sprite.pixelGrid[row][col] = value;
+    _save();
+    notifyListeners();
+  }
+
+  void regenerateDailyQuests() {
+    _dailyQuests = generateQuests(currentElement.name, _selectedFocuses);
     _save();
     notifyListeners();
   }

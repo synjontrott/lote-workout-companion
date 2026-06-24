@@ -33,6 +33,17 @@ struct PsychEvaluationView: View {
     @State private var evaluationComplete = false
     @State private var calculatedProfile: CognitiveProfile = .neurotypical
     
+    // Multi-step onboarding phases after evaluation
+    @State private var onboardingStep = 0
+    @State private var tempSelectedFocuses: Set<TrainingFocus> = [.calisthenics, .cardio, .cutting]
+    @State private var inputHeight: String = "70.0"
+    @State private var inputWeight: String = "160.0"
+    @State private var inputChest: String = "38.0"
+    @State private var inputArms: String = "13.0"
+    @State private var inputWaist: String = "32.0"
+    @State private var inputHips: String = "40.0"
+    @State private var inputLegs: String = "22.0"
+    
     let questions: [PsychQuestion] = [
         PsychQuestion(text: "How do you feel about long-term workout routines?", options: [
             PsychOption(text: "I thrive when I have a fixed, structured schedule that repeats exactly every week.", adhdWeight: 0, autisticWeight: 3, audhdWeight: 1, ntWeight: 1),
@@ -133,7 +144,7 @@ struct PsychEvaluationView: View {
                                 .tracking(3)
                                 .multilineTextAlignment(.center)
                             
-                            Text("Phase 1: Cognitive Resonance Evaluation")
+                            Text("Phase 1: Cognitive Fitness Evaluation")
                                 .font(.custom("Exo2-Medium", size: 14))
                                 .foregroundColor(Color(hex: "#FF1616") ?? .red)
                                 .tracking(1)
@@ -215,68 +226,231 @@ struct PsychEvaluationView: View {
                         }
                         
                     } else {
-                        // Evaluation complete - Show Destiny Reveal Screen
-                        VStack(spacing: 30) {
-                            Image(systemName: "sparkles")
-                                .font(.system(size: 60))
-                                .foregroundColor(Color(hex: "#FF1616"))
-                                .shadow(color: Color(hex: "#FF1616")!, radius: 10)
-                                .padding(.top, 45)
-                            
-                            VStack(spacing: 8) {
-                                Text("DESTINY AWAKENED")
-                                    .font(.custom("Orbitron-Bold", size: 26).bold())
-                                    .foregroundColor(.white)
-                                    .tracking(5)
-                                
-                                Text("Your elemental mind type is calibrated.")
-                                    .font(.custom("Exo2-Regular", size: 15))
-                                    .foregroundColor(.gray)
-                            }
-                            
-                            VStack(alignment: .leading, spacing: 20) {
-                                Text(calculatedProfile.title)
-                                    .font(.custom("Orbitron-Bold", size: 20).bold())
+                        // Evaluation complete - Show Destiny Reveal Screen and Onboarding Steps
+                        if onboardingStep == 0 {
+                            // Phase 1 Reveal
+                            VStack(spacing: 30) {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 60))
                                     .foregroundColor(Color(hex: "#FF1616"))
-                                    .tracking(2)
+                                    .shadow(color: Color(hex: "#FF1616")!, radius: 10)
+                                    .padding(.top, 45)
                                 
-                                Text(calculatedProfile.description)
-                                    .font(.custom("Exo2-Regular", size: 15))
-                                    .foregroundColor(.white.opacity(0.85))
-                                    .lineSpacing(6)
+                                VStack(spacing: 8) {
+                                    Text("DESTINY AWAKENED")
+                                        .font(.custom("Orbitron-Bold", size: 26).bold())
+                                        .foregroundColor(.white)
+                                        .tracking(5)
+                                    
+                                    Text("Your elemental mind type is calibrated.")
+                                        .font(.custom("Exo2-Regular", size: 15))
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                VStack(alignment: .leading, spacing: 20) {
+                                    Text(calculatedProfile.title)
+                                        .font(.custom("Orbitron-Bold", size: 20).bold())
+                                        .foregroundColor(Color(hex: "#FF1616"))
+                                        .tracking(2)
+                                    
+                                    Text(calculatedProfile.description)
+                                        .font(.custom("Exo2-Regular", size: 15))
+                                        .foregroundColor(.white.opacity(0.85))
+                                        .lineSpacing(6)
+                                }
+                                .padding(25)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 18)
+                                        .fill(Color.white.opacity(0.03))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 18)
+                                                .stroke(Color(hex: "#FF1616")!.opacity(0.3), lineWidth: 1)
+                                        )
+                                )
+                                .padding(.horizontal, 20)
+                                
+                                Button(action: {
+                                    withAnimation {
+                                        onboardingStep = 1
+                                    }
+                                }) {
+                                    Text("CONTINUE TO GOALS")
+                                        .font(.custom("Orbitron-Bold", size: 16).bold())
+                                        .foregroundColor(.white)
+                                        .tracking(2)
+                                        .padding(.vertical, 16)
+                                        .padding(.horizontal, 40)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color(hex: "#FF1616")!)
+                                                .shadow(color: Color(hex: "#FF1616")!.opacity(0.4), radius: 8)
+                                        )
+                                }
+                                .padding(.top, 10)
                             }
-                            .padding(25)
-                            .background(
-                                RoundedRectangle(cornerRadius: 18)
-                                    .fill(Color.white.opacity(0.03))
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 18)
-                                            .stroke(Color(hex: "#FF1616")!.opacity(0.3), lineWidth: 1)
-                                    )
-                            )
-                            .padding(.horizontal, 20)
-                            
-                            Button(action: {
-                                confirmProfile()
-                            }) {
-                                Text("COMMENCE TRAINING")
-                                    .font(.custom("Orbitron-Bold", size: 16).bold())
-                                    .foregroundColor(.white)
-                                    .tracking(2)
-                                    .padding(.vertical, 16)
-                                    .padding(.horizontal, 40)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color(hex: "#FF1616")!)
-                                            .shadow(color: Color(hex: "#FF1616")!.opacity(0.4), radius: 8)
-                                    )
+                        } else if onboardingStep == 1 {
+                            // Phase 2: Select Training Focuses
+                            VStack(spacing: 30) {
+                                VStack(spacing: 8) {
+                                    Text("TRAINING FOCUSES")
+                                        .font(.custom("Orbitron-Bold", size: 24).bold())
+                                        .foregroundColor(.white)
+                                        .tracking(4)
+                                        .padding(.top, 40)
+                                    
+                                    Text("Select your primary training focus objectives.")
+                                        .font(.custom("Exo2-Regular", size: 14))
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                VStack(spacing: 12) {
+                                    ForEach(TrainingFocus.allCases, id: \.self) { focus in
+                                        let isSelected = tempSelectedFocuses.contains(focus)
+                                        Button(action: {
+                                            if isSelected {
+                                                tempSelectedFocuses.remove(focus)
+                                            } else {
+                                                tempSelectedFocuses.insert(focus)
+                                            }
+                                        }) {
+                                            HStack {
+                                                VStack(alignment: .leading, spacing: 4) {
+                                                    Text(focus.rawValue)
+                                                        .font(.custom("Exo2-Bold", size: 16))
+                                                        .foregroundColor(.white)
+                                                    
+                                                    let desc: String = {
+                                                        switch focus {
+                                                        case .calisthenics: return "Gravity-defying pull-ups, push-ups, and dips."
+                                                        case .lifting: return "Forge raw muscle with squat, bench, and deadlifts."
+                                                        case .weightGain: return "Build structural mass and dense weight support."
+                                                        case .cutting: return "Deficit conditioning to burn off excess layers."
+                                                        case .flexibility: return "Flexible joint flow and muscle lengthening."
+                                                        case .cardio: return "Conditioning, endurance walks, and swift runs."
+                                                        }
+                                                    }()
+                                                    Text(desc)
+                                                        .font(.caption2)
+                                                        .foregroundColor(.gray)
+                                                }
+                                                Spacer()
+                                                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                                                    .foregroundColor(isSelected ? Color(hex: "#FF1616") : .gray)
+                                                    .font(.title3)
+                                            }
+                                            .padding()
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .fill(isSelected ? Color(hex: "#FF1616")!.opacity(0.08) : Color.white.opacity(0.02))
+                                                    .overlay(
+                                                        RoundedRectangle(cornerRadius: 12)
+                                                            .stroke(isSelected ? Color(hex: "#FF1616")! : Color.white.opacity(0.1), lineWidth: isSelected ? 1.5 : 1)
+                                                    )
+                                            )
+                                        }
+                                        .buttonStyle(PlainButtonStyle())
+                                    }
+                                }
+                                .padding(.horizontal, 20)
+                                
+                                Button(action: {
+                                    withAnimation {
+                                        onboardingStep = 2
+                                    }
+                                }) {
+                                    Text("CONTINUE TO METRICS")
+                                        .font(.custom("Orbitron-Bold", size: 16).bold())
+                                        .foregroundColor(.white)
+                                        .tracking(2)
+                                        .padding(.vertical, 16)
+                                        .padding(.horizontal, 40)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color(hex: "#FF1616")!)
+                                                .shadow(color: Color(hex: "#FF1616")!.opacity(0.4), radius: 8)
+                                        )
+                                }
+                                .disabled(tempSelectedFocuses.isEmpty)
+                                .opacity(tempSelectedFocuses.isEmpty ? 0.5 : 1.0)
                             }
-                            .padding(.top, 10)
+                        } else {
+                            // Phase 3: Set Initial Measurements
+                            VStack(spacing: 30) {
+                                VStack(spacing: 8) {
+                                    Text("INITIAL BODY METRICS")
+                                        .font(.custom("Orbitron-Bold", size: 24).bold())
+                                        .foregroundColor(.white)
+                                        .tracking(4)
+                                        .padding(.top, 40)
+                                    
+                                    Text("Input your starting numbers to log precise progress.")
+                                        .font(.custom("Exo2-Regular", size: 14))
+                                        .foregroundColor(.gray)
+                                }
+                                
+                                VStack(spacing: 16) {
+                                    HStack(spacing: 15) {
+                                        metricInputField(label: "HEIGHT (INCHES)", text: $inputHeight)
+                                        metricInputField(label: "WEIGHT (LBS)", text: $inputWeight)
+                                    }
+                                    
+                                    HStack(spacing: 15) {
+                                        metricInputField(label: "CHEST (INCHES)", text: $inputChest)
+                                        metricInputField(label: "ARMS (INCHES)", text: $inputArms)
+                                    }
+                                    
+                                    HStack(spacing: 15) {
+                                        metricInputField(label: "WAIST (INCHES)", text: $inputWaist)
+                                        metricInputField(label: "HIPS (INCHES)", text: $inputHips)
+                                    }
+                                    
+                                    metricInputField(label: "LEGS (INCHES)", text: $inputLegs)
+                                }
+                                .padding(.horizontal, 20)
+                                
+                                Button(action: {
+                                    confirmProfile()
+                                }) {
+                                    Text("COMMENCE TRAINING")
+                                        .font(.custom("Orbitron-Bold", size: 16).bold())
+                                        .foregroundColor(.white)
+                                        .tracking(2)
+                                        .padding(.vertical, 16)
+                                        .padding(.horizontal, 40)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .fill(Color(hex: "#FF1616")!)
+                                                .shadow(color: Color(hex: "#FF1616")!.opacity(0.4), radius: 8)
+                                        )
+                                }
+                            }
                         }
                     }
                 }
                 .padding(.bottom, 40)
             }
+        }
+    }
+    
+    // MARK: - Metric Input Component Helper
+    private func metricInputField(label: String, text: Binding<String>) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(label)
+                .font(.caption2)
+                .foregroundColor(.gray)
+                .tracking(1)
+            
+            TextField("", text: text)
+                .keyboardType(.decimalPad)
+                .padding(12)
+                .background(Color.white.opacity(0.03))
+                .cornerRadius(10)
+                .foregroundColor(.white)
+                .font(.custom("Orbitron-Bold", size: 14))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                )
         }
     }
     
@@ -342,6 +516,14 @@ struct PsychEvaluationView: View {
     
     private func confirmProfile() {
         profileManager.cognitiveProfile = calculatedProfile
+        profileManager.selectedFocuses = Array(tempSelectedFocuses)
+        profileManager.height = Double(inputHeight) ?? 70.0
+        profileManager.weight = Double(inputWeight) ?? 160.0
+        profileManager.chest = Double(inputChest) ?? 38.0
+        profileManager.arms = Double(inputArms) ?? 13.0
+        profileManager.waist = Double(inputWaist) ?? 32.0
+        profileManager.hips = Double(inputHips) ?? 40.0
+        profileManager.legs = Double(inputLegs) ?? 22.0
         profileManager.hasCompletedInitialQuiz = true
     }
 }

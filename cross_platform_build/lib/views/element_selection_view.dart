@@ -67,7 +67,7 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                 Column(
                   children: [
                     Text(
-                      "RESONANCE CHAMBER",
+                      "ELEMENT THEME SELECTION",
                       style: GoogleFonts.orbitron(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -77,7 +77,7 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "Tune your elemental wavelength and stance",
+                      "Choose your elemental theme and stance",
                       style: GoogleFonts.exo2(
                         fontSize: 13,
                         color: Colors.grey,
@@ -325,7 +325,7 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                               shadowColor: _activeElement.primaryColor.withOpacity(0.4),
                             ),
                             child: Text(
-                              "ALIGN SOUL CHANNELS",
+                              "CONFIRM ELEMENT THEME",
                               style: GoogleFonts.orbitron(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,

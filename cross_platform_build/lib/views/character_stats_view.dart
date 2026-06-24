@@ -7,20 +7,12 @@ import '../models/lote_models.dart';
 class CharacterStatsView extends StatelessWidget {
   const CharacterStatsView({super.key});
 
-  // Calculates a lore-accurate Sho frequency decimal
-  double _calculateSho(UserProfileManager profile) {
-    final base = (profile.selectedElementIndex + 1) * 61.23;
-    final levelMod = profile.currentLevel * 4.56;
-    final raw = (base + levelMod) % 999.9 + 0.1;
-    return (raw * 100).round() / 100;
-  }
-
   // Decides race based on planet and expression stance
   String _getRaceName(UserProfileManager profile) {
     if (profile.currentElement.inherentDark || profile.expressionStyle == ExpressionStyle.corrupt) {
       return "Tenebrie (Corrupt Genes)";
     }
-    switch (profile.currentElement.planetOfOrigin) {
+    switch (profile.homePlanet) {
       case "Warrion":
         return "Warrion (Primal Force)";
       case "Techno":
@@ -105,7 +97,7 @@ class CharacterStatsView extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            profile.currentTier.displayName.toUpperCase(),
+                            profile.currentTier.dynamicDisplayName(profile.currentElement.name).toUpperCase(),
                             style: GoogleFonts.orbitron(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -204,7 +196,7 @@ class CharacterStatsView extends StatelessWidget {
                         const SizedBox(height: 10),
                         _buildStatRow("Intelligence (INT)", profile.stats.intelligence, "Improves cyber device tech & laser efficiency", themeColor),
                         const SizedBox(height: 10),
-                        _buildStatRow("Wisdom (WIS)", profile.stats.wisdom, "Enhances yoga streams & Sho alignments", themeColor),
+                        _buildStatRow("Wisdom (WIS)", profile.stats.wisdom, "Enhances flexibility and balance training", themeColor),
                         const SizedBox(height: 10),
                         _buildStatRow("Charisma (CHA)", profile.stats.charisma, "Controls companion bonds & shop discounts", themeColor),
                       ],
@@ -218,7 +210,7 @@ class CharacterStatsView extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "ELSAITHER ALIGNMENT METRICS",
+                        "ELSAITHER METRICS",
                         style: GoogleFonts.orbitron(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -245,13 +237,61 @@ class CharacterStatsView extends StatelessWidget {
                         children: [
                           _buildLoreMetricRow("Race Ancestry", _getRaceName(profile)),
                           const Divider(color: Colors.white10),
-                          _buildLoreMetricRow("Planet of Origin", profile.currentElement.planetOfOrigin),
+                          _buildLoreMetricRow("Planet of Origin", profile.homePlanet),
                           const Divider(color: Colors.white10),
                           _buildLoreMetricRow("Mark of the Wild", _getSpiritAnimal(profile)),
                           const Divider(color: Colors.white10),
-                          _buildLoreMetricRow("Resonant Sho Frequency", "${_calculateSho(profile)} Hz"),
-                          const Divider(color: Colors.white10),
                           _buildLoreMetricRow("Power Stance", profile.expressionStyle.displayName),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // Body Measurements Card
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "BODY MEASUREMENTS",
+                        style: GoogleFonts.orbitron(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.02),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: themeColor.withOpacity(0.15),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildLoreMetricRow("Height", "${profile.height.toStringAsFixed(1)} in"),
+                          const Divider(color: Colors.white10),
+                          _buildLoreMetricRow("Weight", "${profile.weight.toStringAsFixed(1)} lbs"),
+                          const Divider(color: Colors.white10),
+                          _buildLoreMetricRow("Chest", "${profile.chest.toStringAsFixed(1)} in"),
+                          const Divider(color: Colors.white10),
+                          _buildLoreMetricRow("Arms", "${profile.arms.toStringAsFixed(1)} in"),
+                          const Divider(color: Colors.white10),
+                          _buildLoreMetricRow("Waist", "${profile.waist.toStringAsFixed(1)} in"),
+                          const Divider(color: Colors.white10),
+                          _buildLoreMetricRow("Hips", "${profile.hips.toStringAsFixed(1)} in"),
+                          const Divider(color: Colors.white10),
+                          _buildLoreMetricRow("Legs", "${profile.legs.toStringAsFixed(1)} in"),
                         ],
                       ),
                     ),

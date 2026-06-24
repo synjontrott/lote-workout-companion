@@ -98,6 +98,157 @@ enum WarriorTier {
   final int levelRequired;
   const WarriorTier(this.displayName, this.levelRequired);
 
+  String dynamicDisplayName(String elementName) {
+    switch (elementName) {
+      case 'Fire':
+        switch (this) {
+          case WarriorTier.recruit: return "Ember Recruit";
+          case WarriorTier.apprentice: return "Flame Apprentice";
+          case WarriorTier.vanguard: return "Cinder Vanguard";
+          case WarriorTier.sentinel: return "Blaze Sentinel";
+          case WarriorTier.master: return "Inferno Master";
+          case WarriorTier.legend: return "Legend of the Phoenix";
+        }
+      case 'Water':
+        switch (this) {
+          case WarriorTier.recruit: return "Tide Recruit";
+          case WarriorTier.apprentice: return "Hydro Apprentice";
+          case WarriorTier.vanguard: return "Torrent Vanguard";
+          case WarriorTier.sentinel: return "Wave Sentinel";
+          case WarriorTier.master: return "Abyss Master";
+          case WarriorTier.legend: return "Legend of the Ocean";
+        }
+      case 'Earth':
+        switch (this) {
+          case WarriorTier.recruit: return "Stone Recruit";
+          case WarriorTier.apprentice: return "Clay Apprentice";
+          case WarriorTier.vanguard: return "Rock Vanguard";
+          case WarriorTier.sentinel: return "Ridge Sentinel";
+          case WarriorTier.master: return "Mountain Master";
+          case WarriorTier.legend: return "Legend of the Golem";
+        }
+      case 'Air':
+        switch (this) {
+          case WarriorTier.recruit: return "Wind Recruit";
+          case WarriorTier.apprentice: return "Gale Apprentice";
+          case WarriorTier.vanguard: return "Zephyr Vanguard";
+          case WarriorTier.sentinel: return "Vortex Sentinel";
+          case WarriorTier.master: return "Tempest Master";
+          case WarriorTier.legend: return "Legend of the Storm";
+        }
+      case 'Lightning':
+        switch (this) {
+          case WarriorTier.recruit: return "Spark Recruit";
+          case WarriorTier.apprentice: return "Bolt Apprentice";
+          case WarriorTier.vanguard: return "Shock Vanguard";
+          case WarriorTier.sentinel: return "Storm Sentinel";
+          case WarriorTier.master: return "Voltage Master";
+          case WarriorTier.legend: return "Legend of Thunder";
+        }
+      case 'Metal':
+        switch (this) {
+          case WarriorTier.recruit: return "Iron Recruit";
+          case WarriorTier.apprentice: return "Steel Apprentice";
+          case WarriorTier.vanguard: return "Alloy Vanguard";
+          case WarriorTier.sentinel: return "Shield Sentinel";
+          case WarriorTier.master: return "Forge Master";
+          case WarriorTier.legend: return "Legend of Titanium";
+        }
+      case 'Ice':
+        switch (this) {
+          case WarriorTier.recruit: return "Frost Recruit";
+          case WarriorTier.apprentice: return "Ice Apprentice";
+          case WarriorTier.vanguard: return "Glacier Vanguard";
+          case WarriorTier.sentinel: return "Shard Sentinel";
+          case WarriorTier.master: return "Tundra Master";
+          case WarriorTier.legend: return "Legend of Blizzard";
+        }
+      case 'Bone':
+        switch (this) {
+          case WarriorTier.recruit: return "Calcium Recruit";
+          case WarriorTier.apprentice: return "Skeletal Apprentice";
+          case WarriorTier.vanguard: return "Fossil Vanguard";
+          case WarriorTier.sentinel: return "Marrow Sentinel";
+          case WarriorTier.master: return "Crypt Master";
+          case WarriorTier.legend: return "Legend of the Grave";
+        }
+      case 'Gas':
+        switch (this) {
+          case WarriorTier.recruit: return "Vapor Recruit";
+          case WarriorTier.apprentice: return "Mist Apprentice";
+          case WarriorTier.vanguard: return "Cloud Vanguard";
+          case WarriorTier.sentinel: return "Fume Sentinel";
+          case WarriorTier.master: return "Plasma Master";
+          case WarriorTier.legend: return "Legend of Atmosphere";
+        }
+      case 'Laser':
+        switch (this) {
+          case WarriorTier.recruit: return "Ray Recruit";
+          case WarriorTier.apprentice: return "Beam Apprentice";
+          case WarriorTier.vanguard: return "Pulse Vanguard";
+          case WarriorTier.sentinel: return "Focus Sentinel";
+          case WarriorTier.master: return "Photon Master";
+          case WarriorTier.legend: return "Legend of the Cosmos";
+        }
+      case 'Zero Space':
+        switch (this) {
+          case WarriorTier.recruit: return "Node Recruit";
+          case WarriorTier.apprentice: return "Rift Apprentice";
+          case WarriorTier.vanguard: return "Warp Vanguard";
+          case WarriorTier.sentinel: return "Gate Sentinel";
+          case WarriorTier.master: return "Singularity Master";
+          case WarriorTier.legend: return "Legend of the Void";
+        }
+      case 'Darki':
+        switch (this) {
+          case WarriorTier.recruit: return "Dark Recruit";
+          case WarriorTier.apprentice: return "Shade Apprentice";
+          case WarriorTier.vanguard: return "Night Vanguard";
+          case WarriorTier.sentinel: return "Royal Sentinel";
+          case WarriorTier.master: return "Sovereign Master";
+          case WarriorTier.legend: return "Legend of Eclipse";
+        }
+      case 'Death':
+        switch (this) {
+          case WarriorTier.recruit: return "Wither Recruit";
+          case WarriorTier.apprentice: return "Decay Apprentice";
+          case WarriorTier.vanguard: return "Reaper Vanguard";
+          case WarriorTier.sentinel: return "Soul Sentinel";
+          case WarriorTier.master: return "Crypt Master";
+          case WarriorTier.legend: return "Legend of Doom";
+        }
+      case 'Knife':
+        switch (this) {
+          case WarriorTier.recruit: return "Edge Recruit";
+          case WarriorTier.apprentice: return "Blade Apprentice";
+          case WarriorTier.vanguard: return "Dagger Vanguard";
+          case WarriorTier.sentinel: return "Pierce Sentinel";
+          case WarriorTier.master: return "Saber Master";
+          case WarriorTier.legend: return "Legend of the Sword";
+        }
+      case 'Poison':
+        switch (this) {
+          case WarriorTier.recruit: return "Venom Recruit";
+          case WarriorTier.apprentice: return "Toxin Apprentice";
+          case WarriorTier.vanguard: return "Viper Vanguard";
+          case WarriorTier.sentinel: return "Acid Sentinel";
+          case WarriorTier.master: return "Serum Master";
+          case WarriorTier.legend: return "Legend of Plague";
+        }
+      case 'Shadow':
+        switch (this) {
+          case WarriorTier.recruit: return "Shade Recruit";
+          case WarriorTier.apprentice: return "Dusk Apprentice";
+          case WarriorTier.vanguard: return "Veil Vanguard";
+          case WarriorTier.sentinel: return "Phantom Sentinel";
+          case WarriorTier.master: return "Eclipse Master";
+          case WarriorTier.legend: return "Legend of the Ghost";
+        }
+      default:
+        return displayName;
+    }
+  }
+
   String get description {
     switch (this) {
       case WarriorTier.recruit:
@@ -287,7 +438,7 @@ enum WorkoutCategory {
   strength('Strength Forge'),
   flexibility('Flexibility Stream'),
   nutrition('Healthy Rations'),
-  meditation('Spiritual Focus');
+  meditation('Mental Focus');
 
   final String displayName;
   const WorkoutCategory(this.displayName);
@@ -382,8 +533,8 @@ class LotEQuest {
       ),
       LotEQuest(
         id: 'q3',
-        title: 'Air Stream Alignment',
-        questDescription: 'Align your internal Sho through yoga, stretching, or mobility work. 15 mins.',
+        title: 'Mobility Routine',
+        questDescription: 'Perform a mobility routine, stretching, or yoga to improve flexibility. 15 mins.',
         workoutType: WorkoutCategory.flexibility,
         difficultyRoll: 6,
         rewardXP: 30,
@@ -404,4 +555,197 @@ class LotEQuest {
       ),
     ];
   }
+}
+
+enum TrainingFocus {
+  calisthenics('Calisthenics'),
+  lifting('Lifting'),
+  weightGain('Weight Gain'),
+  cutting('Cutting'),
+  flexibility('Yoga & Flexibility'),
+  cardio('Cardio');
+
+  final String displayName;
+  const TrainingFocus(this.displayName);
+}
+
+List<LotEQuest> generateQuests(String element, List<TrainingFocus> focuses) {
+  List<LotEQuest> quests = [];
+  
+  // Fallback if no focuses are selected
+  final activeFocuses = focuses.isEmpty
+      ? [TrainingFocus.cardio, TrainingFocus.calisthenics, TrainingFocus.flexibility, TrainingFocus.cutting]
+      : focuses;
+      
+  for (var focus in activeFocuses.take(4)) {
+    final String title;
+    final String desc;
+    final WorkoutCategory wType;
+    final int dc;
+    final int xp;
+    final int crystals;
+    final StatType stat;
+    final int val;
+    
+    switch (focus) {
+      case TrainingFocus.calisthenics:
+        title = "$element Bar Mastery";
+        desc = "Perform bodyweight dips, pushups, or pullups. Complete 15 minutes of gravity defying calisthenics.";
+        wType = WorkoutCategory.strength;
+        dc = 10;
+        xp = 60;
+        crystals = 20;
+        stat = StatType.strength;
+        val = 1;
+        break;
+      case TrainingFocus.lifting:
+        title = "$element Heavy Forge";
+        desc = "Perform squat, bench, or deadlift strength training. Complete 20 minutes of heavy lifting.";
+        wType = WorkoutCategory.strength;
+        dc = 12;
+        xp = 70;
+        crystals = 25;
+        stat = StatType.strength;
+        val = 1;
+        break;
+      case TrainingFocus.weightGain:
+        title = "$element Bulking Feast";
+        desc = "Log a calorie-dense bulking meal with clean protein and carbs to gain healthy weight.";
+        wType = WorkoutCategory.nutrition;
+        dc = 5;
+        xp = 40;
+        crystals = 15;
+        stat = StatType.constitution;
+        val = 1;
+        break;
+      case TrainingFocus.cutting:
+        title = "$element Lean Burn";
+        desc = "Log a high-protein, calorie-deficit meal to burn off excess fat and stay lean.";
+        wType = WorkoutCategory.nutrition;
+        dc = 5;
+        xp = 40;
+        crystals = 15;
+        stat = StatType.constitution;
+        val = 1;
+        break;
+      case TrainingFocus.flexibility:
+        title = "$element Flow Routine";
+        desc = "Perform a flexibility, yoga, or dynamic mobility routine. Complete 15 minutes of stretching.";
+        wType = WorkoutCategory.flexibility;
+        dc = 7;
+        xp = 50;
+        crystals = 15;
+        stat = StatType.wisdom;
+        val = 1;
+        break;
+      case TrainingFocus.cardio:
+        title = "$element Speed Patrol";
+        desc = "Complete a 15-minute run, jog, cycle, or high-intensity cardio patrol.";
+        wType = WorkoutCategory.cardio;
+        dc = 8;
+        xp = 50;
+        crystals = 15;
+        stat = StatType.dexterity;
+        val = 1;
+        break;
+    }
+    
+    String customizedTitle = title;
+    String customizedDesc = desc;
+    
+    switch (element) {
+      case "Fire":
+        customizedTitle = title.replaceAll(element, "Ember");
+        customizedDesc = "$desc Channel the blazing heat of your inner fire.";
+        break;
+      case "Water":
+        customizedTitle = title.replaceAll(element, "Tide");
+        customizedDesc = "$desc Keep your movements smooth and flowing like water.";
+        break;
+      case "Earth":
+        customizedTitle = title.replaceAll(element, "Stone");
+        customizedDesc = "$desc Ground your stance and stand solid as rock.";
+        break;
+      case "Air":
+        customizedTitle = title.replaceAll(element, "Zephyr");
+        customizedDesc = "$desc Move light and swift as the wind.";
+        break;
+      case "Lightning":
+        customizedTitle = title.replaceAll(element, "Volt");
+        customizedDesc = "$desc Bring high intensity and electrical speed.";
+        break;
+      case "Metal":
+        customizedTitle = title.replaceAll(element, "Iron");
+        customizedDesc = "$desc Harden your resolve and forge your steel structure.";
+        break;
+      case "Ice":
+        customizedTitle = title.replaceAll(element, "Frost");
+        customizedDesc = "$desc Focus with cool precision and frosty control.";
+        break;
+      case "Bone":
+        customizedTitle = title.replaceAll(element, "Marrow");
+        customizedDesc = "$desc Strengthen your skeletal core and inner structure.";
+        break;
+      case "Gas":
+        customizedTitle = title.replaceAll(element, "Vapor");
+        customizedDesc = "$desc Flow seamlessly and adjust your form fluidly.";
+        break;
+      case "Laser":
+        customizedTitle = title.replaceAll(element, "Photon");
+        customizedDesc = "$desc Focus your energy into a concentrated beam of power.";
+        break;
+      case "Zero Space":
+        customizedTitle = title.replaceAll(element, "Void");
+        customizedDesc = "$desc Transcend standard physical coordinates.";
+        break;
+      case "Darki":
+        customizedTitle = title.replaceAll(element, "Dark");
+        customizedDesc = "$desc Harness powerful dark waves to fuel your reps.";
+        break;
+      case "Death":
+        customizedTitle = title.replaceAll(element, "Decay");
+        customizedDesc = "$desc Push through physical boundaries.";
+        break;
+      case "Knife":
+        customizedTitle = title.replaceAll(element, "Blade");
+        customizedDesc = "$desc Focus on sharp execution and clean cuts.";
+        break;
+      case "Poison":
+        customizedTitle = title.replaceAll(element, "Toxic");
+        customizedDesc = "$desc Build immunities and clean cellular efficiency.";
+        break;
+      case "Shadow":
+        customizedTitle = title.replaceAll(element, "Shade");
+        customizedDesc = "$desc Keep your execution silent, stealthy, and phantom-like.";
+        break;
+    }
+    
+    quests.add(LotEQuest(
+      id: UniqueKey().toString(),
+      title: customizedTitle,
+      questDescription: customizedDesc,
+      workoutType: wType,
+      difficultyRoll: dc,
+      rewardXP: xp,
+      rewardCrystals: crystals,
+      statReward: stat,
+      statValue: val,
+    ));
+  }
+  
+  while (quests.length < 4) {
+    quests.add(LotEQuest(
+      id: UniqueKey().toString(),
+      title: "General Training Patrol",
+      questDescription: "Perform a general physical workout to build overall energy. 15 mins.",
+      workoutType: WorkoutCategory.cardio,
+      difficultyRoll: 8,
+      rewardXP: 30,
+      rewardCrystals: 10,
+      statReward: StatType.constitution,
+      statValue: 1,
+    ));
+  }
+  
+  return quests;
 }

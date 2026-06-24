@@ -10,20 +10,12 @@ import SwiftUI
 struct CharacterStatsView: View {
     @ObservedObject var profileManager: UserProfileManager
     
-    // Calculates a lore-accurate Sho frequency decimal
-    var calculatedSho: Double {
-        let base = Double(profileManager.selectedElementIndex + 1) * 61.23
-        let levelMod = Double(profileManager.currentLevel) * 4.56
-        let raw = (base + levelMod).truncatingRemainder(dividingBy: 999.9) + 0.1
-        return Double(round(100 * raw) / 100)
-    }
-    
     // Decides race based on planet and expression stance
     var raceName: String {
         if profileManager.currentElement.inherentDark || profileManager.expressionStyle == .corrupt {
             return "Tenebrie (Corrupt Genes)"
         }
-        switch profileManager.currentElement.planetOfOrigin {
+        switch profileManager.homePlanet {
         case "Warrion": return "Warrion (Primal Force)"
         case "Techno": return "Krenpowen (Techno Cyber)"
         case "Ninjonia": return "Krenpowen (Ninjonian Disciplined)"
@@ -71,7 +63,7 @@ struct CharacterStatsView: View {
                     
                     // Level & Tier Summary Card
                     VStack(spacing: 12) {
-                        Text(profileManager.currentTier.rawValue.uppercased())
+                        Text(profileManager.currentTier.displayName(for: profileManager.currentElement.name).uppercased())
                             .font(.custom("Orbitron-Bold", size: 16).bold())
                             .foregroundColor(profileManager.currentElement.primaryColor)
                             .tracking(2)
@@ -127,7 +119,7 @@ struct CharacterStatsView: View {
                             statRow(name: "Dexterity (DEX)", value: profileManager.stats.dexterity, desc: "Improves running, cardio & speed sprints")
                             statRow(name: "Constitution (CON)", value: profileManager.stats.constitution, desc: "Increases meal absorption & stamina logs")
                             statRow(name: "Intelligence (INT)", value: profileManager.stats.intelligence, desc: "Improves cyber device tech & laser efficiency")
-                            statRow(name: "Wisdom (WIS)", value: profileManager.stats.wisdom, desc: "Enhances yoga streams & Sho alignments")
+                            statRow(name: "Wisdom (WIS)", value: profileManager.stats.wisdom, desc: "Enhances flexibility and balance training")
                             statRow(name: "Charisma (CHA)", value: profileManager.stats.charisma, desc: "Controls companion bonds & shop discounts")
                         }
                         .padding(.horizontal)
@@ -135,17 +127,42 @@ struct CharacterStatsView: View {
                     
                     // Lore Alignment Card
                     VStack(alignment: .leading, spacing: 15) {
-                        Text("ELSAITHER ALIGNMENT METRICS")
+                        Text("ELSAITHER METRICS")
                             .font(.custom("Orbitron-Bold", size: 13).bold())
                             .foregroundColor(.gray)
                             .tracking(2)
                         
                         VStack(spacing: 12) {
                             loreMetricRow(label: "Race Ancestry", value: raceName)
-                            loreMetricRow(label: "Planet of Origin", value: profileManager.currentElement.planetOfOrigin)
+                            loreMetricRow(label: "Planet of Origin", value: profileManager.homePlanet)
                             loreMetricRow(label: "Mark of the Wild", value: spiritAnimal)
-                            loreMetricRow(label: "Resonant Sho Frequency", value: "\(calculatedSho) Hz")
                             loreMetricRow(label: "Power Stance", value: profileManager.expressionStyle.rawValue)
+                        }
+                    }
+                    .padding(20)
+                    .background(Color.white.opacity(0.02))
+                    .cornerRadius(16)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(profileManager.currentElement.primaryColor.opacity(0.15), lineWidth: 1)
+                    )
+                    .padding(.horizontal)
+                    
+                    // Body Measurements Card
+                    VStack(alignment: .leading, spacing: 15) {
+                        Text("BODY MEASUREMENTS")
+                            .font(.custom("Orbitron-Bold", size: 13).bold())
+                            .foregroundColor(.gray)
+                            .tracking(2)
+                        
+                        VStack(spacing: 12) {
+                            loreMetricRow(label: "Height", value: String(format: "%.1f in", profileManager.height))
+                            loreMetricRow(label: "Weight", value: String(format: "%.1f lbs", profileManager.weight))
+                            loreMetricRow(label: "Chest", value: String(format: "%.1f in", profileManager.chest))
+                            loreMetricRow(label: "Arms", value: String(format: "%.1f in", profileManager.arms))
+                            loreMetricRow(label: "Waist", value: String(format: "%.1f in", profileManager.waist))
+                            loreMetricRow(label: "Hips", value: String(format: "%.1f in", profileManager.hips))
+                            loreMetricRow(label: "Legs", value: String(format: "%.1f in", profileManager.legs))
                         }
                     }
                     .padding(20)

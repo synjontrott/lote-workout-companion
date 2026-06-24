@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../managers/user_profile_manager.dart';
 import '../managers/health_manager.dart';
+import '../models/lote_models.dart';
 import 'character_creator_view.dart';
 import 'element_selection_view.dart';
 
@@ -19,11 +20,39 @@ class _SettingsViewState extends State<SettingsView> {
   final TextEditingController _caloriesController = TextEditingController(text: "150");
   final TextEditingController _minutesController = TextEditingController(text: "15");
 
+  late final TextEditingController _heightController;
+  late final TextEditingController _weightController;
+  late final TextEditingController _chestController;
+  late final TextEditingController _armsController;
+  late final TextEditingController _waistController;
+  late final TextEditingController _hipsController;
+  late final TextEditingController _legsController;
+
+  @override
+  void initState() {
+    super.initState();
+    final profile = Provider.of<UserProfileManager>(context, listen: false);
+    _heightController = TextEditingController(text: profile.height.toString());
+    _weightController = TextEditingController(text: profile.weight.toString());
+    _chestController = TextEditingController(text: profile.chest.toString());
+    _armsController = TextEditingController(text: profile.arms.toString());
+    _waistController = TextEditingController(text: profile.waist.toString());
+    _hipsController = TextEditingController(text: profile.hips.toString());
+    _legsController = TextEditingController(text: profile.legs.toString());
+  }
+
   @override
   void dispose() {
     _stepsController.dispose();
     _caloriesController.dispose();
     _minutesController.dispose();
+    _heightController.dispose();
+    _weightController.dispose();
+    _chestController.dispose();
+    _armsController.dispose();
+    _waistController.dispose();
+    _hipsController.dispose();
+    _legsController.dispose();
     super.dispose();
   }
 
@@ -149,21 +178,230 @@ class _SettingsViewState extends State<SettingsView> {
                           ),
                           const SizedBox(height: 12),
 
-                          // Short Term Goal Input
+                          // Home Planet Input
                           _buildConfigField(
-                            label: "SHORT TERM TRAINING GOAL",
-                            hint: "e.g., 5,000 steps daily",
-                            initialValue: profile.shortTermGoal,
-                            onChanged: (val) => profile.shortTermGoal = val,
+                            label: "HOME PLANET",
+                            hint: "Enter Home Planet",
+                            initialValue: profile.homePlanet,
+                            onChanged: (val) => profile.homePlanet = val,
                           ),
                           const SizedBox(height: 12),
 
-                          // Long Term Goal Input
+                          // Calisthenics Goal Input
                           _buildConfigField(
-                            label: "LONG TERM TRAINING GOAL",
-                            hint: "e.g., Run 5k in under 25 mins",
-                            initialValue: profile.longTermGoal,
-                            onChanged: (val) => profile.longTermGoal = val,
+                            label: "CALISTHENICS GOAL",
+                            hint: "e.g., 10 pull-ups, handstands",
+                            initialValue: profile.calisthenicsGoal,
+                            onChanged: (val) => profile.calisthenicsGoal = val,
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Lifting Goal Input
+                          _buildConfigField(
+                            label: "LIFTING GOAL",
+                            hint: "e.g., Deadlift 300 lbs",
+                            initialValue: profile.liftingGoal,
+                            onChanged: (val) => profile.liftingGoal = val,
+                          ),
+                          const SizedBox(height: 12),
+
+                          // Custom Goal Input
+                          _buildConfigField(
+                            label: "CUSTOM GOAL",
+                            hint: "e.g., Run 3 miles, stretch daily",
+                            initialValue: profile.customGoal,
+                            onChanged: (val) => profile.customGoal = val,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // TRAINING GOALS & FOCUSES Card
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.02),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: themeColor.withOpacity(0.15),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "TRAINING GOALS & FOCUSES",
+                            style: GoogleFonts.orbitron(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Column(
+                            children: TrainingFocus.values.map((focus) {
+                              final isSelected = profile.selectedFocuses.contains(focus);
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: InkWell(
+                                  onTap: () {
+                                    final newList = List<TrainingFocus>.from(profile.selectedFocuses);
+                                    if (isSelected) {
+                                      newList.remove(focus);
+                                    } else {
+                                      newList.add(focus);
+                                    }
+                                    profile.selectedFocuses = newList;
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 8),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            focus.displayName,
+                                            style: GoogleFonts.exo2(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        Icon(
+                                          isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+                                          color: isSelected ? themeColor : Colors.grey,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // BODY METRICS Card
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.02),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: themeColor.withOpacity(0.15),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "BODY METRICS TRACKING",
+                            style: GoogleFonts.orbitron(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "HEIGHT (INCHES)",
+                                  controller: _heightController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.height = d;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "WEIGHT (LBS)",
+                                  controller: _weightController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.weight = d;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "CHEST (INCHES)",
+                                  controller: _chestController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.chest = d;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "ARMS (INCHES)",
+                                  controller: _armsController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.arms = d;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "WAIST (INCHES)",
+                                  controller: _waistController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.waist = d;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "HIPS (INCHES)",
+                                  controller: _hipsController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.hips = d;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          _buildMetricConfigField(
+                            label: "LEGS (INCHES)",
+                            controller: _legsController,
+                            onChanged: (val) {
+                              final d = double.tryParse(val);
+                              if (d != null) profile.legs = d;
+                            },
                           ),
                         ],
                       ),
@@ -192,7 +430,7 @@ class _SettingsViewState extends State<SettingsView> {
                         // Tune Element Channels Button
                         _buildAdjustButton(
                           icon: Icons.local_fire_department,
-                          label: "Tune Element Channels",
+                          label: "Choose Element Theme",
                           color: themeColor,
                           onTap: () {
                             Navigator.of(context).push(
@@ -435,6 +673,43 @@ class _SettingsViewState extends State<SettingsView> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildMetricConfigField({
+    required String label,
+    required TextEditingController controller,
+    required ValueChanged<String> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.exo2(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 4),
+        TextFormField(
+          controller: controller,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          style: const TextStyle(color: Colors.black, fontSize: 14),
+          decoration: InputDecoration(
+            fillColor: Colors.white,
+            filled: true,
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(6),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          onChanged: onChanged,
+        )
+      ],
     );
   }
 }

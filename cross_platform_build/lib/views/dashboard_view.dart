@@ -199,7 +199,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  profile.currentTier.displayName.toUpperCase(),
+                                  profile.currentTier.dynamicDisplayName(profile.currentElement.name).toUpperCase(),
                                   style: GoogleFonts.orbitron(
                                     fontSize: 11,
                                     fontWeight: FontWeight.bold,
@@ -594,7 +594,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "DAILY ENERGY ALIGNMENT CHECKLIST",
+                  "DAILY FITNESS PERFORMANCE CHECKLIST",
                   style: GoogleFonts.orbitron(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -644,7 +644,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Wavelength Sho Frequency matches elemental parameters exactly. Consistent execution keeps alignment perfect.",
+                  "Training frequency matches physical parameters exactly. Consistent execution keeps performance high.",
                   style: GoogleFonts.exo2(
                     fontSize: 10,
                     color: Colors.grey,
@@ -800,52 +800,79 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                     color: profile.currentElement.primaryColor,
                   ),
                 ),
-                const SizedBox(height: 10),
-                Row(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Short Term: ",
-                      style: GoogleFonts.exo2(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        profile.shortTermGoal,
-                        style: GoogleFonts.exo2(
-                          fontSize: 11,
-                          color: Colors.white,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Calisthenics: ",
+                          style: GoogleFonts.exo2(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
-                    )
+                        Expanded(
+                          child: Text(
+                            profile.calisthenicsGoal,
+                            style: GoogleFonts.exo2(
+                              fontSize: 11,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Lifting: ",
+                          style: GoogleFonts.exo2(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            profile.liftingGoal,
+                            style: GoogleFonts.exo2(
+                              fontSize: 11,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Custom: ",
+                          style: GoogleFonts.exo2(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            profile.customGoal,
+                            style: GoogleFonts.exo2(
+                              fontSize: 11,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Long Term: ",
-                      style: GoogleFonts.exo2(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        profile.longTermGoal,
-                        style: GoogleFonts.exo2(
-                          fontSize: 11,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
-                  ],
-                )
               ],
             ),
           )

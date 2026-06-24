@@ -44,6 +44,46 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   bool _evaluationComplete = false;
   CognitiveProfile _calculatedProfile = CognitiveProfile.neurotypical;
 
+  // Onboarding wizard phases
+  int _onboardingStep = 0;
+  final Set<TrainingFocus> _tempSelectedFocuses = {
+    TrainingFocus.calisthenics,
+    TrainingFocus.cardio,
+    TrainingFocus.cutting,
+  };
+
+  late final TextEditingController _heightController;
+  late final TextEditingController _weightController;
+  late final TextEditingController _chestController;
+  late final TextEditingController _armsController;
+  late final TextEditingController _waistController;
+  late final TextEditingController _hipsController;
+  late final TextEditingController _legsController;
+
+  @override
+  void initState() {
+    super.initState();
+    _heightController = TextEditingController(text: "70.0");
+    _weightController = TextEditingController(text: "160.0");
+    _chestController = TextEditingController(text: "38.0");
+    _armsController = TextEditingController(text: "13.0");
+    _waistController = TextEditingController(text: "32.0");
+    _hipsController = TextEditingController(text: "40.0");
+    _legsController = TextEditingController(text: "22.0");
+  }
+
+  @override
+  void dispose() {
+    _heightController.dispose();
+    _weightController.dispose();
+    _chestController.dispose();
+    _armsController.dispose();
+    _waistController.dispose();
+    _hipsController.dispose();
+    _legsController.dispose();
+    super.dispose();
+  }
+
   final List<PsychQuestion> _questions = const [
     PsychQuestion(
       text: "How do you feel about long-term workout routines?",
@@ -216,17 +256,17 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
       ],
     )
   ];
-
+ 
   void _selectOption(int index) {
     setState(() {
       _answers.add(index);
       final option = _questions[_currentQuestionIndex].options[index];
-
+ 
       _adhdScore += option.adhdWeight;
       _autisticScore += option.autisticWeight;
       _audhdScore += option.audhdWeight;
       _ntScore += option.ntWeight;
-
+ 
       if (_currentQuestionIndex < _questions.length - 1) {
         _currentQuestionIndex += 1;
       } else {
@@ -234,22 +274,22 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
       }
     });
   }
-
+ 
   void _goBack() {
     if (_answers.isEmpty) return;
     setState(() {
       final lastAnswerIndex = _answers.removeLast();
       final option = _questions[_currentQuestionIndex - 1].options[lastAnswerIndex];
-
+ 
       _adhdScore -= option.adhdWeight;
       _autisticScore -= option.autisticWeight;
       _audhdScore -= option.audhdWeight;
       _ntScore -= option.ntWeight;
-
+ 
       _currentQuestionIndex -= 1;
     });
   }
-
+ 
   void _calculateProfileResult() {
     final maxWeight = [
       _adhdScore,
@@ -257,7 +297,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
       _audhdScore,
       _ntScore
     ].reduce((a, b) => a > b ? a : b);
-
+ 
     if (maxWeight == _adhdScore) {
       _calculatedProfile = CognitiveProfile.adhd;
     } else if (maxWeight == _autisticScore) {
@@ -267,17 +307,25 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     } else {
       _calculatedProfile = CognitiveProfile.neurotypical;
     }
-
+ 
     // Default to AuDHD if both are extremely high
     if (_adhdScore > 10 && _autisticScore > 10) {
       _calculatedProfile = CognitiveProfile.audhd;
     }
-
+ 
     _evaluationComplete = true;
   }
-
+ 
   void _confirmProfile(UserProfileManager manager) {
     manager.cognitiveProfile = _calculatedProfile;
+    manager.selectedFocuses = _tempSelectedFocuses.toList();
+    manager.height = double.tryParse(_heightController.text) ?? 70.0;
+    manager.weight = double.tryParse(_weightController.text) ?? 160.0;
+    manager.chest = double.tryParse(_chestController.text) ?? 38.0;
+    manager.arms = double.tryParse(_armsController.text) ?? 13.0;
+    manager.waist = double.tryParse(_waistController.text) ?? 32.0;
+    manager.hips = double.tryParse(_hipsController.text) ?? 40.0;
+    manager.legs = double.tryParse(_legsController.text) ?? 22.0;
     manager.hasCompletedInitialQuiz = true;
   }
 
@@ -359,7 +407,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         ),
         const SizedBox(height: 8),
         Text(
-          "Phase 1: Cognitive Resonance Evaluation",
+          "Phase 1: Cognitive Fitness Evaluation",
           style: GoogleFonts.exo2(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -481,92 +529,354 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   }
 
   Widget _buildResultScreen(UserProfileManager profileManager) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        const Icon(
-          Icons.auto_awesome,
-          size: 60,
-          color: Color(0xFFFF1616),
-        ),
-        const SizedBox(height: 25),
-        Text(
-          "DESTINY AWAKENED",
-          style: GoogleFonts.orbitron(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 5,
-            color: Colors.white,
+    if (_onboardingStep == 0) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.auto_awesome,
+            size: 60,
+            color: Color(0xFFFF1616),
           ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          "Your elemental mind type is calibrated.",
-          style: GoogleFonts.exo2(
-            fontSize: 15,
-            color: Colors.grey,
+          const SizedBox(height: 25),
+          Text(
+            "DESTINY AWAKENED",
+            style: GoogleFonts.orbitron(
+              fontSize: 26,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 5,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 30),
-        // Destiny Display Card
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(25),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: const Color(0xFFFF1616).withOpacity(0.3),
-              width: 1,
+          const SizedBox(height: 8),
+          Text(
+            "Your elemental mind type is calibrated.",
+            style: GoogleFonts.exo2(
+              fontSize: 15,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 30),
+          // Destiny Display Card
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(25),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: const Color(0xFFFF1616).withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _calculatedProfile.title,
+                  style: GoogleFonts.orbitron(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                    color: const Color(0xFFFF1616),
+                  ),
+                ),
+                const SizedBox(height: 15),
+                Text(
+                  _calculatedProfile.description,
+                  style: GoogleFonts.exo2(
+                    fontSize: 15,
+                    height: 1.6,
+                    color: Colors.white.withOpacity(0.85),
+                  ),
+                ),
+              ],
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 35),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _onboardingStep = 1;
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF1616),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 8,
+              shadowColor: const Color(0xFFFF1616).withOpacity(0.4),
+            ),
+            child: Text(
+              "CONTINUE TO GOALS",
+              style: GoogleFonts.orbitron(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      );
+    } else if (_onboardingStep == 1) {
+      // Focuses Selection Screen
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            "TRAINING FOCUSES",
+            style: GoogleFonts.orbitron(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 4,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Select your primary training focus objectives.",
+            style: GoogleFonts.exo2(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 30),
+          Column(
+            children: TrainingFocus.values.map((focus) {
+              final isSelected = _tempSelectedFocuses.contains(focus);
+              final desc = _getTrainingFocusDesc(focus);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: InkWell(
+                  onTap: () {
+                    setState(() {
+                      if (isSelected) {
+                        _tempSelectedFocuses.remove(focus);
+                      } else {
+                        _tempSelectedFocuses.add(focus);
+                      }
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(12),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? const Color(0xFFFF1616).withOpacity(0.08)
+                          : Colors.white.withOpacity(0.02),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: isSelected
+                            ? const Color(0xFFFF1616)
+                            : Colors.white.withOpacity(0.1),
+                        width: isSelected ? 1.5 : 1.0,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                focus.displayName,
+                                style: GoogleFonts.exo2(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                desc,
+                                style: GoogleFonts.exo2(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          isSelected ? Icons.check_circle : Icons.radio_button_unchecked,
+                          color: isSelected ? const Color(0xFFFF1616) : Colors.grey,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            onPressed: _tempSelectedFocuses.isEmpty
+                ? null
+                : () {
+                    setState(() {
+                      _onboardingStep = 2;
+                    });
+                  },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF1616),
+              disabledBackgroundColor: const Color(0xFFFF1616).withOpacity(0.5),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 8,
+              shadowColor: const Color(0xFFFF1616).withOpacity(0.4),
+            ),
+            child: Text(
+              "CONTINUE TO METRICS",
+              style: GoogleFonts.orbitron(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      // Body Metrics Input Screen
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            "INITIAL BODY METRICS",
+            style: GoogleFonts.orbitron(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 4,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Input your starting numbers to log precise progress.",
+            style: GoogleFonts.exo2(
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 30),
+          Row(
             children: [
-              Text(
-                _calculatedProfile.title,
-                style: GoogleFonts.orbitron(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                  color: const Color(0xFFFF1616),
-                ),
-              ),
-              const SizedBox(height: 15),
-              Text(
-                _calculatedProfile.description,
-                style: GoogleFonts.exo2(
-                  fontSize: 15,
-                  height: 1.6,
-                  color: Colors.white.withOpacity(0.85),
-                ),
-              ),
+              Expanded(child: _buildMetricInputField("HEIGHT (INCHES)", _heightController)),
+              const SizedBox(width: 15),
+              Expanded(child: _buildMetricInputField("WEIGHT (LBS)", _weightController)),
             ],
           ),
-        ),
-        const SizedBox(height: 35),
-        // Action Button
-        ElevatedButton(
-          onPressed: () => _confirmProfile(profileManager),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFF1616),
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 8,
-            shadowColor: const Color(0xFFFF1616).withOpacity(0.4),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(child: _buildMetricInputField("CHEST (INCHES)", _chestController)),
+              const SizedBox(width: 15),
+              Expanded(child: _buildMetricInputField("ARMS (INCHES)", _armsController)),
+            ],
           ),
-          child: Text(
-            "COMMENCE TRAINING",
-            style: GoogleFonts.orbitron(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 2,
-              color: Colors.white,
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(child: _buildMetricInputField("WAIST (INCHES)", _waistController)),
+              const SizedBox(width: 15),
+              Expanded(child: _buildMetricInputField("HIPS (INCHES)", _hipsController)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildMetricInputField("LEGS (INCHES)", _legsController),
+          const SizedBox(height: 35),
+          ElevatedButton(
+            onPressed: () => _confirmProfile(profileManager),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF1616),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 8,
+              shadowColor: const Color(0xFFFF1616).withOpacity(0.4),
+            ),
+            child: Text(
+              "COMMENCE TRAINING",
+              style: GoogleFonts.orbitron(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
+  String _getTrainingFocusDesc(TrainingFocus focus) {
+    switch (focus) {
+      case TrainingFocus.calisthenics:
+        return "Gravity-defying pull-ups, push-ups, and dips.";
+      case TrainingFocus.lifting:
+        return "Forge raw muscle with squat, bench, and deadlifts.";
+      case TrainingFocus.weightGain:
+        return "Build structural mass and dense weight support.";
+      case TrainingFocus.cutting:
+        return "Deficit conditioning to burn off excess layers.";
+      case TrainingFocus.flexibility:
+        return "Flexible joint flow and muscle lengthening.";
+      case TrainingFocus.cardio:
+        return "Conditioning, endurance walks, and swift runs.";
+    }
+  }
+
+  Widget _buildMetricInputField(String label, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.exo2(
+            fontSize: 11,
+            color: Colors.grey,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          style: GoogleFonts.orbitron(
+            fontSize: 14,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white.withOpacity(0.03),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: Colors.white.withOpacity(0.15)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Color(0xFFFF1616)),
             ),
           ),
         ),

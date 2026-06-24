@@ -15,12 +15,50 @@ public class UserProfileManager: ObservableObject {
         didSet { save() }
     }
     
-    @Published public var selectedElementIndex: Int {
+    @Published public var expressionStyle: ExpressionStyle {
         didSet { save() }
     }
     
-    @Published public var expressionStyle: ExpressionStyle {
+    @Published public var selectedFocuses: [TrainingFocus] {
+        didSet {
+            save()
+            regenerateDailyQuests()
+        }
+    }
+    
+    @Published public var height: Double {
         didSet { save() }
+    }
+    
+    @Published public var weight: Double {
+        didSet { save() }
+    }
+    
+    @Published public var chest: Double {
+        didSet { save() }
+    }
+    
+    @Published public var arms: Double {
+        didSet { save() }
+    }
+    
+    @Published public var waist: Double {
+        didSet { save() }
+    }
+    
+    @Published public var hips: Double {
+        didSet { save() }
+    }
+    
+    @Published public var legs: Double {
+        didSet { save() }
+    }
+    
+    @Published public var selectedElementIndex: Int {
+        didSet {
+            save()
+            regenerateDailyQuests()
+        }
     }
     
     @Published public var cognitiveProfile: CognitiveProfile? {
@@ -64,6 +102,22 @@ public class UserProfileManager: ObservableObject {
     }
     
     @Published public var longTermGoal: String {
+        didSet { save() }
+    }
+
+    @Published public var homePlanet: String {
+        didSet { save() }
+    }
+
+    @Published public var calisthenicsGoal: String {
+        didSet { save() }
+    }
+
+    @Published public var liftingGoal: String {
+        didSet { save() }
+    }
+
+    @Published public var customGoal: String {
         didSet { save() }
     }
     
@@ -284,7 +338,7 @@ public class UserProfileManager: ObservableObject {
             primaryColorHex: "#263238",
             accentColorHex: "#311B92",
             planetOfOrigin: "Battacaria",
-            inherentDark: true
+            inherentDark: false
         )
     ]
     
@@ -305,11 +359,44 @@ public class UserProfileManager: ObservableObject {
     
     // MARK: - Initializer & Load Data
     public init() {
-        self.characterName = UserDefaults.standard.string(forKey: "lote_char_name") ?? "Recruit"
-        self.selectedElementIndex = UserDefaults.standard.integer(forKey: "lote_selected_element_idx")
+        let name = UserDefaults.standard.string(forKey: "lote_char_name") ?? "Recruit"
+        self.characterName = name
+        
+        let elementIdx = UserDefaults.standard.integer(forKey: "lote_selected_element_idx")
+        self.selectedElementIndex = elementIdx
         
         let savedStyle = UserDefaults.standard.string(forKey: "lote_expression_style") ?? ExpressionStyle.standard.rawValue
         self.expressionStyle = ExpressionStyle(rawValue: savedStyle) ?? .standard
+        
+        let tempFocuses: [TrainingFocus]
+        if let focusesData = UserDefaults.standard.data(forKey: "lote_selected_focuses"),
+           let decodedFocuses = try? JSONDecoder().decode([TrainingFocus].self, from: focusesData) {
+            tempFocuses = decodedFocuses
+        } else {
+            tempFocuses = [.calisthenics, .cardio, .cutting]
+        }
+        self.selectedFocuses = tempFocuses
+        
+        let loadedHeight = UserDefaults.standard.double(forKey: "lote_body_height")
+        self.height = loadedHeight == 0.0 ? 70.0 : loadedHeight
+        
+        let loadedWeight = UserDefaults.standard.double(forKey: "lote_body_weight")
+        self.weight = loadedWeight == 0.0 ? 160.0 : loadedWeight
+        
+        let loadedChest = UserDefaults.standard.double(forKey: "lote_body_chest")
+        self.chest = loadedChest == 0.0 ? 38.0 : loadedChest
+        
+        let loadedArms = UserDefaults.standard.double(forKey: "lote_body_arms")
+        self.arms = loadedArms == 0.0 ? 13.0 : loadedArms
+        
+        let loadedWaist = UserDefaults.standard.double(forKey: "lote_body_waist")
+        self.waist = loadedWaist == 0.0 ? 32.0 : loadedWaist
+        
+        let loadedHips = UserDefaults.standard.double(forKey: "lote_body_hips")
+        self.hips = loadedHips == 0.0 ? 40.0 : loadedHips
+        
+        let loadedLegs = UserDefaults.standard.double(forKey: "lote_body_legs")
+        self.legs = loadedLegs == 0.0 ? 22.0 : loadedLegs
         
         if let savedCognitive = UserDefaults.standard.string(forKey: "lote_cognitive_profile") {
             self.cognitiveProfile = CognitiveProfile(rawValue: savedCognitive)
@@ -342,12 +429,15 @@ public class UserProfileManager: ObservableObject {
         let savedCrystals = UserDefaults.standard.integer(forKey: "lote_crystals")
         self.crystals = savedCrystals == 0 ? 100 : savedCrystals
         
+        let loadedQuests: [LotEQuest]
         if let questsData = UserDefaults.standard.data(forKey: "lote_daily_quests"),
            let decodedQuests = try? JSONDecoder().decode([LotEQuest].self, from: questsData) {
-            self.dailyQuests = decodedQuests
+            loadedQuests = decodedQuests
         } else {
-            self.dailyQuests = LotEQuest.dailyDefaults
+            let elementName = UserProfileManager.availableElements[elementIdx].name
+            loadedQuests = generateQuests(forElementName: elementName, focuses: tempFocuses)
         }
+        self.dailyQuests = loadedQuests
         
         self.streak = UserDefaults.standard.integer(forKey: "lote_streak")
         
@@ -361,6 +451,12 @@ public class UserProfileManager: ObservableObject {
         self.longTermGoal = UserDefaults.standard.string(forKey: "lote_long_goal") ?? "Reach Krenpowen Apprentice tier rank."
         self.hasCompletedInitialQuiz = UserDefaults.standard.bool(forKey: "lote_has_quiz")
         self.healthyMealsLoggedToday = UserDefaults.standard.integer(forKey: "lote_meals_today")
+        
+        let defaultPlanet = UserProfileManager.availableElements[elementIdx].planetOfOrigin
+        self.homePlanet = UserDefaults.standard.string(forKey: "lote_home_planet") ?? defaultPlanet
+        self.calisthenicsGoal = UserDefaults.standard.string(forKey: "lote_calisthenics_goal") ?? "Perform 20 mins of handstands or pulls."
+        self.liftingGoal = UserDefaults.standard.string(forKey: "lote_lifting_goal") ?? "Deadlift 2x bodyweight milestone."
+        self.customGoal = UserDefaults.standard.string(forKey: "lote_custom_goal") ?? "Complete 3 flexibility routines."
         
         // Refresh Quests if it's a new day
         checkNewDayRefresh()
@@ -381,6 +477,22 @@ public class UserProfileManager: ObservableObject {
         UserDefaults.standard.set(longTermGoal, forKey: "lote_long_goal")
         UserDefaults.standard.set(hasCompletedInitialQuiz, forKey: "lote_has_quiz")
         UserDefaults.standard.set(healthyMealsLoggedToday, forKey: "lote_meals_today")
+        UserDefaults.standard.set(homePlanet, forKey: "lote_home_planet")
+        UserDefaults.standard.set(calisthenicsGoal, forKey: "lote_calisthenics_goal")
+        UserDefaults.standard.set(liftingGoal, forKey: "lote_lifting_goal")
+        UserDefaults.standard.set(customGoal, forKey: "lote_custom_goal")
+        
+        UserDefaults.standard.set(height, forKey: "lote_body_height")
+        UserDefaults.standard.set(weight, forKey: "lote_body_weight")
+        UserDefaults.standard.set(chest, forKey: "lote_body_chest")
+        UserDefaults.standard.set(arms, forKey: "lote_body_arms")
+        UserDefaults.standard.set(waist, forKey: "lote_body_waist")
+        UserDefaults.standard.set(hips, forKey: "lote_body_hips")
+        UserDefaults.standard.set(legs, forKey: "lote_body_legs")
+        
+        if let focusesData = try? JSONEncoder().encode(selectedFocuses) {
+            UserDefaults.standard.set(focusesData, forKey: "lote_selected_focuses")
+        }
         
         if let statsData = try? JSONEncoder().encode(stats) {
             UserDefaults.standard.set(statsData, forKey: "lote_dnd_stats")
@@ -477,7 +589,7 @@ public class UserProfileManager: ObservableObject {
             if diff > 0 {
                 // It's a new day!
                 healthyMealsLoggedToday = 0
-                dailyQuests = LotEQuest.dailyDefaults
+                regenerateDailyQuests()
                 
                 if diff > 1 {
                     // Streak broken
@@ -519,5 +631,10 @@ public class UserProfileManager: ObservableObject {
     public func updatePixelGrid(row: Int, col: Int, value: Int) {
         sprite.pixelGrid[row][col] = value
         save()
+    }
+    
+    public func regenerateDailyQuests() {
+        let elementName = currentElement.name
+        self.dailyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses)
     }
 }

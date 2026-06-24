@@ -107,6 +107,157 @@ public enum WarriorTier: String, Codable, CaseIterable {
         case .legend: return 50
         }
     }
+
+    public func displayName(for elementName: String) -> String {
+        switch elementName {
+        case "Fire":
+            switch self {
+            case .recruit: return "Ember Recruit"
+            case .apprentice: return "Flame Apprentice"
+            case .vanguard: return "Cinder Vanguard"
+            case .sentinel: return "Blaze Sentinel"
+            case .master: return "Inferno Master"
+            case .legend: return "Legend of the Phoenix"
+            }
+        case "Water":
+            switch self {
+            case .recruit: return "Tide Recruit"
+            case .apprentice: return "Hydro Apprentice"
+            case .vanguard: return "Torrent Vanguard"
+            case .sentinel: return "Wave Sentinel"
+            case .master: return "Abyss Master"
+            case .legend: return "Legend of the Ocean"
+            }
+        case "Earth":
+            switch self {
+            case .recruit: return "Stone Recruit"
+            case .apprentice: return "Clay Apprentice"
+            case .vanguard: return "Rock Vanguard"
+            case .sentinel: return "Ridge Sentinel"
+            case .master: return "Mountain Master"
+            case .legend: return "Legend of the Golem"
+            }
+        case "Air":
+            switch self {
+            case .recruit: return "Wind Recruit"
+            case .apprentice: return "Gale Apprentice"
+            case .vanguard: return "Zephyr Vanguard"
+            case .sentinel: return "Vortex Sentinel"
+            case .master: return "Tempest Master"
+            case .legend: return "Legend of the Storm"
+            }
+        case "Lightning":
+            switch self {
+            case .recruit: return "Spark Recruit"
+            case .apprentice: return "Bolt Apprentice"
+            case .vanguard: return "Shock Vanguard"
+            case .sentinel: return "Storm Sentinel"
+            case .master: return "Voltage Master"
+            case .legend: return "Legend of Thunder"
+            }
+        case "Metal":
+            switch self {
+            case .recruit: return "Iron Recruit"
+            case .apprentice: return "Steel Apprentice"
+            case .vanguard: return "Alloy Vanguard"
+            case .sentinel: return "Shield Sentinel"
+            case .master: return "Forge Master"
+            case .legend: return "Legend of Titanium"
+            }
+        case "Ice":
+            switch self {
+            case .recruit: return "Frost Recruit"
+            case .apprentice: return "Ice Apprentice"
+            case .vanguard: return "Glacier Vanguard"
+            case .sentinel: return "Shard Sentinel"
+            case .master: return "Tundra Master"
+            case .legend: return "Legend of Blizzard"
+            }
+        case "Bone":
+            switch self {
+            case .recruit: return "Calcium Recruit"
+            case .apprentice: return "Skeletal Apprentice"
+            case .vanguard: return "Fossil Vanguard"
+            case .sentinel: return "Marrow Sentinel"
+            case .master: return "Crypt Master"
+            case .legend: return "Legend of the Grave"
+            }
+        case "Gas":
+            switch self {
+            case .recruit: return "Vapor Recruit"
+            case .apprentice: return "Mist Apprentice"
+            case .vanguard: return "Cloud Vanguard"
+            case .sentinel: return "Fume Sentinel"
+            case .master: return "Plasma Master"
+            case .legend: return "Legend of Atmosphere"
+            }
+        case "Laser":
+            switch self {
+            case .recruit: return "Ray Recruit"
+            case .apprentice: return "Beam Apprentice"
+            case .vanguard: return "Pulse Vanguard"
+            case .sentinel: return "Focus Sentinel"
+            case .master: return "Photon Master"
+            case .legend: return "Legend of the Cosmos"
+            }
+        case "Zero Space":
+            switch self {
+            case .recruit: return "Node Recruit"
+            case .apprentice: return "Rift Apprentice"
+            case .vanguard: return "Warp Vanguard"
+            case .sentinel: return "Gate Sentinel"
+            case .master: return "Singularity Master"
+            case .legend: return "Legend of the Void"
+            }
+        case "Darki":
+            switch self {
+            case .recruit: return "Dark Recruit"
+            case .apprentice: return "Shade Apprentice"
+            case .vanguard: return "Night Vanguard"
+            case .sentinel: return "Royal Sentinel"
+            case .master: return "Sovereign Master"
+            case .legend: return "Legend of Eclipse"
+            }
+        case "Death":
+            switch self {
+            case .recruit: return "Wither Recruit"
+            case .apprentice: return "Decay Apprentice"
+            case .vanguard: return "Reaper Vanguard"
+            case .sentinel: return "Soul Sentinel"
+            case .master: return "Crypt Master"
+            case .legend: return "Legend of Doom"
+            }
+        case "Knife":
+            switch self {
+            case .recruit: return "Edge Recruit"
+            case .apprentice: return "Blade Apprentice"
+            case .vanguard: return "Dagger Vanguard"
+            case .sentinel: return "Pierce Sentinel"
+            case .master: return "Saber Master"
+            case .legend: return "Legend of the Sword"
+            }
+        case "Poison":
+            switch self {
+            case .recruit: return "Venom Recruit"
+            case .apprentice: return "Toxin Apprentice"
+            case .vanguard: return "Viper Vanguard"
+            case .sentinel: return "Acid Sentinel"
+            case .master: return "Serum Master"
+            case .legend: return "Legend of Plague"
+            }
+        case "Shadow":
+            switch self {
+            case .recruit: return "Shade Recruit"
+            case .apprentice: return "Dusk Apprentice"
+            case .vanguard: return "Veil Vanguard"
+            case .sentinel: return "Phantom Sentinel"
+            case .master: return "Eclipse Master"
+            case .legend: return "Legend of the Ghost"
+            }
+        default:
+            return rawValue
+        }
+    }
 }
 
 // MARK: - Character Sprite Creator
@@ -202,7 +353,7 @@ public struct LotEQuest: Identifiable, Codable, Equatable {
         return [
             LotEQuest(id: UUID(), title: "Patrol the Whispering Woods", questDescription: "A brisk walk or run to clear out stray energy beasts. Requires 15 mins of activity.", workoutType: .cardio, difficultyRoll: 8, rewardXP: 40, rewardCrystals: 15, statReward: .dexterity, statValue: 1),
             LotEQuest(id: UUID(), title: "Earth Shaking Forging", questDescription: "Lift heavy weights, do bodyweight exercises, or strength training. Perform 20 mins.", workoutType: .strength, difficultyRoll: 10, rewardXP: 60, rewardCrystals: 25, statReward: .strength, statValue: 1),
-            LotEQuest(id: UUID(), title: "Air Stream Alignment", questDescription: "Align your internal Sho through yoga, stretching, or mobility work. 15 mins.", workoutType: .flexibility, difficultyRoll: 6, rewardXP: 30, rewardCrystals: 10, statReward: .wisdom, statValue: 1),
+            LotEQuest(id: UUID(), title: "Mobility Routine", questDescription: "Perform a mobility routine, stretching, or yoga to improve flexibility. 15 mins.", workoutType: .flexibility, difficultyRoll: 6, rewardXP: 30, rewardCrystals: 10, statReward: .wisdom, statValue: 1),
             LotEQuest(id: UUID(), title: "Consuming Healthy Rations", questDescription: "Log a protein-rich, nourishing meal with fresh vegetables and clean energy hydration.", workoutType: .nutrition, difficultyRoll: 5, rewardXP: 25, rewardCrystals: 10, statReward: .constitution, statValue: 1)
         ]
     }
@@ -213,7 +364,179 @@ public enum WorkoutCategory: String, Codable, CaseIterable {
     case strength = "Strength Forge"
     case flexibility = "Flexibility Stream"
     case nutrition = "Healthy Rations"
-    case meditation = "Spiritual Focus"
+    case meditation = "Mental Focus"
+}
+
+// MARK: - Training Focus Objectives
+public enum TrainingFocus: String, Codable, CaseIterable, Identifiable {
+    public var id: String { rawValue }
+    case calisthenics = "Calisthenics"
+    case lifting = "Lifting"
+    case weightGain = "Weight Gain"
+    case cutting = "Cutting"
+    case flexibility = "Yoga & Flexibility"
+    case cardio = "Cardio"
+}
+
+public func generateQuests(forElementName element: String, focuses: [TrainingFocus]) -> [LotEQuest] {
+    var quests: [LotEQuest] = []
+    
+    // Fallback if no focuses are selected
+    let activeFocuses = focuses.isEmpty ? [.cardio, .calisthenics, .flexibility, .cutting] : focuses
+    
+    for focus in activeFocuses.prefix(4) {
+        let questId = UUID()
+        let title: String
+        let desc: String
+        let wType: WorkoutCategory
+        let dc: Int
+        let xp: Int
+        let crystals: Int
+        let stat: StatType
+        let val: Int
+        
+        switch focus {
+        case .calisthenics:
+            title = "\(element) Bar Mastery"
+            desc = "Perform bodyweight dips, pushups, or pullups. Complete 15 minutes of gravity defying calisthenics."
+            wType = .strength
+            dc = 10
+            xp = 60
+            crystals = 20
+            stat = .strength
+            val = 1
+        case .lifting:
+            title = "\(element) Heavy Forge"
+            desc = "Perform squat, bench, or deadlift strength training. Complete 20 minutes of heavy lifting."
+            wType = .strength
+            dc = 12
+            xp = 70
+            crystals = 25
+            stat = .strength
+            val = 1
+        case .weightGain:
+            title = "\(element) Bulking Feast"
+            desc = "Log a calorie-dense bulking meal with clean protein and carbs to gain healthy weight."
+            wType = .nutrition
+            dc = 5
+            xp = 40
+            crystals = 15
+            stat = .constitution
+            val = 1
+        case .cutting:
+            title = "\(element) Lean Burn"
+            desc = "Log a high-protein, calorie-deficit meal to burn off excess fat and stay lean."
+            wType = .nutrition
+            dc = 5
+            xp = 40
+            crystals = 15
+            stat = .constitution
+            val = 1
+        case .flexibility:
+            title = "\(element) Flow Routine"
+            desc = "Perform a flexibility, yoga, or dynamic mobility routine. Complete 15 minutes of stretching."
+            wType = .flexibility
+            dc = 7
+            xp = 50
+            crystals = 15
+            stat = .wisdom
+            val = 1
+        case .cardio:
+            title = "\(element) Speed Patrol"
+            desc = "Complete a 15-minute run, jog, cycle, or high-intensity cardio patrol."
+            wType = .cardio
+            dc = 8
+            xp = 50
+            crystals = 15
+            stat = .dexterity
+            val = 1
+        }
+        
+        let customizedTitle: String
+        let customizedDesc: String
+        
+        switch element {
+        case "Fire":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Ember")
+            customizedDesc = desc + " Channel the blazing heat of your inner fire."
+        case "Water":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Tide")
+            customizedDesc = desc + " Keep your movements smooth and flowing like water."
+        case "Earth":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Stone")
+            customizedDesc = desc + " Ground your stance and stand solid as rock."
+        case "Air":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Zephyr")
+            customizedDesc = desc + " Move light and swift as the wind."
+        case "Lightning":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Volt")
+            customizedDesc = desc + " Bring high intensity and electrical speed."
+        case "Metal":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Iron")
+            customizedDesc = desc + " Harden your resolve and forge your steel structure."
+        case "Ice":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Frost")
+            customizedDesc = desc + " Focus with cool precision and frosty control."
+        case "Bone":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Marrow")
+            customizedDesc = desc + " Strengthen your skeletal core and inner structure."
+        case "Gas":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Vapor")
+            customizedDesc = desc + " Flow seamlessly and adjust your form fluidly."
+        case "Laser":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Photon")
+            customizedDesc = desc + " Focus your energy into a concentrated beam of power."
+        case "Zero Space":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Void")
+            customizedDesc = desc + " Transcend standard physical coordinates."
+        case "Darki":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Dark")
+            customizedDesc = desc + " Harness powerful dark waves to fuel your reps."
+        case "Death":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Decay")
+            customizedDesc = desc + " Push through physical boundaries."
+        case "Knife":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Blade")
+            customizedDesc = desc + " Focus on sharp execution and clean cuts."
+        case "Poison":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Toxic")
+            customizedDesc = desc + " Build immunities and clean cellular efficiency."
+        case "Shadow":
+            customizedTitle = title.replacingOccurrences(of: element, with: "Shade")
+            customizedDesc = desc + " Keep your execution silent, stealthy, and phantom-like."
+        default:
+            customizedTitle = title
+            customizedDesc = desc
+        }
+        
+        quests.append(LotEQuest(
+            id: questId,
+            title: customizedTitle,
+            questDescription: customizedDesc,
+            workoutType: wType,
+            difficultyRoll: dc,
+            rewardXP: xp,
+            rewardCrystals: crystals,
+            statReward: stat,
+            statValue: val
+        ))
+    }
+    
+    while quests.count < 4 {
+        quests.append(LotEQuest(
+            id: UUID(),
+            title: "General Training Patrol",
+            questDescription: "Perform a general physical workout to build overall energy. 15 mins.",
+            workoutType: .cardio,
+            difficultyRoll: 8,
+            rewardXP: 30,
+            rewardCrystals: 10,
+            statReward: .constitution,
+            statValue: 1
+        ))
+    }
+    
+    return quests
 }
 
 // MARK: - Helper Hex Color Extension

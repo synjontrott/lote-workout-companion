@@ -65,12 +65,12 @@ struct SettingsView: View {
                                     )
                             }
                             
-                            // Short Term Goal Input
+                            // Home Planet Input
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("SHORT TERM TRAINING GOAL")
+                                Text("HOME PLANET")
                                     .font(.caption2)
                                     .foregroundColor(.gray)
-                                TextField("e.g. 5,000 steps daily", text: $profileManager.shortTermGoal)
+                                TextField("Enter Home Planet", text: $profileManager.homePlanet)
                                     .padding(10)
                                     .background(Color.white.opacity(0.04))
                                     .cornerRadius(8)
@@ -81,12 +81,44 @@ struct SettingsView: View {
                                     )
                             }
                             
-                            // Long Term Goal Input
+                            // Calisthenics Goal Input
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("LONG TERM TRAINING GOAL")
+                                Text("CALISTHENICS GOAL")
                                     .font(.caption2)
                                     .foregroundColor(.gray)
-                                TextField("e.g. Run 5k in under 25 mins", text: $profileManager.longTermGoal)
+                                TextField("e.g. 10 pull-ups, handstands", text: $profileManager.calisthenicsGoal)
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.04))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                    )
+                            }
+                            
+                            // Lifting Goal Input
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("LIFTING GOAL")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                                TextField("e.g. Deadlift 300 lbs", text: $profileManager.liftingGoal)
+                                    .padding(10)
+                                    .background(Color.white.opacity(0.04))
+                                    .cornerRadius(8)
+                                    .foregroundColor(.white)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                                    )
+                            }
+                            
+                            // Custom Goal Input
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("CUSTOM GOAL")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                                TextField("e.g. Run 3 miles, stretch daily", text: $profileManager.customGoal)
                                     .padding(10)
                                     .background(Color.white.opacity(0.04))
                                     .cornerRadius(8)
@@ -107,6 +139,81 @@ struct SettingsView: View {
                     )
                     .padding(.horizontal)
                     
+                    // Training Focuses Card
+                    VStack(alignment: .leading, spacing: 15) {
+                        Text("TRAINING GOALS & FOCUSES")
+                            .font(.custom("Orbitron-Bold", size: 13).bold())
+                            .foregroundColor(.gray)
+                            .tracking(2)
+                        
+                        VStack(spacing: 12) {
+                            ForEach(TrainingFocus.allCases, id: \.self) { focus in
+                                let isSelected = profileManager.selectedFocuses.contains(focus)
+                                Button(action: {
+                                    if isSelected {
+                                        profileManager.selectedFocuses.removeAll { $0 == focus }
+                                    } else {
+                                        profileManager.selectedFocuses.append(focus)
+                                    }
+                                }) {
+                                    HStack {
+                                        Text(focus.rawValue)
+                                            .font(.custom("Exo2-Bold", size: 14))
+                                            .foregroundColor(.white)
+                                        Spacer()
+                                        Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                                            .foregroundColor(isSelected ? profileManager.currentElement.primaryColor : .gray)
+                                    }
+                                    .padding(.vertical, 8)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                             }
+                        }
+                    }
+                    .padding(20)
+                    .background(Color.white.opacity(0.02))
+                    .cornerRadius(16)
+                    .overlay(
+                         RoundedRectangle(cornerRadius: 16)
+                             .stroke(profileManager.currentElement.primaryColor.opacity(0.15), lineWidth: 1)
+                    )
+                    .padding(.horizontal)
+                    
+                    // Body Metrics Card
+                    VStack(alignment: .leading, spacing: 15) {
+                        Text("BODY METRICS TRACKING")
+                            .font(.custom("Orbitron-Bold", size: 13).bold())
+                            .foregroundColor(.gray)
+                            .tracking(2)
+                        
+                        VStack(spacing: 12) {
+                            HStack(spacing: 12) {
+                                metricSettingField(label: "HEIGHT (INCHES)", text: doubleBinding(for: \.height))
+                                metricSettingField(label: "WEIGHT (LBS)", text: doubleBinding(for: \.weight))
+                            }
+                            
+                            HStack(spacing: 12) {
+                                metricSettingField(label: "CHEST (INCHES)", text: doubleBinding(for: \.chest))
+                                metricSettingField(label: "ARMS (INCHES)", text: doubleBinding(for: \.arms))
+                            }
+                            
+                            HStack(spacing: 12) {
+                                metricSettingField(label: "WAIST (INCHES)", text: doubleBinding(for: \.waist))
+                                metricSettingField(label: "HIPS (INCHES)", text: doubleBinding(for: \.hips))
+                            }
+                            
+                            metricSettingField(label: "LEGS (INCHES)", text: doubleBinding(for: \.legs))
+                        }
+                    }
+                    .padding(20)
+                    .background(Color.white.opacity(0.02))
+                    .cornerRadius(16)
+                    .overlay(
+                         RoundedRectangle(cornerRadius: 16)
+                             .stroke(profileManager.currentElement.primaryColor.opacity(0.15), lineWidth: 1)
+                    )
+                    .padding(.horizontal)
+                    
                     // Customize triggers
                     VStack(alignment: .leading, spacing: 14) {
                         Text("SOVEREIGN ADJUSTMENTS")
@@ -123,7 +230,7 @@ struct SettingsView: View {
                                 HStack {
                                     Image(systemName: "flame.fill")
                                         .foregroundColor(profileManager.currentElement.primaryColor)
-                                    Text("Tune Element Channels")
+                                    Text("Choose Element Theme")
                                         .font(.custom("Exo2-Bold", size: 14))
                                         .foregroundColor(.white)
                                     Spacer()
@@ -290,5 +397,37 @@ struct SettingsView: View {
         profileManager.earnCrystals(30)
         
         showSimulationNotice = true
-    }
+     }
+     
+     private func doubleBinding(for keyPath: ReferenceWritableKeyPath<UserProfileManager, Double>) -> Binding<String> {
+         Binding<String>(
+             get: {
+                 let val = profileManager[keyPath: keyPath]
+                 return val == 0.0 ? "" : String(format: "%.1f", val)
+             },
+             set: { newValue in
+                 if let doubleVal = Double(newValue) {
+                     profileManager[keyPath: keyPath] = doubleVal
+                 }
+             }
+         )
+     }
+     
+     private func metricSettingField(label: String, text: Binding<String>) -> some View {
+         VStack(alignment: .leading, spacing: 4) {
+             Text(label)
+                 .font(.caption2)
+                 .foregroundColor(.gray)
+             TextField("", text: text)
+                 .keyboardType(.decimalPad)
+                 .padding(10)
+                 .background(Color.white.opacity(0.04))
+                 .cornerRadius(8)
+                 .foregroundColor(.white)
+                 .overlay(
+                     RoundedRectangle(cornerRadius: 8)
+                         .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                 )
+         }
+     }
 }

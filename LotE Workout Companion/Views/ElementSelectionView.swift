@@ -35,12 +35,12 @@ struct ElementSelectionView: View {
             VStack(spacing: 0) {
                 // Header
                 VStack(spacing: 8) {
-                    Text("RESONANCE CHAMBER")
+                    Text("ELEMENT THEME SELECTION")
                         .font(.custom("Orbitron-Bold", size: 22).bold())
                         .foregroundColor(.white)
                         .tracking(3)
                     
-                    Text("Tune your elemental wavelength and stance")
+                    Text("Choose your elemental theme and stance")
                         .font(.custom("Exo2-Medium", size: 13))
                         .foregroundColor(.gray)
                 }
@@ -199,7 +199,7 @@ struct ElementSelectionView: View {
                         Button(action: {
                             saveSelection()
                         }) {
-                            Text("ALIGN SOUL CHANNELS")
+                            Text("CONFIRM ELEMENT THEME")
                                 .font(.custom("Orbitron-Bold", size: 15).bold())
                                 .foregroundColor(.white)
                                 .tracking(2)
