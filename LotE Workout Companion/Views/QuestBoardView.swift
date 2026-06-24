@@ -268,7 +268,16 @@ struct QuestBoardView: View {
                     .padding(.vertical, 10)
                     
                     // Modifiers
-                    let mod = (profileManager.stats.strength - 10) / 2
+                    let mod: Int = {
+                        switch quest.statReward {
+                        case .strength: return (profileManager.stats.strength - 10) / 2
+                        case .dexterity: return (profileManager.stats.dexterity - 10) / 2
+                        case .constitution: return (profileManager.stats.constitution - 10) / 2
+                        case .intelligence: return (profileManager.stats.intelligence - 10) / 2
+                        case .wisdom: return (profileManager.stats.wisdom - 10) / 2
+                        case .charisma: return (profileManager.stats.charisma - 10) / 2
+                        }
+                    }()
                     Text("Your Modifier: +\(mod) (\(quest.statReward.rawValue))")
                         .font(.custom("Exo2-Medium", size: 12))
                         .foregroundColor(.gray)
