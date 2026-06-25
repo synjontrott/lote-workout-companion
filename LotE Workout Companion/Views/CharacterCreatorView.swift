@@ -15,16 +15,17 @@ struct CharacterCreatorView: View {
     @State private var pixelGrid: [[Int]] = CharacterSprite.defaultGrid
     
     // Preset configuration state
+    @State private var sexPreset: String = "Male"
+    @State private var planetPreset: String = "Ninjonia"
     @State private var skinPreset: String = "Fair"
     @State private var hairStylePreset: String = "Spiky"
     @State private var hairColorPreset: String = "Yellow"
-    @State private var outfitPreset: String = "Warrior Plate"
-    @State private var auraPreset: String = "Flames"
+    @State private var outfitColorPreset: String = "Gray"
     
     // Colors mapped from selections
     var activeSkinColor: Color { Color(hex: skinHex(for: skinPreset)) ?? .orange }
     var activeHairColor: Color { Color(hex: hairHex(for: hairColorPreset)) ?? .yellow }
-    var activeOutfitColor: Color { Color(hex: outfitHex(for: outfitPreset)) ?? .gray }
+    var activeOutfitColor: Color { Color(hex: outfitHex(for: outfitColorPreset)) ?? .gray }
     var activeAuraColor: Color { profileManager.currentElement.accentColor }
     var activeEyeColor: Color { profileManager.currentElement.primaryColor }
     
@@ -114,9 +115,12 @@ struct CharacterCreatorView: View {
                         
                         // Preset selectors
                         VStack(spacing: 12) {
-                            presetSelector(title: "Skin Type", selection: $skinPreset, options: ["Fair", "Tan", "Dark", "Celestial"])
-                            presetSelector(title: "Hair Color", selection: $hairColorPreset, options: ["Yellow", "Red", "Black", "Blue", "Silver", "Green"])
-                            presetSelector(title: "Armor Tier", selection: $outfitPreset, options: ["Warrior Plate", "Ninja Garb", "Cyber Suit", "Mage Robes"])
+                            presetSelector(title: "Sex", selection: $sexPreset, options: ["Male", "Female"])
+                            presetSelector(title: "Planet Style", selection: $planetPreset, options: ["Ninjonia", "Techno", "Warrion", "Battacaria"])
+                            presetSelector(title: "Skin Tone", selection: $skinPreset, options: ["Fair", "Tan", "Dark", "Celestial", "Golden", "Pale"])
+                            presetSelector(title: "Hair Style", selection: $hairStylePreset, options: ["Spiky", "Long", "Short", "Mohawk"])
+                            presetSelector(title: "Hair Color", selection: $hairColorPreset, options: ["Yellow", "Red", "Black", "Blue", "Silver", "Green", "Brown", "Orange"])
+                            presetSelector(title: "Clothing Color", selection: $outfitColorPreset, options: ["Gray", "Dark Blue", "Crimson", "Gold", "Purple", "Green", "Charcoal", "Steel"])
                         }
                         
                         // Reset Grid or Re-generate preset base
@@ -183,6 +187,12 @@ struct CharacterCreatorView: View {
         }
         .onAppear {
             pixelGrid = profileManager.sprite.pixelGrid
+            sexPreset = profileManager.sprite.sex
+            planetPreset = profileManager.sprite.outfitStyle.isEmpty ? profileManager.homePlanet : profileManager.sprite.outfitStyle
+            skinPreset = skinPresetFromHex(profileManager.sprite.skinColorHex)
+            hairStylePreset = profileManager.sprite.hairStyle
+            hairColorPreset = hairColorPresetFromHex(profileManager.sprite.hairColorHex)
+            outfitColorPreset = outfitColorPresetFromHex(profileManager.sprite.outfitColorHex)
         }
     }
     
@@ -263,47 +273,182 @@ struct CharacterCreatorView: View {
     private func generateBaseFromPresets() {
         var grid = Array(repeating: Array(repeating: 0, count: 16), count: 16)
         
-        // Head / Skin (rows 4 to 8, cols 5 to 10)
-        for r in 4...8 {
-            for c in 5...10 {
-                grid[r][c] = 1
+        // 1. Draw Aura (Value 5)
+        grid[1][3] = 5; grid[1][12] = 5
+        grid[3][1] = 5; grid[3][14] = 5
+        grid[5][2] = 5; grid[5][13] = 5
+        grid[7][1] = 5; grid[7][14] = 5
+        grid[9][2] = 5; grid[9][13] = 5
+        grid[11][1] = 5; grid[11][14] = 5
+        grid[13][3] = 5; grid[13][12] = 5
+        grid[14][4] = 5; grid[14][11] = 5
+        
+        // 2. Draw Legs/Feet (Value 4 or 1)
+        if planetPreset == "Warrion" {
+            grid[14][5] = 1; grid[14][10] = 1
+            grid[15][5] = 4; grid[15][10] = 4
+        } else if planetPreset == "Ninjonia" && sexPreset == "Female" {
+            for c in 4...11 {
+                grid[14][c] = 4
             }
+            grid[15][6] = 1; grid[15][9] = 1
+        } else {
+            grid[14][5] = 4; grid[14][10] = 4
+            grid[15][5] = 4; grid[15][10] = 4
         }
         
-        // Hair Styles
-        switch hairStylePreset {
-        default: // Spiky hair drawing template
-            for r in 2...3 {
-                for c in 4...11 {
-                    grid[r][c] = 2
+        // 3. Draw Body & Arms (Outfit = 4, Skin = 1)
+        switch planetPreset {
+        case "Ninjonia":
+            if sexPreset == "Female" {
+                grid[9][7] = 1; grid[9][8] = 1 // neck
+                grid[10][5] = 4; grid[10][6] = 4; grid[10][7] = 1; grid[10][8] = 1; grid[10][9] = 4; grid[10][10] = 4
+                for c in 5...10 { grid[11][c] = 4 }
+                for c in 4...11 { grid[12][c] = 4 }
+                for c in 3...12 { grid[13][c] = 4 }
+                for r in 10...12 {
+                    grid[r][3] = 1
+                    grid[r][12] = 1
+                }
+            } else {
+                grid[9][7] = 1; grid[9][8] = 1 // neck
+                grid[10][5] = 1; grid[10][6] = 1; grid[10][7] = 4; grid[10][8] = 4; grid[10][9] = 4; grid[10][10] = 4
+                grid[11][5] = 1; grid[11][6] = 4; grid[11][7] = 4; grid[11][8] = 4; grid[11][9] = 4; grid[11][10] = 4
+                for c in 5...10 {
+                    grid[12][c] = 4
+                    grid[13][c] = 4
+                }
+                for r in 10...12 {
+                    grid[r][3] = 1; grid[r][4] = 1
+                }
+                for r in 10...12 {
+                    grid[r][11] = 4; grid[r][12] = 4
+                }
+                grid[13][11] = 1; grid[13][12] = 1
+                grid[13][3] = 1; grid[13][4] = 1
+            }
+            
+        case "Techno":
+            for r in 9...13 {
+                for c in 5...10 {
+                    grid[r][c] = 4
                 }
             }
-            grid[1][5] = 2
-            grid[1][10] = 2
-            grid[4][4] = 2
-            grid[4][11] = 2
+            for r in 10...12 {
+                grid[r][3] = 4; grid[r][4] = 4
+                grid[r][11] = 4; grid[r][12] = 4
+            }
+            grid[13][3] = 1; grid[13][4] = 1
+            grid[13][11] = 1; grid[13][12] = 1
+            
+            grid[8][5] = 4; grid[8][10] = 4
+            grid[8][6] = 4; grid[8][7] = 4; grid[8][8] = 4; grid[8][9] = 4
+            
+        case "Warrion":
+            if sexPreset == "Female" {
+                grid[9][7] = 1; grid[9][8] = 1 // neck
+                for c in 5...10 { grid[10][c] = 4 } // fur top
+                for c in 5...10 { grid[11][c] = 1 } // bare midriff
+                for c in 5...10 { grid[12][c] = 4 } // belt
+                for c in 4...11 { grid[13][c] = 4 } // skirt
+            } else {
+                grid[9][7] = 1; grid[9][8] = 1 // neck
+                grid[10][5] = 1; grid[10][6] = 4; grid[10][7] = 1; grid[10][8] = 1; grid[10][9] = 4; grid[10][10] = 1 // straps
+                grid[11][5] = 1; grid[11][6] = 1; grid[11][7] = 4; grid[11][8] = 4; grid[11][9] = 1; grid[11][10] = 1
+                for c in 5...10 { grid[12][c] = 4 }
+                grid[13][5] = 1; grid[13][6] = 4; grid[13][7] = 4; grid[13][8] = 4; grid[13][9] = 4; grid[13][10] = 1
+            }
+            for r in 10...12 {
+                grid[r][3] = 1; grid[r][4] = 1
+                grid[r][11] = 1; grid[r][12] = 1
+            }
+            grid[13][3] = 1; grid[13][4] = 1; grid[13][11] = 1; grid[13][12] = 1
+            
+        case "Battacaria":
+            grid[9][7] = 4; grid[9][8] = 4
+            grid[9][4] = 4; grid[10][4] = 4 // left heavy pauldron
+            for r in 10...11 {
+                for c in 5...10 {
+                    grid[r][c] = 4
+                }
+            }
+            for c in 4...11 {
+                grid[12][c] = 4
+            }
+            for c in 4...11 {
+                grid[13][c] = 4
+            }
+            for r in 10...12 {
+                grid[r][3] = 4
+            }
+            grid[10][11] = 1; grid[10][12] = 1
+            grid[11][11] = 1; grid[11][12] = 1
+            grid[12][11] = 4; grid[12][12] = 4 // gauntlet
+            grid[13][3] = 4; grid[13][11] = 4; grid[13][12] = 4
+            
+        default:
+            for r in 9...13 {
+                for c in 5...10 {
+                    grid[r][c] = 4
+                }
+            }
+            for r in 10...12 {
+                grid[r][4] = 4; grid[r][11] = 4
+            }
+            grid[14][5] = 4; grid[14][10] = 4
         }
         
-        // Eyes
+        // 4. Draw Face/Skin (Value 1)
+        for r in 4...8 {
+            for c in 5...10 {
+                if grid[r][c] != 4 {
+                    grid[r][c] = 1
+                }
+            }
+        }
+        if planetPreset == "Battacaria" {
+            grid[4][5] = 4; grid[4][10] = 4
+            grid[5][5] = 4; grid[5][6] = 4; grid[5][9] = 4; grid[5][10] = 4
+        }
+        
+        // 5. Draw Eyes (Value 3)
         grid[6][6] = 3
         grid[6][9] = 3
         
-        // Armor (rows 9 to 13, cols 4 to 11)
-        for r in 9...13 {
-            for c in 4...11 {
-                grid[r][c] = 4
-            }
+        // 6. Draw Hair (Value 2)
+        switch hairStylePreset {
+        case "Spiky":
+            for c in 5...10 { grid[3][c] = 2 }
+            grid[2][5] = 2; grid[2][7] = 2; grid[2][8] = 2; grid[2][10] = 2
+            grid[1][5] = 2; grid[1][10] = 2
+            grid[4][4] = 2; grid[4][11] = 2
+            grid[5][4] = 2; grid[5][11] = 2
+            
+        case "Long":
+            for c in 5...10 { grid[3][c] = 2 }
+            for c in 4...11 { grid[4][c] = 2 }
+            grid[5][4] = 2; grid[5][11] = 2
+            grid[6][4] = 2; grid[6][11] = 2
+            grid[7][4] = 2; grid[7][11] = 2
+            grid[8][4] = 2; grid[8][11] = 2
+            grid[9][4] = 2; grid[9][11] = 2
+            grid[10][4] = 2; grid[10][11] = 2
+            
+        case "Short":
+            for c in 4...11 { grid[3][c] = 2 }
+            grid[4][4] = 2; grid[4][11] = 2
+            grid[5][4] = 2; grid[5][11] = 2
+            
+        case "Mohawk":
+            grid[1][7] = 2; grid[1][8] = 2
+            grid[2][7] = 2; grid[2][8] = 2
+            grid[3][7] = 2; grid[3][8] = 2
+            grid[4][7] = 2; grid[4][8] = 2
+            
+        default:
+            for c in 4...11 { grid[3][c] = 2 }
+            grid[2][5] = 2; grid[2][10] = 2
         }
-        
-        // Legs (row 14, cols 5 and 10)
-        grid[14][5] = 4
-        grid[14][10] = 4
-        
-        // Aura surrounding sprite
-        grid[1][3] = 5; grid[1][12] = 5
-        grid[5][2] = 5; grid[5][13] = 5
-        grid[9][2] = 5; grid[9][13] = 5
-        grid[13][3] = 5; grid[13][12] = 5
         
         pixelGrid = grid
     }
@@ -314,7 +459,20 @@ struct CharacterCreatorView: View {
         case "Tan": return "#D7CCC8"
         case "Dark": return "#8D6E63"
         case "Celestial": return "#9575CD"
+        case "Golden": return "#FFE082"
+        case "Pale": return "#FFECB3"
         default: return "#FFD180" // Fair
+        }
+    }
+    
+    private func skinPresetFromHex(_ hex: String) -> String {
+        switch hex {
+        case "#D7CCC8": return "Tan"
+        case "#8D6E63": return "Dark"
+        case "#9575CD": return "Celestial"
+        case "#FFE082": return "Golden"
+        case "#FFECB3": return "Pale"
+        default: return "Fair"
         }
     }
     
@@ -325,16 +483,48 @@ struct CharacterCreatorView: View {
         case "Blue": return "#29B6F6"
         case "Silver": return "#CFD8DC"
         case "Green": return "#66BB6A"
+        case "Brown": return "#5D4037"
+        case "Orange": return "#FF9100"
         default: return "#FFEA00" // Yellow
         }
     }
     
-    private func outfitHex(for style: String) -> String {
-        switch style {
-        case "Ninja Garb": return "#263238"
-        case "Cyber Suit": return "#00E5FF"
-        case "Mage Robes": return "#4A148C"
-        default: return "#37474F" // Warrior Plate
+    private func hairColorPresetFromHex(_ hex: String) -> String {
+        switch hex {
+        case "#FF3D00": return "Red"
+        case "#212121": return "Black"
+        case "#29B6F6": return "Blue"
+        case "#CFD8DC": return "Silver"
+        case "#66BB6A": return "Green"
+        case "#5D4037": return "Brown"
+        case "#FF9100": return "Orange"
+        default: return "Yellow"
+        }
+    }
+    
+    private func outfitHex(for color: String) -> String {
+        switch color {
+        case "Dark Blue": return "#1A237E"
+        case "Crimson": return "#B71C1C"
+        case "Gold": return "#FFD700"
+        case "Purple": return "#4A148C"
+        case "Green": return "#1B5E20"
+        case "Charcoal": return "#263238"
+        case "Steel": return "#455A64"
+        default: return "#37474F" // Gray
+        }
+    }
+    
+    private func outfitColorPresetFromHex(_ hex: String) -> String {
+        switch hex {
+        case "#1A237E": return "Dark Blue"
+        case "#B71C1C": return "Crimson"
+        case "#FFD700": return "Gold"
+        case "#4A148C": return "Purple"
+        case "#1B5E20": return "Green"
+        case "#263238": return "Charcoal"
+        case "#455A64": return "Steel"
+        default: return "Gray"
         }
     }
     
@@ -343,9 +533,10 @@ struct CharacterCreatorView: View {
         profileManager.sprite.pixelGrid = pixelGrid
         profileManager.sprite.skinColorHex = skinHex(for: skinPreset)
         profileManager.sprite.hairColorHex = hairHex(for: hairColorPreset)
-        profileManager.sprite.outfitColorHex = outfitHex(for: outfitPreset)
+        profileManager.sprite.outfitColorHex = outfitHex(for: outfitColorPreset)
         profileManager.sprite.hairStyle = hairStylePreset
-        profileManager.sprite.outfitStyle = outfitPreset
+        profileManager.sprite.outfitStyle = planetPreset
+        profileManager.sprite.sex = sexPreset
         presentationMode.wrappedValue.dismiss()
     }
 }

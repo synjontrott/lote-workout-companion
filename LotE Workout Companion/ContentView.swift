@@ -25,28 +25,44 @@ struct ContentView: View {
             } else {
                 TabView {
                     // TAB 1: Dashboard
-                    DashboardView(profileManager: profileManager, healthManager: healthManager)
-                        .tabItem {
-                            Label("Dashboard", systemImage: "terminal.fill")
-                        }
+                    NavigationView {
+                        DashboardView(profileManager: profileManager, healthManager: healthManager)
+                            .navigationBarHidden(true)
+                    }
+                    .navigationViewStyle(StackNavigationViewStyle())
+                    .tabItem {
+                        Label("Dashboard", systemImage: "terminal.fill")
+                    }
                     
                     // TAB 2: Quests
-                    QuestBoardView(profileManager: profileManager)
-                        .tabItem {
-                            Label("Quests", systemImage: "shield.fill")
-                        }
+                    NavigationView {
+                        QuestBoardView(profileManager: profileManager, healthManager: healthManager)
+                            .navigationBarHidden(true)
+                    }
+                    .navigationViewStyle(StackNavigationViewStyle())
+                    .tabItem {
+                        Label("Quests", systemImage: "shield.fill")
+                    }
                     
                     // TAB 3: D&D Character Sheets
-                    CharacterStatsView(profileManager: profileManager)
-                        .tabItem {
-                            Label("Warrior Sheet", systemImage: "person.text.rectangle.fill")
-                        }
+                    NavigationView {
+                        CharacterStatsView(profileManager: profileManager)
+                            .navigationBarHidden(true)
+                    }
+                    .navigationViewStyle(StackNavigationViewStyle())
+                    .tabItem {
+                        Label("Warrior Sheet", systemImage: "person.text.rectangle.fill")
+                    }
                     
                     // TAB 4: Systems Settings & Simulator
-                    SettingsView(profileManager: profileManager, healthManager: healthManager)
-                        .tabItem {
-                            Label("Systems HUD", systemImage: "slider.horizontal.3")
-                        }
+                    NavigationView {
+                        SettingsView(profileManager: profileManager, healthManager: healthManager)
+                            .navigationBarHidden(true)
+                    }
+                    .navigationViewStyle(StackNavigationViewStyle())
+                    .tabItem {
+                        Label("Systems HUD", systemImage: "slider.horizontal.3")
+                    }
                 }
                 .accentColor(profileManager.currentElement.primaryColor)
                 .preferredColorScheme(.dark)

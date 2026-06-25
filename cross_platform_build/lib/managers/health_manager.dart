@@ -6,11 +6,13 @@ class HealthManager extends ChangeNotifier {
   double _todaySteps = 0.0;
   double _todayCalories = 0.0;
   double _activeMinutes = 0.0;
+  double _todayStandHours = 0.0;
 
   bool get isAuthorized => _isAuthorized;
   double get todaySteps => _todaySteps;
   double get todayCalories => _todayCalories;
   double get activeMinutes => _activeMinutes;
+  double get todayStandHours => _todayStandHours;
 
   HealthManager() {
     // Check if health data is available and request initial check
@@ -70,7 +72,6 @@ class HealthManager extends ChangeNotifier {
       _todayCalories = totalCalories;
 
       // Estimate active minutes from workouts or steps
-      // Let's check workouts
       final List<HealthDataType> workoutTypes = [HealthDataType.WORKOUT];
       List<HealthDataPoint> workouts = await health.getHealthDataFromTypes(
         types: workoutTypes,
@@ -84,16 +85,37 @@ class HealthManager extends ChangeNotifier {
       }
       _activeMinutes = workoutMins > 0 ? workoutMins : (_todaySteps / 100).clamp(0, 100);
 
+      // Fetch/Estimate stand hours
+      try {
+        final List<HealthDataType> standTypes = [HealthDataType.APPLE_STAND_TIME];
+        List<HealthDataPoint> standData = await health.getHealthDataFromTypes(
+          types: standTypes,
+          startTime: startOfDay,
+          endTime: now,
+        );
+        double totalStand = 0.0;
+        for (var p in standData) {
+          final val = p.value;
+          if (val is NumericHealthValue) {
+            totalStand += val.numericValue.toDouble();
+          }
+        }
+        _todayStandHours = totalStand > 0 ? totalStand : (_todaySteps / 1000).clamp(0.0, 24.0);
+      } catch (_) {
+        _todayStandHours = (_todaySteps / 1000).clamp(0.0, 24.0);
+      }
+
     } catch (e) {
       debugPrint("Error fetching health data: $e");
     }
     notifyListeners();
   }
 
-  void simulateActivity({required double steps, required double calories, required double minutes}) {
+  void simulateActivity({required double steps, required double calories, required double minutes, double standHours = 0.0}) {
     _todaySteps += steps;
     _todayCalories += calories;
     _activeMinutes += minutes;
+    _todayStandHours += standHours;
     notifyListeners();
   }
 }

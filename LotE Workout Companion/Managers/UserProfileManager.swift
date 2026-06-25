@@ -31,6 +31,65 @@ public class UserProfileManager: ObservableObject {
     }
     
     @Published public var weight: Double {
+        didSet {
+            save()
+            checkWeightGoalProgress()
+        }
+    }
+    
+    @Published public var startWeight: Double {
+        didSet { save() }
+    }
+    
+    @Published public var goalWeight: Double {
+        didSet {
+            save()
+            startWeight = weight
+            hasClaimedWeightGoalReward = false
+        }
+    }
+    
+    @Published public var distanceGoal: Double {
+        didSet { save() }
+    }
+    
+    @Published public var stepsGoal: Double {
+        didSet { save() }
+    }
+    
+    @Published public var caloriesGoal: Double {
+        didSet { save() }
+    }
+    
+    @Published public var activeMinutesGoal: Double {
+        didSet { save() }
+    }
+    
+    @Published public var standHoursGoal: Double {
+        didSet { save() }
+    }
+    
+    @Published public var weightHistory: [WeightEntry] {
+        didSet { save() }
+    }
+    
+    @Published public var measurementHistory: [BodyMeasurementEntry] {
+        didSet { save() }
+    }
+    
+    @Published public var unlockedShopItems: [String] {
+        didSet { save() }
+    }
+    
+    @Published public var unlockedBadges: [String] {
+        didSet { save() }
+    }
+    
+    @Published public var hasClaimedWeightGoalReward: Bool {
+        didSet { save() }
+    }
+    
+    @Published public var hasClaimedDistanceGoalReward: Bool {
         didSet { save() }
     }
     
@@ -89,6 +148,14 @@ public class UserProfileManager: ObservableObject {
         didSet { save() }
     }
     
+    @Published public var monthlyQuests: [LotEQuest] {
+        didSet { save() }
+    }
+    
+    @Published public var yearlyQuests: [LotEQuest] {
+        didSet { save() }
+    }
+    
     @Published public var streak: Int {
         didSet { save() }
     }
@@ -109,15 +176,7 @@ public class UserProfileManager: ObservableObject {
         didSet { save() }
     }
 
-    @Published public var calisthenicsGoal: String {
-        didSet { save() }
-    }
-
-    @Published public var liftingGoal: String {
-        didSet { save() }
-    }
-
-    @Published public var customGoal: String {
+    @Published public var loggedMeals: [MealEntry] {
         didSet { save() }
     }
     
@@ -126,6 +185,30 @@ public class UserProfileManager: ObservableObject {
     }
     
     @Published public var healthyMealsLoggedToday: Int {
+        didSet { save() }
+    }
+    
+    @Published public var totalQuestsCompleted: Int {
+        didSet { save() }
+    }
+    
+    @Published public var equippedFrame: String {
+        didSet { save() }
+    }
+    
+    @Published public var equippedTitle: String {
+        didSet { save() }
+    }
+    
+    @Published public var equippedAura: String {
+        didSet { save() }
+    }
+    
+    @Published public var equippedBackground: String {
+        didSet { save() }
+    }
+    
+    @Published public var equippedAccessory: String {
         didSet { save() }
     }
     
@@ -383,6 +466,55 @@ public class UserProfileManager: ObservableObject {
         let loadedWeight = UserDefaults.standard.double(forKey: "lote_body_weight")
         self.weight = loadedWeight == 0.0 ? 160.0 : loadedWeight
         
+        let loadedStartWeight = UserDefaults.standard.double(forKey: "lote_start_weight")
+        self.startWeight = loadedStartWeight == 0.0 ? 160.0 : loadedStartWeight
+        
+        let loadedGoalWeight = UserDefaults.standard.double(forKey: "lote_goal_weight")
+        self.goalWeight = loadedGoalWeight == 0.0 ? 150.0 : loadedGoalWeight
+        
+        let loadedDistanceGoal = UserDefaults.standard.double(forKey: "lote_distance_goal")
+        self.distanceGoal = loadedDistanceGoal == 0.0 ? 2.0 : loadedDistanceGoal
+        
+        let loadedStepsGoal = UserDefaults.standard.double(forKey: "lote_steps_goal")
+        self.stepsGoal = loadedStepsGoal == 0.0 ? 10000.0 : loadedStepsGoal
+        
+        let loadedCalGoal = UserDefaults.standard.double(forKey: "lote_cal_goal")
+        self.caloriesGoal = loadedCalGoal == 0.0 ? 400.0 : loadedCalGoal
+        
+        let loadedMinGoal = UserDefaults.standard.double(forKey: "lote_min_goal")
+        self.activeMinutesGoal = loadedMinGoal == 0.0 ? 30.0 : loadedMinGoal
+        
+        let loadedStandGoal = UserDefaults.standard.double(forKey: "lote_stand_goal")
+        self.standHoursGoal = loadedStandGoal == 0.0 ? 10.0 : loadedStandGoal
+        
+        self.hasClaimedWeightGoalReward = UserDefaults.standard.bool(forKey: "lote_claimed_weight_reward")
+        self.hasClaimedDistanceGoalReward = UserDefaults.standard.bool(forKey: "lote_claimed_distance_reward")
+        
+        if let weightHistoryData = UserDefaults.standard.data(forKey: "lote_weight_history"),
+           let decodedWeightHistory = try? JSONDecoder().decode([WeightEntry].self, from: weightHistoryData) {
+            self.weightHistory = decodedWeightHistory
+        } else {
+            self.weightHistory = [WeightEntry(date: Date(), weight: loadedWeight == 0.0 ? 160.0 : loadedWeight)]
+        }
+        
+        if let measurementHistoryData = UserDefaults.standard.data(forKey: "lote_measurement_history"),
+           let decodedMeasurementHistory = try? JSONDecoder().decode([BodyMeasurementEntry].self, from: measurementHistoryData) {
+            self.measurementHistory = decodedMeasurementHistory
+        } else {
+            self.measurementHistory = []
+        }
+        
+        self.totalQuestsCompleted = UserDefaults.standard.integer(forKey: "lote_total_quests_completed")
+        
+        self.unlockedShopItems = UserDefaults.standard.stringArray(forKey: "lote_unlocked_shop_items") ?? []
+        self.unlockedBadges = UserDefaults.standard.stringArray(forKey: "lote_unlocked_badges") ?? []
+        
+        self.equippedFrame = UserDefaults.standard.string(forKey: "lote_equipped_frame") ?? "None"
+        self.equippedTitle = UserDefaults.standard.string(forKey: "lote_equipped_title") ?? "None"
+        self.equippedAura = UserDefaults.standard.string(forKey: "lote_equipped_aura") ?? "None"
+        self.equippedBackground = UserDefaults.standard.string(forKey: "lote_equipped_background") ?? "None"
+        self.equippedAccessory = UserDefaults.standard.string(forKey: "lote_equipped_accessory") ?? "None"
+        
         let loadedChest = UserDefaults.standard.double(forKey: "lote_body_chest")
         self.chest = loadedChest == 0.0 ? 38.0 : loadedChest
         
@@ -399,7 +531,7 @@ public class UserProfileManager: ObservableObject {
         self.legs = loadedLegs == 0.0 ? 22.0 : loadedLegs
         
         if let savedCognitive = UserDefaults.standard.string(forKey: "lote_cognitive_profile") {
-            self.cognitiveProfile = CognitiveProfile(rawValue: savedCognitive)
+            self.cognitiveProfile = CognitiveProfile(safeValue: savedCognitive)
         } else {
             self.cognitiveProfile = nil
         }
@@ -435,9 +567,25 @@ public class UserProfileManager: ObservableObject {
             loadedQuests = decodedQuests
         } else {
             let elementName = UserProfileManager.availableElements[elementIdx].name
-            loadedQuests = generateQuests(forElementName: elementName, focuses: tempFocuses)
+            loadedQuests = generateQuests(forElementName: elementName, focuses: tempFocuses, cadence: .daily)
         }
         self.dailyQuests = loadedQuests
+        
+        if let monthlyQuestsData = UserDefaults.standard.data(forKey: "lote_monthly_quests"),
+           let decodedMonthlyQuests = try? JSONDecoder().decode([LotEQuest].self, from: monthlyQuestsData) {
+            self.monthlyQuests = decodedMonthlyQuests
+        } else {
+            let elementName = UserProfileManager.availableElements[elementIdx].name
+            self.monthlyQuests = generateQuests(forElementName: elementName, focuses: tempFocuses, cadence: .monthly)
+        }
+        
+        if let yearlyQuestsData = UserDefaults.standard.data(forKey: "lote_yearly_quests"),
+           let decodedYearlyQuests = try? JSONDecoder().decode([LotEQuest].self, from: yearlyQuestsData) {
+            self.yearlyQuests = decodedYearlyQuests
+        } else {
+            let elementName = UserProfileManager.availableElements[elementIdx].name
+            self.yearlyQuests = generateQuests(forElementName: elementName, focuses: tempFocuses, cadence: .yearly)
+        }
         
         self.streak = UserDefaults.standard.integer(forKey: "lote_streak")
         
@@ -454,9 +602,13 @@ public class UserProfileManager: ObservableObject {
         
         let defaultPlanet = UserProfileManager.availableElements[elementIdx].planetOfOrigin
         self.homePlanet = UserDefaults.standard.string(forKey: "lote_home_planet") ?? defaultPlanet
-        self.calisthenicsGoal = UserDefaults.standard.string(forKey: "lote_calisthenics_goal") ?? "Perform 20 mins of handstands or pulls."
-        self.liftingGoal = UserDefaults.standard.string(forKey: "lote_lifting_goal") ?? "Deadlift 2x bodyweight milestone."
-        self.customGoal = UserDefaults.standard.string(forKey: "lote_custom_goal") ?? "Complete 3 flexibility routines."
+        
+        if let mealsData = UserDefaults.standard.data(forKey: "lote_logged_meals"),
+           let decodedMeals = try? JSONDecoder().decode([MealEntry].self, from: mealsData) {
+            self.loggedMeals = decodedMeals
+        } else {
+            self.loggedMeals = []
+        }
         
         // Refresh Quests if it's a new day
         checkNewDayRefresh()
@@ -478,17 +630,39 @@ public class UserProfileManager: ObservableObject {
         UserDefaults.standard.set(hasCompletedInitialQuiz, forKey: "lote_has_quiz")
         UserDefaults.standard.set(healthyMealsLoggedToday, forKey: "lote_meals_today")
         UserDefaults.standard.set(homePlanet, forKey: "lote_home_planet")
-        UserDefaults.standard.set(calisthenicsGoal, forKey: "lote_calisthenics_goal")
-        UserDefaults.standard.set(liftingGoal, forKey: "lote_lifting_goal")
-        UserDefaults.standard.set(customGoal, forKey: "lote_custom_goal")
+        
+        if let mealsData = try? JSONEncoder().encode(loggedMeals) {
+            UserDefaults.standard.set(mealsData, forKey: "lote_logged_meals")
+        }
         
         UserDefaults.standard.set(height, forKey: "lote_body_height")
         UserDefaults.standard.set(weight, forKey: "lote_body_weight")
+        UserDefaults.standard.set(startWeight, forKey: "lote_start_weight")
+        UserDefaults.standard.set(goalWeight, forKey: "lote_goal_weight")
+        UserDefaults.standard.set(distanceGoal, forKey: "lote_distance_goal")
+        UserDefaults.standard.set(stepsGoal, forKey: "lote_steps_goal")
+        UserDefaults.standard.set(caloriesGoal, forKey: "lote_cal_goal")
+        UserDefaults.standard.set(activeMinutesGoal, forKey: "lote_min_goal")
+        UserDefaults.standard.set(standHoursGoal, forKey: "lote_stand_goal")
+        
+        UserDefaults.standard.set(hasClaimedWeightGoalReward, forKey: "lote_claimed_weight_reward")
+        UserDefaults.standard.set(hasClaimedDistanceGoalReward, forKey: "lote_claimed_distance_reward")
+        UserDefaults.standard.set(unlockedShopItems, forKey: "lote_unlocked_shop_items")
+        UserDefaults.standard.set(unlockedBadges, forKey: "lote_unlocked_badges")
+        
+        UserDefaults.standard.set(equippedFrame, forKey: "lote_equipped_frame")
+        UserDefaults.standard.set(equippedTitle, forKey: "lote_equipped_title")
+        UserDefaults.standard.set(equippedAura, forKey: "lote_equipped_aura")
+        UserDefaults.standard.set(equippedBackground, forKey: "lote_equipped_background")
+        UserDefaults.standard.set(equippedAccessory, forKey: "lote_equipped_accessory")
+        
         UserDefaults.standard.set(chest, forKey: "lote_body_chest")
         UserDefaults.standard.set(arms, forKey: "lote_body_arms")
         UserDefaults.standard.set(waist, forKey: "lote_body_waist")
         UserDefaults.standard.set(hips, forKey: "lote_body_hips")
         UserDefaults.standard.set(legs, forKey: "lote_body_legs")
+        
+        UserDefaults.standard.set(totalQuestsCompleted, forKey: "lote_total_quests_completed")
         
         if let focusesData = try? JSONEncoder().encode(selectedFocuses) {
             UserDefaults.standard.set(focusesData, forKey: "lote_selected_focuses")
@@ -505,13 +679,34 @@ public class UserProfileManager: ObservableObject {
         if let questsData = try? JSONEncoder().encode(dailyQuests) {
             UserDefaults.standard.set(questsData, forKey: "lote_daily_quests")
         }
+        
+        if let monthlyQuestsData = try? JSONEncoder().encode(monthlyQuests) {
+            UserDefaults.standard.set(monthlyQuestsData, forKey: "lote_monthly_quests")
+        }
+        
+        if let yearlyQuestsData = try? JSONEncoder().encode(yearlyQuests) {
+            UserDefaults.standard.set(yearlyQuestsData, forKey: "lote_yearly_quests")
+        }
+        
+        if let weightHistoryData = try? JSONEncoder().encode(weightHistory) {
+            UserDefaults.standard.set(weightHistoryData, forKey: "lote_weight_history")
+        }
+        
+        if let measurementHistoryData = try? JSONEncoder().encode(measurementHistory) {
+            UserDefaults.standard.set(measurementHistoryData, forKey: "lote_measurement_history")
+        }
     }
     
     // MARK: - XP & Rewards Engine
     public func addXP(_ amount: Int) {
+        if currentLevel >= 100 {
+            currentLevel = 100
+            currentXP = 0
+            return
+        }
         currentXP += amount
-        let xpNeeded = requiredXPForLevel(currentLevel)
-        if currentXP >= xpNeeded {
+        var xpNeeded = requiredXPForLevel(currentLevel)
+        while currentXP >= xpNeeded && currentLevel < 100 {
             currentXP -= xpNeeded
             currentLevel += 1
             crystals += 50 // Level up reward
@@ -520,48 +715,325 @@ public class UserProfileManager: ObservableObject {
             if let randomStat = StatType.allCases.randomElement() {
                 stats.increase(randomStat, by: 1)
             }
+            xpNeeded = requiredXPForLevel(currentLevel)
+        }
+        if currentLevel >= 100 {
+            currentLevel = 100
+            currentXP = 0
         }
     }
     
     public func requiredXPForLevel(_ lvl: Int) -> Int {
-        return 100 + (lvl * 50)
+        // Multi-year leveling curve reaching level 100 (steeper scaling)
+        return 1000 + (lvl * 100) + (lvl * lvl * 5)
     }
     
     public func earnCrystals(_ amount: Int) {
         crystals += amount
     }
     
-    // MARK: - Quest Actions
-    public func completeQuest(_ quest: LotEQuest, rollValue: Int) -> Bool {
-        guard let idx = dailyQuests.firstIndex(where: { $0.id == quest.id }),
-              !dailyQuests[idx].isCompleted else {
-            return false
+    // MARK: - Shop Purchase Action
+    public func buyShopItem(_ item: ShopItem) -> Bool {
+        guard crystals >= item.cost else { return false }
+        guard !unlockedShopItems.contains(item.name) else { return false }
+        
+        crystals -= item.cost
+        unlockedShopItems.append(item.name)
+        
+        // Apply stats boost if it's a stat elixir
+        if item.type == "stat" {
+            if item.name.contains("STR") { stats.increase(.strength, by: 1) }
+            else if item.name.contains("DEX") { stats.increase(.dexterity, by: 1) }
+            else if item.name.contains("CON") { stats.increase(.constitution, by: 1) }
+            else if item.name.contains("INT") { stats.increase(.intelligence, by: 1) }
+            else if item.name.contains("WIS") { stats.increase(.wisdom, by: 1) }
+            else if item.name.contains("CHA") { stats.increase(.charisma, by: 1) }
         }
         
-        // D&D Stat Bonus Modifier
-        let statBonus = getStatModifier(for: quest.statReward)
-        let totalRoll = rollValue + statBonus
+        unlockBadge("Guild Patron")
+        save()
+        return true
+    }
+    
+    public func toggleEquipItem(_ item: ShopItem) {
+        guard unlockedShopItems.contains(item.name) else { return }
         
-        if totalRoll >= quest.difficultyRoll {
-            dailyQuests[idx].isCompleted = true
-            addXP(quest.rewardXP)
-            earnCrystals(quest.rewardCrystals)
-            stats.increase(quest.statReward, by: quest.statValue)
-            updateStreakOnActivity()
-            return true
-        } else {
-            // Failed roll reward (consolation XP)
-            addXP(quest.rewardXP / 3)
-            return false
+        switch item.type {
+        case "frame":
+            equippedFrame = (equippedFrame == item.name) ? "None" : item.name
+        case "title":
+            equippedTitle = (equippedTitle == item.name) ? "None" : item.name
+        case "aura":
+            equippedAura = (equippedAura == item.name) ? "None" : item.name
+        case "background":
+            equippedBackground = (equippedBackground == item.name) ? "None" : item.name
+        case "accessory":
+            equippedAccessory = (equippedAccessory == item.name) ? "None" : item.name
+        default:
+            break
+        }
+        save()
+    }
+    
+    // MARK: - Badge Unlock Engine
+    public func unlockBadge(_ name: String) {
+        if !unlockedBadges.contains(name) {
+            unlockedBadges.append(name)
+            // Grant badge completion rewards
+            addXP(200)
+            earnCrystals(50)
+            save()
         }
     }
     
-    public func logHealthyMeal() {
-        healthyMealsLoggedToday += 1
-        earnCrystals(10)
-        addXP(15)
-        stats.increase(.constitution, by: 1)
+    public func checkBadges(healthManager: HealthKitManager) {
+        if healthManager.todaySteps >= 10000.0 {
+            unlockBadge("First Step")
+        }
+        if healthManager.todaySteps >= 20000.0 {
+            unlockBadge("20k Steps Sentinel")
+        }
+        if healthManager.activeMinutes >= 60.0 {
+            unlockBadge("Iron Will (1 Hr)")
+        }
+        if healthManager.activeMinutes >= 120.0 {
+            unlockBadge("Unstoppable Force (2 Hr)")
+        }
+        if totalQuestsCompleted >= 100 {
+            unlockBadge("Quest Crusader (100 Quests)")
+        }
+        if totalQuestsCompleted >= 1000 {
+            unlockBadge("Legendary Champion (1000 Quests)")
+        }
+        
+        if streak >= 7 {
+            unlockBadge("Streak Master")
+        }
+        if streak >= 14 {
+            unlockBadge("Vanguard Streak (14 Days)")
+        }
+        if streak >= 30 {
+            unlockBadge("Sovereign Streak (30 Days)")
+        }
+        if streak >= 100 {
+            unlockBadge("Immortal Streak (100 Days)")
+        }
+        
+        if stats.strength >= 18 || stats.dexterity >= 18 || stats.constitution >= 18 || stats.wisdom >= 18 || stats.intelligence >= 18 || stats.charisma >= 18 {
+            unlockBadge("Demi-God")
+        }
+        if hasCompletedInitialQuiz {
+            unlockBadge("Lore Scholar")
+        }
+        
+        // Check daily distance target goal progress
+        checkDistanceGoalProgress(todaySteps: healthManager.todaySteps)
+    }
+    
+    public func checkDistanceGoalProgress(todaySteps: Double) {
+        let currentDistance = todaySteps / 2000.0
+        if !hasClaimedDistanceGoalReward && currentDistance >= distanceGoal {
+            addXP(100)
+            earnCrystals(30)
+            hasClaimedDistanceGoalReward = true
+            save()
+        }
+    }
+    
+    // MARK: - Target Progress Helper
+    public func checkWeightGoalProgress() {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        
+        // Record in history, replacing today's entry if already present
+        weightHistory.removeAll { calendar.isDate($0.date, inSameDayAs: today) }
+        weightHistory.append(WeightEntry(date: Date(), weight: weight))
+        
+        // Auto reward check
+        if !hasClaimedWeightGoalReward {
+            let isCutting = startWeight > goalWeight
+            if isCutting {
+                if weight <= goalWeight {
+                    addXP(2000)
+                    earnCrystals(1000)
+                    hasClaimedWeightGoalReward = true
+                    unlockBadge("Weight Target Achieved")
+                }
+            } else { // Bulking
+                if weight >= goalWeight {
+                    addXP(2000)
+                    earnCrystals(1000)
+                    hasClaimedWeightGoalReward = true
+                    unlockBadge("Weight Target Achieved")
+                }
+            }
+        }
+        save()
+    }
+    
+    // MARK: - Quest Actions
+    public func completeQuest(_ quest: LotEQuest) -> Bool {
+        var isDaily = false
+        var isMonthly = false
+        var isYearly = false
+        var foundIndex = -1
+        
+        if let idx = dailyQuests.firstIndex(where: { $0.id == quest.id }) {
+            isDaily = true
+            foundIndex = idx
+        } else if let idx = monthlyQuests.firstIndex(where: { $0.id == quest.id }) {
+            isMonthly = true
+            foundIndex = idx
+        } else if let idx = yearlyQuests.firstIndex(where: { $0.id == quest.id }) {
+            isYearly = true
+            foundIndex = idx
+        }
+        
+        guard foundIndex != -1 else { return false }
+        
+        let questToComplete = isDaily ? dailyQuests[foundIndex] : (isMonthly ? monthlyQuests[foundIndex] : yearlyQuests[foundIndex])
+        guard !questToComplete.isCompleted else { return false }
+        guard questToComplete.progressCount >= questToComplete.targetCount else { return false }
+        
+        if isDaily {
+            dailyQuests[foundIndex].isCompleted = true
+            incrementMonthlyAndYearlyProgress(for: questToComplete.workoutType)
+        } else if isMonthly {
+            monthlyQuests[foundIndex].isCompleted = true
+        } else if isYearly {
+            yearlyQuests[foundIndex].isCompleted = true
+        }
+        
+        addXP(questToComplete.rewardXP)
+        earnCrystals(questToComplete.rewardCrystals)
+        stats.increase(questToComplete.statReward, by: questToComplete.statValue)
         updateStreakOnActivity()
+        
+        totalQuestsCompleted += 1
+        
+        // Unlocks badge on 5 completed quests
+        let completedDailies = dailyQuests.filter { $0.isCompleted }.count
+        if completedDailies >= 5 {
+            unlockBadge("Flame Starter")
+        }
+        
+        save()
+        return true
+    }
+    
+    private func incrementMonthlyAndYearlyProgress(for category: WorkoutCategory) {
+        for i in 0..<monthlyQuests.count {
+            if monthlyQuests[i].workoutType == category && !monthlyQuests[i].isCompleted {
+                monthlyQuests[i].progressCount = min(monthlyQuests[i].progressCount + 1, monthlyQuests[i].targetCount)
+            }
+        }
+        for i in 0..<yearlyQuests.count {
+            if yearlyQuests[i].workoutType == category && !yearlyQuests[i].isCompleted {
+                yearlyQuests[i].progressCount = min(yearlyQuests[i].progressCount + 1, yearlyQuests[i].targetCount)
+            }
+        }
+    }
+    
+    public func logWorkout(category: WorkoutCategory) {
+        // Increment progress on matching daily quests
+        for i in 0..<dailyQuests.count {
+            if dailyQuests[i].workoutType == category && !dailyQuests[i].isCompleted {
+                dailyQuests[i].progressCount = min(dailyQuests[i].progressCount + 1, dailyQuests[i].targetCount)
+            }
+        }
+        // Increment progress on matching monthly quests
+        for i in 0..<monthlyQuests.count {
+            if monthlyQuests[i].workoutType == category && !monthlyQuests[i].isCompleted {
+                monthlyQuests[i].progressCount = min(monthlyQuests[i].progressCount + 1, monthlyQuests[i].targetCount)
+            }
+        }
+        // Increment progress on matching yearly quests
+        for i in 0..<yearlyQuests.count {
+            if yearlyQuests[i].workoutType == category && !yearlyQuests[i].isCompleted {
+                yearlyQuests[i].progressCount = min(yearlyQuests[i].progressCount + 1, yearlyQuests[i].targetCount)
+            }
+        }
+        save()
+    }
+    
+    public func logDetailedMeal(name: String, calories: Double, protein: Double, carbs: Double, fats: Double, sugar: Double) {
+        let entry = MealEntry(name: name, calories: calories, protein: protein, carbs: carbs, fats: fats, sugar: sugar)
+        loggedMeals.append(entry)
+        healthyMealsLoggedToday += 1
+        logWorkout(category: .nutrition)
+        save()
+    }
+    
+    public func logBodyMeasurements(weight: Double, chest: Double, arms: Double, waist: Double, hips: Double, legs: Double) {
+        let entry = BodyMeasurementEntry(weight: weight, chest: chest, arms: arms, waist: waist, hips: hips, legs: legs)
+        measurementHistory.append(entry)
+        
+        self.weight = weight
+        self.chest = chest
+        self.arms = arms
+        self.waist = waist
+        self.hips = hips
+        self.legs = legs
+        
+        save()
+    }
+    
+    public func logRestDay() {
+        updateStreakOnActivity()
+        save()
+    }
+    
+    public var todaySugar: Double {
+        let calendar = Calendar.current
+        return loggedMeals
+            .filter { calendar.isDateInToday($0.date) }
+            .reduce(0.0) { $0 + $1.sugar }
+    }
+    
+    public func syncQuestsWithHealthData(todaySteps: Double, activeMinutes: Double) {
+        if activeMinutes >= 15.0 {
+            for i in 0..<dailyQuests.count {
+                let q = dailyQuests[i]
+                if q.workoutType == .strength || q.workoutType == .flexibility || q.workoutType == .cardio {
+                    if dailyQuests[i].progressCount < dailyQuests[i].targetCount {
+                        dailyQuests[i].progressCount = dailyQuests[i].targetCount
+                    }
+                }
+            }
+        }
+        if todaySteps >= 5000.0 {
+            for i in 0..<dailyQuests.count {
+                if dailyQuests[i].workoutType == .cardio {
+                    if dailyQuests[i].progressCount < dailyQuests[i].targetCount {
+                        dailyQuests[i].progressCount = dailyQuests[i].targetCount
+                    }
+                }
+            }
+        }
+        save()
+    }
+    
+    public func resetProgress() {
+        self.currentLevel = 1
+        self.currentXP = 0
+        self.crystals = 100
+        self.streak = 0
+        self.stats = DNDStats()
+        self.unlockedBadges = []
+        self.unlockedShopItems = []
+        self.loggedMeals = []
+        self.measurementHistory = []
+        self.equippedFrame = "None"
+        self.equippedTitle = "None"
+        self.equippedAura = "None"
+        self.equippedBackground = "None"
+        self.equippedAccessory = "None"
+        self.totalQuestsCompleted = 0
+        self.healthyMealsLoggedToday = 0
+        self.hasClaimedWeightGoalReward = false
+        self.hasClaimedDistanceGoalReward = false
+        self.regenerateDailyQuests()
+        save()
     }
     
     private func getStatModifier(for stat: StatType) -> Int {
@@ -589,7 +1061,23 @@ public class UserProfileManager: ObservableObject {
             if diff > 0 {
                 // It's a new day!
                 healthyMealsLoggedToday = 0
-                regenerateDailyQuests()
+                hasClaimedDistanceGoalReward = false
+                let elementName = currentElement.name
+                self.dailyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .daily)
+                
+                // If it's a new month, refresh monthly quests
+                let lastMonth = calendar.component(.month, from: lastDate)
+                let currentMonth = calendar.component(.month, from: Date())
+                if lastMonth != currentMonth {
+                    self.monthlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .monthly)
+                }
+                
+                // If it's a new year, refresh yearly quests
+                let lastYear = calendar.component(.year, from: lastDate)
+                let currentYear = calendar.component(.year, from: Date())
+                if lastYear != currentYear {
+                    self.yearlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .yearly)
+                }
                 
                 if diff > 1 {
                     // Streak broken
@@ -635,6 +1123,8 @@ public class UserProfileManager: ObservableObject {
     
     public func regenerateDailyQuests() {
         let elementName = currentElement.name
-        self.dailyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses)
+        self.dailyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .daily)
+        self.monthlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .monthly)
+        self.yearlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .yearly)
     }
 }

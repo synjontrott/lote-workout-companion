@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 Color hexToColor(String hex) {
   final buffer = StringBuffer();
@@ -64,10 +65,10 @@ enum ExpressionStyle {
 }
 
 enum CognitiveProfile {
-  adhd('ADHD (The Flame Sentinel)'),
-  autistic('Autistic (The Iron Archivist)'),
-  audhd('AuDHD (The Chimera)'),
-  neurotypical('Neurotypical (The Radiant Vanguard)');
+  adhd('The Flame Sentinel'),
+  autistic('The Iron Archivist'),
+  audhd('The Chimera'),
+  neurotypical('The Radiant Vanguard');
 
   final String title;
   const CognitiveProfile(this.title);
@@ -348,15 +349,17 @@ class CharacterSprite {
   String outfitStyle;
   String outfitColorHex;
   String auraStyle;
+  String sex;
   List<List<int>> pixelGrid;
 
   CharacterSprite({
     this.hairStyle = 'Spiky',
     this.hairColorHex = '#FFEA00',
     this.skinColorHex = '#FFD180',
-    this.outfitStyle = 'Warrior Plate',
+    this.outfitStyle = 'Ninjonia',
     this.outfitColorHex = '#37474F',
     this.auraStyle = 'Flames',
+    this.sex = 'Male',
     List<List<int>>? grid,
   }) : pixelGrid = grid ?? defaultGrid;
 
@@ -367,6 +370,7 @@ class CharacterSprite {
         'outfitStyle': outfitStyle,
         'outfitColorHex': outfitColorHex,
         'auraStyle': auraStyle,
+        'sex': sex,
         'pixelGrid': pixelGrid,
       };
 
@@ -384,9 +388,10 @@ class CharacterSprite {
       hairStyle: json['hairStyle'] ?? 'Spiky',
       hairColorHex: json['hairColorHex'] ?? '#FFEA00',
       skinColorHex: json['skinColorHex'] ?? '#FFD180',
-      outfitStyle: json['outfitStyle'] ?? 'Warrior Plate',
+      outfitStyle: json['outfitStyle'] ?? 'Ninjonia',
       outfitColorHex: json['outfitColorHex'] ?? '#37474F',
       auraStyle: json['auraStyle'] ?? 'Flames',
+      sex: json['sex'] ?? 'Male',
       grid: grid,
     );
   }
@@ -410,9 +415,9 @@ class CharacterSprite {
     // Eyes
     grid[6][6] = 3;
     grid[6][9] = 3;
-    // Body / Outfit (rows 9 to 14, cols 4 to 11)
+    // Body / Outfit (rows 9 to 13, cols 5 to 10)
     for (int r = 9; r <= 13; r++) {
-      for (int c = 4; c <= 11; c++) {
+      for (int c = 5; c <= 10; c++) {
         grid[r][c] = 4;
       }
     }
@@ -444,6 +449,184 @@ enum WorkoutCategory {
   const WorkoutCategory(this.displayName);
 }
 
+class WeightEntry {
+  final DateTime date;
+  final double weight;
+  WeightEntry({required this.date, required this.weight});
+
+  Map<String, dynamic> toJson() => {
+        'date': date.toIso8601String(),
+        'weight': weight,
+      };
+
+  factory WeightEntry.fromJson(Map<String, dynamic> json) {
+    return WeightEntry(
+      date: DateTime.parse(json['date'] ?? DateTime.now().toIso8601String()),
+      weight: (json['weight'] as num).toDouble(),
+    );
+  }
+}
+
+enum QuestCadence { daily, monthly, yearly }
+
+class ShopItem {
+  final String name;
+  final int cost;
+  final String description;
+  final String type; // "frame", "title", "aura", "stat", "badge"
+
+  ShopItem({
+    required this.name,
+    required this.cost,
+    required this.description,
+    required this.type,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'cost': cost,
+        'description': description,
+        'type': type,
+      };
+
+  factory ShopItem.fromJson(Map<String, dynamic> json) {
+    return ShopItem(
+      name: json['name'] ?? '',
+      cost: json['cost'] ?? 0,
+      description: json['description'] ?? '',
+      type: json['type'] ?? '',
+    );
+  }
+
+  static List<ShopItem> get availableItems => [
+        // Frames
+        ShopItem(name: "Ignis Frame", cost: 150, description: "A fiery red profile border", type: "frame"),
+        ShopItem(name: "Crystalline Frame", cost: 180, description: "Teal frost profile border", type: "frame"),
+        ShopItem(name: "Umbral Border", cost: 220, description: "Deep shadow profile border", type: "frame"),
+        ShopItem(name: "Cyber Grid Frame", cost: 250, description: "Neon blue glowing profile border", type: "frame"),
+        // Titles
+        ShopItem(name: "Void Sovereign", cost: 200, description: "Sovereign warrior status title", type: "title"),
+        ShopItem(name: "The Immortal", cost: 300, description: "Immortal warrior status title", type: "title"),
+        ShopItem(name: "Elsaither Vanguard", cost: 150, description: "Elite vanguard title", type: "title"),
+        ShopItem(name: "Iron Forge Master", cost: 180, description: "Master smith title", type: "title"),
+        // Auras
+        ShopItem(name: "Glitch Aura", cost: 300, description: "Cybernetic glowing aura animation effect", type: "aura"),
+        ShopItem(name: "Phoenix Flare", cost: 400, description: "Fiery wings rising aura effect", type: "aura"),
+        ShopItem(name: "Abyssal Mist", cost: 350, description: "Shadowy dark tendrils aura effect", type: "aura"),
+        ShopItem(name: "Lightning Spark", cost: 320, description: "Electric storm discharge aura effect", type: "aura"),
+        // Backgrounds
+        ShopItem(name: "Neon Cyber Space", cost: 250, description: "Cyberpunk neon grid background", type: "background"),
+        ShopItem(name: "Nebula Starfield", cost: 300, description: "Space cosmic dust overlay", type: "background"),
+        ShopItem(name: "Volcanic Core", cost: 350, description: "Molten fire cavern background", type: "background"),
+        ShopItem(name: "Zen Garden", cost: 200, description: "Zen meditation backdrop", type: "background"),
+        // Accessories
+        ShopItem(name: "Golden Pauldrons", cost: 150, description: "Heavy royal shoulder guards", type: "accessory"),
+        ShopItem(name: "Vanguard Greatsword", cost: 250, description: "Massive element-infused blade", type: "accessory"),
+        ShopItem(name: "Cybernetic Visor", cost: 200, description: "Glowing red tactical eyepiece", type: "accessory"),
+        ShopItem(name: "Elsaither Wings", cost: 400, description: "Hovering mechanical energy wings", type: "accessory"),
+        // Stats
+        ShopItem(name: "Strength Elixir (+1 STR)", cost: 500, description: "Permanently boost your Strength by 1 point", type: "stat"),
+        ShopItem(name: "Gale Boots (+1 DEX)", cost: 500, description: "Permanently boost your Dexterity by 1 point", type: "stat"),
+        ShopItem(name: "Marrow Brew (+1 CON)", cost: 500, description: "Permanently boost your Constitution by 1 point", type: "stat"),
+        ShopItem(name: "Mind Stone (+1 INT)", cost: 500, description: "Permanently boost your Intelligence by 1 point", type: "stat"),
+        ShopItem(name: "Wisdom Herb (+1 WIS)", cost: 500, description: "Permanently boost your Wisdom by 1 point", type: "stat"),
+        ShopItem(name: "Crown of Command (+1 CHA)", cost: 500, description: "Permanently boost your Charisma by 1 point", type: "stat"),
+        // Badges
+        ShopItem(name: "Celestial Dragon Badge", cost: 100, description: "Unlocks the special celestial dragon profile badge", type: "badge"),
+      ];
+}
+
+class FitnessBadge {
+  final String name;
+  final String description;
+  final String iconName;
+
+  FitnessBadge({
+    required this.name,
+    required this.description,
+    required this.iconName,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'description': description,
+        'iconName': iconName,
+      };
+
+  factory FitnessBadge.fromJson(Map<String, dynamic> json) {
+    return FitnessBadge(
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      iconName: json['iconName'] ?? '',
+    );
+  }
+
+  static List<FitnessBadge> get allBadges => [
+        FitnessBadge(name: "First Step", description: "Walk 10,000 steps in a single day", iconName: "directions_walk"),
+        FitnessBadge(name: "Flame Starter", description: "Unlock 5 fitness challenges or quests", iconName: "local_fire_department"),
+        FitnessBadge(name: "Lore Scholar", description: "Complete the initial psychological evaluations", iconName: "psychology"),
+        FitnessBadge(name: "Weight Target Achieved", description: "Successfully reach your target weight goal", iconName: "verified"),
+        FitnessBadge(name: "Streak Master", description: "Achieve a consecutive 7-day streak of workouts", iconName: "emoji_events"),
+        FitnessBadge(name: "Guild Patron", description: "Buy your first stat elixir or cosmetic from the shop", iconName: "shopping_cart"),
+        FitnessBadge(name: "Demi-God", description: "Achieve an Attribute level of 18 or higher in any stat", iconName: "star"),
+        // Stretch goals
+        FitnessBadge(name: "20k Steps Sentinel", description: "Walk 20,000 steps in a single day", iconName: "directions_run"),
+        FitnessBadge(name: "Iron Will (1 Hr)", description: "Complete a 1-hour active workout", iconName: "timer"),
+        FitnessBadge(name: "Unstoppable Force (2 Hr)", description: "Complete a 2-hour active workout", iconName: "alarm"),
+        FitnessBadge(name: "Quest Crusader (100 Quests)", description: "Complete 100 fitness quests", iconName: "assignment_turned_in"),
+        FitnessBadge(name: "Legendary Champion (1000 Quests)", description: "Complete 1000 fitness quests", iconName: "military_tech"),
+        FitnessBadge(name: "Vanguard Streak (14 Days)", description: "Achieve a consecutive 14-day workout streak", iconName: "whatshot"),
+        FitnessBadge(name: "Sovereign Streak (30 Days)", description: "Achieve a consecutive 30-day workout streak", iconName: "workspace_premium"),
+        FitnessBadge(name: "Immortal Streak (100 Days)", description: "Achieve a consecutive 100-day workout streak", iconName: "workspace_premium"),
+      ];
+}
+
+class MealEntry {
+  final String id;
+  final DateTime date;
+  final String name;
+  final double calories;
+  final double protein;
+  final double carbs;
+  final double fats;
+  final double sugar;
+
+  MealEntry({
+    required this.id,
+    required this.date,
+    required this.name,
+    required this.calories,
+    required this.protein,
+    required this.carbs,
+    required this.fats,
+    required this.sugar,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'date': date.toIso8601String(),
+        'name': name,
+        'calories': calories,
+        'protein': protein,
+        'carbs': carbs,
+        'fats': fats,
+        'sugar': sugar,
+      };
+
+  factory MealEntry.fromJson(Map<String, dynamic> json) {
+    return MealEntry(
+      id: json['id'] ?? '',
+      date: DateTime.parse(json['date'] ?? DateTime.now().toIso8601String()),
+      name: json['name'] ?? '',
+      calories: (json['calories'] as num?)?.toDouble() ?? 0.0,
+      protein: (json['protein'] as num?)?.toDouble() ?? 0.0,
+      carbs: (json['carbs'] as num?)?.toDouble() ?? 0.0,
+      fats: (json['fats'] as num?)?.toDouble() ?? 0.0,
+      sugar: (json['sugar'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
 class LotEQuest {
   final String id;
   final String title;
@@ -456,6 +639,9 @@ class LotEQuest {
   final int statValue;
   bool isCompleted;
   final DateTime dateCreated;
+  QuestCadence cadence;
+  int progressCount;
+  int targetCount;
 
   LotEQuest({
     required this.id,
@@ -469,6 +655,9 @@ class LotEQuest {
     required this.statValue,
     this.isCompleted = false,
     DateTime? date,
+    this.cadence = QuestCadence.daily,
+    this.progressCount = 0,
+    this.targetCount = 1,
   }) : dateCreated = date ?? DateTime.now();
 
   Map<String, dynamic> toJson() => {
@@ -483,6 +672,9 @@ class LotEQuest {
         'statValue': statValue,
         'isCompleted': isCompleted,
         'dateCreated': dateCreated.toIso8601String(),
+        'cadence': cadence.name,
+        'progressCount': progressCount,
+        'targetCount': targetCount,
       };
 
   factory LotEQuest.fromJson(Map<String, dynamic> json) {
@@ -504,6 +696,12 @@ class LotEQuest {
       statValue: json['statValue'] ?? 1,
       isCompleted: json['isCompleted'] ?? false,
       date: DateTime.tryParse(json['dateCreated'] ?? '') ?? DateTime.now(),
+      cadence: QuestCadence.values.firstWhere(
+        (e) => e.name == (json['cadence'] ?? 'daily'),
+        orElse: () => QuestCadence.daily,
+      ),
+      progressCount: json['progressCount'] ?? 0,
+      targetCount: json['targetCount'] ?? 1,
     );
   }
 
@@ -560,7 +758,7 @@ class LotEQuest {
 enum TrainingFocus {
   calisthenics('Calisthenics'),
   lifting('Lifting'),
-  weightGain('Weight Gain'),
+  bulking('Bulking'),
   cutting('Cutting'),
   flexibility('Yoga & Flexibility'),
   cardio('Cardio');
@@ -569,183 +767,804 @@ enum TrainingFocus {
   const TrainingFocus(this.displayName);
 }
 
-List<LotEQuest> generateQuests(String element, List<TrainingFocus> focuses) {
+List<LotEQuest> generateQuests(String element, List<TrainingFocus> focuses, QuestCadence cadence) {
   List<LotEQuest> quests = [];
-  
+
   // Fallback if no focuses are selected
   final activeFocuses = focuses.isEmpty
-      ? [TrainingFocus.cardio, TrainingFocus.calisthenics, TrainingFocus.flexibility, TrainingFocus.cutting]
+      ? [TrainingFocus.cardio, TrainingFocus.calisthenics]
       : focuses;
-      
-  for (var focus in activeFocuses.take(4)) {
+
+  // Element theme adjective mapping
+  final List<String> themeWords = (() {
+    switch (element) {
+      case "Fire": return ["Blazing", "Ember", "Pyro", "Combustion", "Ignition", "Thermal", "Volcanic"];
+      case "Water": return ["Tidal", "Aqua", "Fluid", "Torrent", "Hydro", "Oceanic", "Cascade"];
+      case "Earth": return ["Stone", "Terra", "Gravel", "Rock", "Seismic", "Tectonic", "Mineral"];
+      case "Air": return ["Zephyr", "Aero", "Gale", "Cyclone", "Atmospheric", "Draft", "Breeze"];
+      case "Lightning": return ["Volt", "Spark", "Arc", "Charged", "Plasma", "Tesla", "Electro"];
+      case "Metal": return ["Steel", "Iron", "Alloy", "Titanium", "Chrome", "Forged", "Metallic"];
+      case "Ice": return ["Frost", "Glacial", "Arctic", "Chilled", "Frozen", "Blizzard", "Cryo"];
+      case "Bone": return ["Skeletal", "Marrow", "Calcium", "Osteo", "Calcified", "Spined", "Ossified"];
+      case "Gas": return ["Vapor", "Aerosol", "Fume", "Mist", "Fog", "Haze", "Gaseous"];
+      case "Laser": return ["Beam", "Photon", "Arc", "Reactor", "Focus", "Ray", "Laser"];
+      case "Zero Space": return ["Void", "Cosmic", "Astral", "Gravity", "Dimensional", "Nebula", "Warp"];
+      case "Darki": return ["Umbral", "Corrupt", "Shadow", "Nightfall", "Vesper", "Abyssal", "Eclipse"];
+      case "Death": return ["Decay", "Morbid", "Necro", "Withered", "Cryptic", "Grave", "Doom"];
+      case "Knife": return ["Razor", "Blade", "Surgical", "Lethal", "Dagger", "Edge", "Shear"];
+      case "Poison": return ["Toxic", "Venom", "Acid", "Noxious", "Serum", "Vial", "Biohazard"];
+      case "Shadow": return ["Phantom", "Spectral", "Stealth", "Silhouette", "Veiled", "Cloaked", "Mirage"];
+      default: return ["Astral", "Mystic", "Ethereal", "Primeval", "Ancient", "Cosmic"];
+    }
+  })();
+
+  if (cadence == QuestCadence.daily) {
+    // Collect unique focuses
+    final List<TrainingFocus> uniqueFocuses = [];
+    for (final focus in activeFocuses) {
+      if (!uniqueFocuses.contains(focus)) {
+        uniqueFocuses.add(focus);
+      }
+    }
+
+    // Backfill with other focuses if less than 4, ensuring absolute uniqueness
+    if (uniqueFocuses.length < 4) {
+      for (final f in TrainingFocus.values) {
+        if (!uniqueFocuses.contains(f) && uniqueFocuses.length < 4) {
+          uniqueFocuses.add(f);
+        }
+      }
+    }
+
+    // Generate up to 4 unique daily quests
+    for (int i = 0; i < min(4, uniqueFocuses.length); i++) {
+      final adjective = themeWords[i % themeWords.length];
+      final focus = uniqueFocuses[i];
+      final String title;
+      final String desc;
+      final WorkoutCategory wType;
+      final StatType stat;
+
+      switch (focus) {
+        case TrainingFocus.calisthenics:
+          final titles = [
+            "$adjective Gravity Defiance",
+            "$adjective Gymnastic Ascent",
+            "Acrobatic $adjective Leverage",
+            "Ascetic $adjective Bar Drill",
+            "Suspended $adjective Static Hold",
+            "$adjective Lever Conditioning",
+            "Aura-Fueled Calisthenics Mastery",
+            "$adjective Kinetic Core Release"
+          ];
+          title = titles[i % titles.length];
+          desc = "Perform bodyweight dips, pushups, pullups, or handstands. Complete 15 minutes.";
+          wType = WorkoutCategory.strength;
+          stat = StatType.strength;
+          break;
+        case TrainingFocus.lifting:
+          final titles = [
+            "$adjective Heavy Forging",
+            "$adjective Steel Press Protocol",
+            "Cataclysmic $adjective Deadlift",
+            "Barbarian $adjective Squat Ascent",
+            "Titan $adjective Bench Mastery",
+            "$adjective Iron Load Injection",
+            "Aura-Infused Muscle Forge",
+            "$adjective Density Progression"
+          ];
+          title = titles[i % titles.length];
+          desc = "Perform squat, bench, or deadlift reps. Complete 20 minutes of heavy structural loading.";
+          wType = WorkoutCategory.strength;
+          stat = StatType.strength;
+          break;
+        case TrainingFocus.cardio:
+          final titles = [
+            "$adjective Speed Patrol",
+            "Swift $adjective Horizon Run",
+            "$adjective Windwalker Interval",
+            "Tempest $adjective Trail Sweep",
+            "$adjective Kinetic Gale Jog",
+            "Aura-Boosted Endurance Dash",
+            "$adjective Boundary Sprint",
+            "Vanguard $adjective Scout Patrol"
+          ];
+          title = titles[i % titles.length];
+          desc = "Complete a 15-minute run, jog, cycle, or cardio sprint.";
+          wType = WorkoutCategory.cardio;
+          stat = StatType.dexterity;
+          break;
+        case TrainingFocus.flexibility:
+          final titles = [
+            "$adjective Elemental Flow",
+            "Fluid $adjective Limbering",
+            "$adjective Meridian Release",
+            "Zephyr-Like $adjective Extension",
+            "Aura-Stretched Range Recovery",
+            "$adjective Elasticity Session",
+            "Serene $adjective Muscle Lengthening",
+            "$adjective Kinetic Joints Tuning"
+          ];
+          title = titles[i % titles.length];
+          desc = "Perform a flexibility, yoga, or dynamic mobility routine. Complete 15 minutes.";
+          wType = WorkoutCategory.flexibility;
+          stat = StatType.wisdom;
+          break;
+        case TrainingFocus.cutting:
+          final titles = [
+            "$adjective Light Burn",
+            "$adjective Deficit Vaporization",
+            "Purified $adjective Metabolic Trim",
+            "Aura-Fueled Lipid Purge",
+            "$adjective Lean Fuel Protocol",
+            "Sovereign $adjective Fasting Log"
+          ];
+          title = titles[i % titles.length];
+          desc = "Log a high-protein, calorie-deficit meal to burn off excess fat.";
+          wType = WorkoutCategory.nutrition;
+          stat = StatType.constitution;
+          break;
+        case TrainingFocus.bulking:
+          final titles = [
+            "$adjective Nutrient Bulk",
+            "$adjective Caloric Anabolism",
+            "Dense $adjective Mass Synthesis",
+            "Sovereign $adjective Heavy Feast",
+            "$adjective Hypertrophic Load Fuel",
+            "Aura-Bound Core Mass Build"
+          ];
+          title = titles[i % titles.length];
+          desc = "Log a calorie-dense bulking meal to build size.";
+          wType = WorkoutCategory.nutrition;
+          stat = StatType.constitution;
+          break;
+      }
+
+      quests.add(LotEQuest(
+        id: UniqueKey().toString(),
+        title: title,
+        questDescription: desc,
+        workoutType: wType,
+        difficultyRoll: 8 + (i % 5),
+        rewardXP: 60,
+        rewardCrystals: 20,
+        statReward: stat,
+        statValue: 1,
+        cadence: QuestCadence.daily,
+        progressCount: 0,
+        targetCount: 1,
+      ));
+    }
+  } else if (cadence == QuestCadence.monthly) {
+    for (int i = 0; i < 2; i++) {
+      final adjective = themeWords[(i + 4) % themeWords.length];
+      final focus = activeFocuses[i % activeFocuses.length];
+      final String title;
+      final String desc;
+      final StatType stat;
+      final WorkoutCategory wType;
+      final int target;
+
+      switch (focus) {
+        case TrainingFocus.calisthenics:
+          final titles = ["$adjective Bar Mastery Campaign", "Sovereign $adjective Calisthenics Master"];
+          title = titles[i % titles.length];
+          desc = "Complete 10 calisthenics sessions (handstands, pullups) this month.";
+          wType = WorkoutCategory.strength;
+          stat = StatType.strength;
+          target = 10;
+          break;
+        case TrainingFocus.lifting:
+          final titles = ["$adjective Iron Forge Campaign", "Titan $adjective Weight Ascendance"];
+          title = titles[i % titles.length];
+          desc = "Complete 10 heavy lifting sessions (squats, deadlifts) this month.";
+          wType = WorkoutCategory.strength;
+          stat = StatType.strength;
+          target = 10;
+          break;
+        case TrainingFocus.cardio:
+          final titles = ["$adjective Marathon Crusade", "$adjective Swiftness Road Campaign"];
+          title = titles[i % titles.length];
+          desc = "Complete 10 cardio workout sessions this month.";
+          wType = WorkoutCategory.cardio;
+          stat = StatType.dexterity;
+          target = 10;
+          break;
+        case TrainingFocus.flexibility:
+          final titles = ["$adjective Meridian Alignment", "$adjective Joint Elasticity Campaign"];
+          title = titles[i % titles.length];
+          desc = "Complete 8 dynamic flexibility or stretching routines this month.";
+          wType = WorkoutCategory.flexibility;
+          stat = StatType.wisdom;
+          target = 8;
+          break;
+        case TrainingFocus.cutting:
+        case TrainingFocus.bulking:
+          final titles = ["$adjective Metabolic Balance", "Pure $adjective Rations Crusade"];
+          title = titles[i % titles.length];
+          desc = "Log 15 healthy meals this month to hit target weight.";
+          wType = WorkoutCategory.nutrition;
+          stat = StatType.constitution;
+          target = 15;
+          break;
+      }
+
+      quests.add(LotEQuest(
+        id: UniqueKey().toString(),
+        title: title,
+        questDescription: desc,
+        workoutType: wType,
+        difficultyRoll: 14,
+        rewardXP: 500,
+        rewardCrystals: 200,
+        statReward: stat,
+        statValue: 3,
+        cadence: QuestCadence.monthly,
+        progressCount: 0,
+        targetCount: target,
+      ));
+    }
+  } else if (cadence == QuestCadence.yearly) {
+    final adjective = themeWords.isNotEmpty ? themeWords.first : "Elemental";
+    final focus = activeFocuses.first;
     final String title;
     final String desc;
     final WorkoutCategory wType;
-    final int dc;
-    final int xp;
-    final int crystals;
-    final StatType stat;
-    final int val;
-    
+    final int target;
+
     switch (focus) {
       case TrainingFocus.calisthenics:
-        title = "$element Bar Mastery";
-        desc = "Perform bodyweight dips, pushups, or pullups. Complete 15 minutes of gravity defying calisthenics.";
+        title = "Grand $adjective Gravity Champion";
+        desc = "Maintain fitness goals and complete 100 calisthenics logs.";
         wType = WorkoutCategory.strength;
-        dc = 10;
-        xp = 60;
-        crystals = 20;
-        stat = StatType.strength;
-        val = 1;
+        target = 100;
         break;
       case TrainingFocus.lifting:
-        title = "$element Heavy Forge";
-        desc = "Perform squat, bench, or deadlift strength training. Complete 20 minutes of heavy lifting.";
+        title = "Grand $adjective Titan of Iron";
+        desc = "Maintain fitness goals and complete 100 heavy lifting logs.";
         wType = WorkoutCategory.strength;
-        dc = 12;
-        xp = 70;
-        crystals = 25;
-        stat = StatType.strength;
-        val = 1;
-        break;
-      case TrainingFocus.weightGain:
-        title = "$element Bulking Feast";
-        desc = "Log a calorie-dense bulking meal with clean protein and carbs to gain healthy weight.";
-        wType = WorkoutCategory.nutrition;
-        dc = 5;
-        xp = 40;
-        crystals = 15;
-        stat = StatType.constitution;
-        val = 1;
-        break;
-      case TrainingFocus.cutting:
-        title = "$element Lean Burn";
-        desc = "Log a high-protein, calorie-deficit meal to burn off excess fat and stay lean.";
-        wType = WorkoutCategory.nutrition;
-        dc = 5;
-        xp = 40;
-        crystals = 15;
-        stat = StatType.constitution;
-        val = 1;
-        break;
-      case TrainingFocus.flexibility:
-        title = "$element Flow Routine";
-        desc = "Perform a flexibility, yoga, or dynamic mobility routine. Complete 15 minutes of stretching.";
-        wType = WorkoutCategory.flexibility;
-        dc = 7;
-        xp = 50;
-        crystals = 15;
-        stat = StatType.wisdom;
-        val = 1;
+        target = 100;
         break;
       case TrainingFocus.cardio:
-        title = "$element Speed Patrol";
-        desc = "Complete a 15-minute run, jog, cycle, or high-intensity cardio patrol.";
+        title = "Grand $adjective Swiftness Legend";
+        desc = "Maintain fitness goals and complete 100 cardio workouts.";
         wType = WorkoutCategory.cardio;
-        dc = 8;
-        xp = 50;
-        crystals = 15;
-        stat = StatType.dexterity;
-        val = 1;
+        target = 100;
+        break;
+      case TrainingFocus.flexibility:
+        title = "Grand $adjective Spiritual Master";
+        desc = "Maintain fitness goals and complete 80 flexibility sessions.";
+        wType = WorkoutCategory.flexibility;
+        target = 80;
+        break;
+      case TrainingFocus.cutting:
+      case TrainingFocus.bulking:
+        title = "Grand $adjective Alchemist of Flesh";
+        desc = "Reach and sustain your target weight goals. Log 100 healthy meals.";
+        wType = WorkoutCategory.nutrition;
+        target = 100;
         break;
     }
-    
-    String customizedTitle = title;
-    String customizedDesc = desc;
-    
-    switch (element) {
-      case "Fire":
-        customizedTitle = title.replaceAll(element, "Ember");
-        customizedDesc = "$desc Channel the blazing heat of your inner fire.";
-        break;
-      case "Water":
-        customizedTitle = title.replaceAll(element, "Tide");
-        customizedDesc = "$desc Keep your movements smooth and flowing like water.";
-        break;
-      case "Earth":
-        customizedTitle = title.replaceAll(element, "Stone");
-        customizedDesc = "$desc Ground your stance and stand solid as rock.";
-        break;
-      case "Air":
-        customizedTitle = title.replaceAll(element, "Zephyr");
-        customizedDesc = "$desc Move light and swift as the wind.";
-        break;
-      case "Lightning":
-        customizedTitle = title.replaceAll(element, "Volt");
-        customizedDesc = "$desc Bring high intensity and electrical speed.";
-        break;
-      case "Metal":
-        customizedTitle = title.replaceAll(element, "Iron");
-        customizedDesc = "$desc Harden your resolve and forge your steel structure.";
-        break;
-      case "Ice":
-        customizedTitle = title.replaceAll(element, "Frost");
-        customizedDesc = "$desc Focus with cool precision and frosty control.";
-        break;
-      case "Bone":
-        customizedTitle = title.replaceAll(element, "Marrow");
-        customizedDesc = "$desc Strengthen your skeletal core and inner structure.";
-        break;
-      case "Gas":
-        customizedTitle = title.replaceAll(element, "Vapor");
-        customizedDesc = "$desc Flow seamlessly and adjust your form fluidly.";
-        break;
-      case "Laser":
-        customizedTitle = title.replaceAll(element, "Photon");
-        customizedDesc = "$desc Focus your energy into a concentrated beam of power.";
-        break;
-      case "Zero Space":
-        customizedTitle = title.replaceAll(element, "Void");
-        customizedDesc = "$desc Transcend standard physical coordinates.";
-        break;
-      case "Darki":
-        customizedTitle = title.replaceAll(element, "Dark");
-        customizedDesc = "$desc Harness powerful dark waves to fuel your reps.";
-        break;
-      case "Death":
-        customizedTitle = title.replaceAll(element, "Decay");
-        customizedDesc = "$desc Push through physical boundaries.";
-        break;
-      case "Knife":
-        customizedTitle = title.replaceAll(element, "Blade");
-        customizedDesc = "$desc Focus on sharp execution and clean cuts.";
-        break;
-      case "Poison":
-        customizedTitle = title.replaceAll(element, "Toxic");
-        customizedDesc = "$desc Build immunities and clean cellular efficiency.";
-        break;
-      case "Shadow":
-        customizedTitle = title.replaceAll(element, "Shade");
-        customizedDesc = "$desc Keep your execution silent, stealthy, and phantom-like.";
-        break;
-    }
-    
+
     quests.add(LotEQuest(
       id: UniqueKey().toString(),
-      title: customizedTitle,
-      questDescription: customizedDesc,
+      title: title,
+      questDescription: desc,
       workoutType: wType,
-      difficultyRoll: dc,
-      rewardXP: xp,
-      rewardCrystals: crystals,
-      statReward: stat,
-      statValue: val,
-    ));
-  }
-  
-  while (quests.length < 4) {
-    quests.add(LotEQuest(
-      id: UniqueKey().toString(),
-      title: "General Training Patrol",
-      questDescription: "Perform a general physical workout to build overall energy. 15 mins.",
-      workoutType: WorkoutCategory.cardio,
-      difficultyRoll: 8,
-      rewardXP: 30,
-      rewardCrystals: 10,
+      difficultyRoll: 18,
+      rewardXP: 5000,
+      rewardCrystals: 2000,
       statReward: StatType.constitution,
-      statValue: 1,
+      statValue: 5,
+      cadence: QuestCadence.yearly,
+      progressCount: 0,
+      targetCount: target,
     ));
   }
-  
+
   return quests;
+}
+
+class BodyMeasurementEntry {
+  final String id;
+  final DateTime date;
+  final double weight;
+  final double chest;
+  final double arms;
+  final double waist;
+  final double hips;
+  final double legs;
+
+  BodyMeasurementEntry({
+    required this.id,
+    required this.date,
+    required this.weight,
+    required this.chest,
+    required this.arms,
+    required this.waist,
+    required this.hips,
+    required this.legs,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'date': date.toIso8601String(),
+        'weight': weight,
+        'chest': chest,
+        'arms': arms,
+        'waist': waist,
+        'hips': hips,
+        'legs': legs,
+      };
+
+  factory BodyMeasurementEntry.fromJson(Map<String, dynamic> json) {
+    return BodyMeasurementEntry(
+      id: json['id'] ?? '',
+      date: DateTime.parse(json['date'] ?? DateTime.now().toIso8601String()),
+      weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
+      chest: (json['chest'] as num?)?.toDouble() ?? 0.0,
+      arms: (json['arms'] as num?)?.toDouble() ?? 0.0,
+      waist: (json['waist'] as num?)?.toDouble() ?? 0.0,
+      hips: (json['hips'] as num?)?.toDouble() ?? 0.0,
+      legs: (json['legs'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
+class SuggestedWorkout {
+  final String id;
+  final String name;
+  final WorkoutCategory category;
+  final String difficulty; // "Easy", "Medium", "Hard", "Legend", "Master"
+  final String equipment;
+  final String space;
+  final String description;
+  final List<String> instructions;
+  final int sets;
+  final String reps;
+
+  SuggestedWorkout({
+    required this.id,
+    required this.name,
+    required this.category,
+    required this.difficulty,
+    required this.equipment,
+    required this.space,
+    required this.description,
+    required this.instructions,
+    required this.sets,
+    required this.reps,
+  });
+
+  static List<SuggestedWorkout> get allWorkouts => [
+        // STRENGTH WORKOUTS
+        SuggestedWorkout(
+          id: "knee_pushups",
+          name: "Knee Pushups Foundation",
+          category: WorkoutCategory.strength,
+          difficulty: "Easy",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Build upper body pushing strength with knee pushups.",
+          instructions: ["Get on your hands and knees", "Keep core tight", "Lower chest to ground", "Push back up"],
+          sets: 3,
+          reps: "10-12 reps",
+        ),
+        SuggestedWorkout(
+          id: "standard_pushups",
+          name: "Standard Pushups Drill",
+          category: WorkoutCategory.strength,
+          difficulty: "Medium",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Standard bodyweight pushups for chest and triceps.",
+          instructions: ["Assume high plank position", "Lower body until chest almost touches", "Push back up to plank"],
+          sets: 3,
+          reps: "12-15 reps",
+        ),
+        SuggestedWorkout(
+          id: "diamond_pushups",
+          name: "Diamond Pushups Precision",
+          category: WorkoutCategory.strength,
+          difficulty: "Hard",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Focus on triceps and inner chest using a close hand grip.",
+          instructions: ["Place hands close forming a diamond", "Lower chest to hands", "Keep body in straight line", "Press up"],
+          sets: 4,
+          reps: "8-12 reps",
+        ),
+        SuggestedWorkout(
+          id: "archer_pushups",
+          name: "Archer Pushups Ascent",
+          category: WorkoutCategory.strength,
+          difficulty: "Legend",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Slide side-to-side to load one arm at a time.",
+          instructions: ["Place hands very wide", "Lower to one side, extending other arm", "Push up and repeat on other side"],
+          sets: 4,
+          reps: "6-8 reps per side",
+        ),
+        SuggestedWorkout(
+          id: "handstand_pushups",
+          name: "Handstand Pushups Mastery",
+          category: WorkoutCategory.strength,
+          difficulty: "Master",
+          equipment: "Bodyweight Only",
+          space: "Gym Space",
+          description: "Ultimate vertical pushing strength against a wall or freestanding.",
+          instructions: ["Kick up into a handstand against wall", "Lower head slowly to floor", "Press back up to straight arms"],
+          sets: 5,
+          reps: "5-8 reps",
+        ),
+        
+        // CARDIO WORKOUTS
+        SuggestedWorkout(
+          id: "jumping_jacks",
+          name: "Jumping Jacks Ignite",
+          category: WorkoutCategory.cardio,
+          difficulty: "Easy",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "A simple cardiovascular warmup and aerobic builder.",
+          instructions: ["Stand straight, feet together", "Jump while spreading legs and clapping hands overhead", "Return to start"],
+          sets: 3,
+          reps: "30 secs",
+        ),
+        SuggestedWorkout(
+          id: "high_knees",
+          name: "High Knees Interval",
+          category: WorkoutCategory.cardio,
+          difficulty: "Medium",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Develop speed and heart rate capacity.",
+          instructions: ["Run in place raising knees to hip height", "Pump arms dynamically"],
+          sets: 3,
+          reps: "45 secs",
+        ),
+        SuggestedWorkout(
+          id: "tuck_jumps",
+          name: "Tuck Jump Explosion",
+          category: WorkoutCategory.cardio,
+          difficulty: "Hard",
+          equipment: "Bodyweight Only",
+          space: "Large Room",
+          description: "Explosive plyometric cardio jumps.",
+          instructions: ["Stand with knees slightly bent", "Jump as high as possible, pulling knees to chest", "Land softly and repeat"],
+          sets: 4,
+          reps: "10 reps",
+        ),
+        SuggestedWorkout(
+          id: "double_unders",
+          name: "Double-Under Jump Rope",
+          category: WorkoutCategory.cardio,
+          difficulty: "Legend",
+          equipment: "Rands/Rope",
+          space: "Large Room",
+          description: "High velocity jump rope conditioning.",
+          instructions: ["Perform rope jumps, spinning rope twice per jump", "Maintain quick wrist flicks"],
+          sets: 4,
+          reps: "50 jumps",
+        ),
+        SuggestedWorkout(
+          id: "handstand_walking",
+          name: "Handstand Walking Cruise",
+          category: WorkoutCategory.cardio,
+          difficulty: "Master",
+          equipment: "Bodyweight Only",
+          space: "Gym Space",
+          description: "Cardiovascular and coordinate challenge walking on hands.",
+          instructions: ["Kick up into handstand", "Walk forward on hands controlling hips", "Walk 10 meters per set"],
+          sets: 5,
+          reps: "10 meters",
+        ),
+        
+        // FLEXIBILITY WORKOUTS
+        SuggestedWorkout(
+          id: "childs_pose",
+          name: "Child's Pose Restorative",
+          category: WorkoutCategory.flexibility,
+          difficulty: "Easy",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Gentle stretch for lower back and shoulders.",
+          instructions: ["Kneel and sit on heels", "Fold forward, extending arms on floor", "Breath deeply"],
+          sets: 2,
+          reps: "1 min hold",
+        ),
+        SuggestedWorkout(
+          id: "downward_dog",
+          name: "Downward Dog Stretch",
+          category: WorkoutCategory.flexibility,
+          difficulty: "Medium",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Stretches hamstrings, calves, and shoulders.",
+          instructions: ["Start in plank, push hips high and back", "Press heels toward floor", "Keep back flat"],
+          sets: 3,
+          reps: "45 secs hold",
+        ),
+        SuggestedWorkout(
+          id: "pigeon_stretch",
+          name: "Deep Pigeon Hip Release",
+          category: WorkoutCategory.flexibility,
+          difficulty: "Hard",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Intense hip opener for tight glutes.",
+          instructions: ["Bring one knee forward, shin angled", "Extend back leg straight behind", "Lower torso over front leg"],
+          sets: 3,
+          reps: "1 min per side",
+        ),
+        SuggestedWorkout(
+          id: "full_splits",
+          name: "Full Splits Alignment",
+          category: WorkoutCategory.flexibility,
+          difficulty: "Legend",
+          equipment: "Bodyweight Only",
+          space: "Large Room",
+          description: "Stretch hamstrings and hip flexors for side splits.",
+          instructions: ["Extend front leg forward, back leg backward", "Lower hips slowly, supporting with hands", "Breathe"],
+          sets: 3,
+          reps: "30 secs hold",
+        ),
+        SuggestedWorkout(
+          id: "hollowback_handstand",
+          name: "Hollowback Handstand Arch",
+          category: WorkoutCategory.flexibility,
+          difficulty: "Master",
+          equipment: "Bodyweight Only",
+          space: "Gym Space",
+          description: "Advanced shoulder and upper back mobility against wall.",
+          instructions: ["Kick up to handstand facing away from wall", "Push shoulders open and arch chest out", "Breathe carefully"],
+          sets: 3,
+          reps: "20 secs hold",
+        ),
+        
+        // MEDITATION WORKOUTS
+        SuggestedWorkout(
+          id: "breath_awareness",
+          name: "Breath Awareness",
+          category: WorkoutCategory.meditation,
+          difficulty: "Easy",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Focus on nasal airflow to ground mind.",
+          instructions: ["Sit comfortably with straight spine", "Observe breath enter and exit nose", "Gently return mind when distracted"],
+          sets: 1,
+          reps: "5 mins",
+        ),
+        SuggestedWorkout(
+          id: "body_scan",
+          name: "Body Scan Relaxation",
+          category: WorkoutCategory.meditation,
+          difficulty: "Medium",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Scan body parts systematically to release tension.",
+          instructions: ["Lie down in Savasana", "Focus attention from toes up to crown", "Notice sensations, release holding"],
+          sets: 1,
+          reps: "10 mins",
+        ),
+        SuggestedWorkout(
+          id: "chakra_focusing",
+          name: "Elemental Chakra Focusing",
+          category: WorkoutCategory.meditation,
+          difficulty: "Hard",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Meditate on your LotE elemental energy centers.",
+          instructions: ["Sit in Lotus position", "Visualize your element's color at core", "Feel energy radiating through body"],
+          sets: 1,
+          reps: "15 mins",
+        ),
+        SuggestedWorkout(
+          id: "void_resonance",
+          name: "Void Resonance Meditation",
+          category: WorkoutCategory.meditation,
+          difficulty: "Legend",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Settle into absolute silence and spatial emptiness.",
+          instructions: ["Sit in dark room", "Clear all thoughts, resonance with zero space", "Dissolve sense of boundary"],
+          sets: 1,
+          reps: "20 mins",
+        ),
+        SuggestedWorkout(
+          id: "astral_space",
+          name: "Astral Space Integration",
+          category: WorkoutCategory.meditation,
+          difficulty: "Master",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Transcend consciousness into cosmic flow.",
+          instructions: ["Achieve deep state of stillness", "Expand awareness beyond the physical room", "Connect with cosmic energy flow"],
+          sets: 1,
+          reps: "30 mins",
+        ),
+        
+        // NUTRITION WORKOUTS
+        SuggestedWorkout(
+          id: "hydration_ritual",
+          name: "Hydration Ritual",
+          category: WorkoutCategory.nutrition,
+          difficulty: "Easy",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Drink 3 liters of fresh water daily.",
+          instructions: ["Drink 500ml water upon waking", "Keep water container nearby", "Log hydration throughout day"],
+          sets: 1,
+          reps: "3 Liters",
+        ),
+        SuggestedWorkout(
+          id: "clean_protein",
+          name: "Clean Protein Prep",
+          category: WorkoutCategory.nutrition,
+          difficulty: "Medium",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Batch cook clean protein rations for the week.",
+          instructions: ["Purchase chicken, fish, or tofu", "Season and grill or bake", "Portion into 3 meal containers"],
+          sets: 1,
+          reps: "3 meals prepped",
+        ),
+        SuggestedWorkout(
+          id: "micro_nutrient",
+          name: "Micro-Nutrient Optimization",
+          category: WorkoutCategory.nutrition,
+          difficulty: "Hard",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Include 5 colors of fresh vegetables in today's rations.",
+          instructions: ["Select spinach (green), pepper (red), carrot (orange), cabbage (purple), onion (white)", "Incorporate into meals"],
+          sets: 1,
+          reps: "5 colors logged",
+        ),
+        SuggestedWorkout(
+          id: "advanced_bulking",
+          name: "Advanced Bulking Prep",
+          category: WorkoutCategory.nutrition,
+          difficulty: "Legend",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Prep high protein, calorie-dense foods (e.g. rice, beef, eggs, nuts).",
+          instructions: ["Measure ingredients for caloric surplus target", "Prep 4 high-calorie clean meals", "Log macros accurately"],
+          sets: 1,
+          reps: "4 meals prepped",
+        ),
+        SuggestedWorkout(
+          id: "chrono_nutrition",
+          name: "Chrono-Nutrition Fasting Alignment",
+          category: WorkoutCategory.nutrition,
+          difficulty: "Master",
+          equipment: "Bodyweight Only",
+          space: "Small Room",
+          description: "Align nutrient intake to precise metabolic windows.",
+          instructions: ["Consume all calories within an 8-hour window", "Fast for remaining 16 hours", "Hydrate with water only during fast"],
+          sets: 1,
+          reps: "16/8 window logged",
+        ),
+        SuggestedWorkout(
+          id: "db_goblet_squat",
+          name: "Dumbbell Goblet Squat",
+          category: WorkoutCategory.strength,
+          difficulty: "Easy",
+          equipment: "Dumbbells",
+          space: "Small Room",
+          description: "Lower body strength drill using a single front-held dumbbell.",
+          instructions: ["Hold dumbbell vertically at chest", "Squat down keeping knees tracked outward", "Stand back up pressing feet into floor"],
+          sets: 3,
+          reps: "10-12 reps",
+        ),
+        SuggestedWorkout(
+          id: "db_floor_press",
+          name: "Dumbbell Floor Press",
+          category: WorkoutCategory.strength,
+          difficulty: "Medium",
+          equipment: "Dumbbells",
+          space: "Small Room",
+          description: "Triceps and chest builder performed on the floor to limit range safely.",
+          instructions: ["Lie flat on back, knees bent", "Hold dumbbells over chest", "Lower elbows until they touch floor lightly", "Press back up"],
+          sets: 3,
+          reps: "12-15 reps",
+        ),
+        SuggestedWorkout(
+          id: "db_renegade_row",
+          name: "Dumbbell Renegade Row",
+          category: WorkoutCategory.strength,
+          difficulty: "Hard",
+          equipment: "Dumbbells",
+          space: "Small Room",
+          description: "Challenging core stabilization combined with a back pull.",
+          instructions: ["Assume plank on dumbbells", "Row one dumbbell to ribcage while keeping hips level", "Repeat on other side"],
+          sets: 4,
+          reps: "8-10 reps per arm",
+        ),
+        SuggestedWorkout(
+          id: "db_thrusters",
+          name: "Dumbbell Thrusters",
+          category: WorkoutCategory.strength,
+          difficulty: "Legend",
+          equipment: "Dumbbells",
+          space: "Large Room",
+          description: "Full body integration squat pressing dumbbells overhead dynamically.",
+          instructions: ["Rack dumbbells at shoulders", "Perform deep squat", "Explode up, pressing dumbbells overhead in one motion"],
+          sets: 4,
+          reps: "10-12 reps",
+        ),
+        SuggestedWorkout(
+          id: "db_man_makers",
+          name: "Dumbbell Man-Makers",
+          category: WorkoutCategory.strength,
+          difficulty: "Master",
+          equipment: "Dumbbells",
+          space: "Gym Space",
+          description: "Complex full-body movement: pushup, row, squat clean, thruster.",
+          instructions: ["Pushup on dumbbells", "Row each arm", "Jump feet in, clean dumbbells to shoulders", "Perform thruster"],
+          sets: 5,
+          reps: "6-8 reps",
+        ),
+        SuggestedWorkout(
+          id: "db_shadow_boxing",
+          name: "Dumbbell Shadow Boxing",
+          category: WorkoutCategory.cardio,
+          difficulty: "Easy",
+          equipment: "Dumbbells",
+          space: "Small Room",
+          description: "Low-impact aerobic conditioning with light hand weights.",
+          instructions: ["Hold light dumbbells at chin", "Perform controlled straight punches", "Keep feet active in boxer stance"],
+          sets: 3,
+          reps: "1 min",
+        ),
+        SuggestedWorkout(
+          id: "db_farmers_walk",
+          name: "Dumbbell Farmers Walk",
+          category: WorkoutCategory.cardio,
+          difficulty: "Medium",
+          equipment: "Dumbbells",
+          space: "Large Room",
+          description: "Grip strength and heavy aerobic transport conditioning.",
+          instructions: ["Hold heavy dumbbells at sides", "Walk in straight line, keeping chest up and shoulders back", "Turn and walk back"],
+          sets: 3,
+          reps: "1 min walk",
+        ),
+        SuggestedWorkout(
+          id: "db_devil_press",
+          name: "Dumbbell Devil Press",
+          category: WorkoutCategory.cardio,
+          difficulty: "Hard",
+          equipment: "Dumbbells",
+          space: "Large Room",
+          description: "Burpee directly into a double dumbbell snatch to overhead.",
+          instructions: ["Burpee chest-to-floor on dumbbells", "Jump feet up wide", "Swing dumbbells between legs, snatching them overhead"],
+          sets: 4,
+          reps: "10 reps",
+        ),
+        SuggestedWorkout(
+          id: "db_clean_press",
+          name: "Dumbbell Clean & Press",
+          category: WorkoutCategory.cardio,
+          difficulty: "Legend",
+          equipment: "Dumbbells",
+          space: "Gym Space",
+          description: "High velocity power conditioning using dumbbells.",
+          instructions: ["Deadlift dumbbells, cleaning them to shoulders with hip pop", "Push press dumbbells overhead using legs"],
+          sets: 4,
+          reps: "12 reps",
+        ),
+        SuggestedWorkout(
+          id: "db_snatch_intervals",
+          name: "Dumbbell Snatch Intervals",
+          category: WorkoutCategory.cardio,
+          difficulty: "Master",
+          equipment: "Dumbbells",
+          space: "Gym Space",
+          description: "Rapid single-arm snatches to spike aerobic power.",
+          instructions: ["Pull dumbbell from floor, punching it straight overhead in one clean path", "Switch arms and repeat at fast pace"],
+          sets: 5,
+          reps: "15 reps",
+        ),
+      ];
 }

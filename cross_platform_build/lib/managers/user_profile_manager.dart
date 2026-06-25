@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/lote_models.dart';
+import 'health_manager.dart';
 
 class UserProfileManager extends ChangeNotifier {
   // Persisted Fields
@@ -15,6 +16,8 @@ class UserProfileManager extends ChangeNotifier {
   int _currentLevel = 1;
   int _crystals = 100;
   List<LotEQuest> _dailyQuests = LotEQuest.dailyDefaults;
+  List<LotEQuest> _monthlyQuests = [];
+  List<LotEQuest> _yearlyQuests = [];
   int _streak = 0;
   DateTime? _lastActiveDate;
   String _shortTermGoal = 'Complete at least one Cardio Patrol this week.';
@@ -22,18 +25,36 @@ class UserProfileManager extends ChangeNotifier {
   bool _hasCompletedInitialQuiz = false;
   int _healthyMealsLoggedToday = 0;
   String _homePlanet = 'Warrion';
-  String _calisthenicsGoal = 'Perform 20 mins of handstands or pulls.';
-  String _liftingGoal = 'Deadlift 2x bodyweight milestone.';
-  String _customGoal = 'Complete 3 flexibility routines.';
+  List<MealEntry> _loggedMeals = [];
   
   List<TrainingFocus> _selectedFocuses = [TrainingFocus.calisthenics, TrainingFocus.cardio, TrainingFocus.cutting];
   double _height = 70.0;
   double _weight = 160.0;
+  double _startWeight = 160.0;
+  double _goalWeight = 150.0;
+  double _distanceGoal = 2.0;
+  List<WeightEntry> _weightHistory = [];
+  List<String> _unlockedShopItems = [];
+  List<String> _unlockedBadges = [];
+  bool _hasClaimedWeightGoalReward = false;
+  bool _hasClaimedDistanceGoalReward = false;
   double _chest = 38.0;
   double _arms = 13.0;
   double _waist = 32.0;
   double _hips = 40.0;
   double _legs = 22.0;
+
+  double _stepsGoal = 10000.0;
+  double _caloriesGoal = 400.0;
+  double _activeMinutesGoal = 30.0;
+  double _standHoursGoal = 10.0;
+  int _totalQuestsCompleted = 0;
+  List<BodyMeasurementEntry> _measurementHistory = [];
+  String _equippedFrame = 'None';
+  String _equippedTitle = 'None';
+  String _equippedAura = 'None';
+  String _equippedBackground = 'None';
+  String _equippedAccessory = 'None';
 
   // Getters
   String get characterName => _characterName;
@@ -46,6 +67,8 @@ class UserProfileManager extends ChangeNotifier {
   int get currentLevel => _currentLevel;
   int get crystals => _crystals;
   List<LotEQuest> get dailyQuests => _dailyQuests;
+  List<LotEQuest> get monthlyQuests => _monthlyQuests;
+  List<LotEQuest> get yearlyQuests => _yearlyQuests;
   int get streak => _streak;
   DateTime? get lastActiveDate => _lastActiveDate;
   String get shortTermGoal => _shortTermGoal;
@@ -53,18 +76,36 @@ class UserProfileManager extends ChangeNotifier {
   bool get hasCompletedInitialQuiz => _hasCompletedInitialQuiz;
   int get healthyMealsLoggedToday => _healthyMealsLoggedToday;
   String get homePlanet => _homePlanet;
-  String get calisthenicsGoal => _calisthenicsGoal;
-  String get liftingGoal => _liftingGoal;
-  String get customGoal => _customGoal;
+  List<MealEntry> get loggedMeals => _loggedMeals;
   
   List<TrainingFocus> get selectedFocuses => _selectedFocuses;
   double get height => _height;
   double get weight => _weight;
+  double get startWeight => _startWeight;
+  double get goalWeight => _goalWeight;
+  double get distanceGoal => _distanceGoal;
+  List<WeightEntry> get weightHistory => _weightHistory;
+  List<String> get unlockedShopItems => _unlockedShopItems;
+  List<String> get unlockedBadges => _unlockedBadges;
+  bool get hasClaimedWeightGoalReward => _hasClaimedWeightGoalReward;
+  bool get hasClaimedDistanceGoalReward => _hasClaimedDistanceGoalReward;
   double get chest => _chest;
   double get arms => _arms;
   double get waist => _waist;
   double get hips => _hips;
   double get legs => _legs;
+
+  double get stepsGoal => _stepsGoal;
+  double get caloriesGoal => _caloriesGoal;
+  double get activeMinutesGoal => _activeMinutesGoal;
+  double get standHoursGoal => _standHoursGoal;
+  int get totalQuestsCompleted => _totalQuestsCompleted;
+  List<BodyMeasurementEntry> get measurementHistory => _measurementHistory;
+  String get equippedFrame => _equippedFrame;
+  String get equippedTitle => _equippedTitle;
+  String get equippedAura => _equippedAura;
+  String get equippedBackground => _equippedBackground;
+  String get equippedAccessory => _equippedAccessory;
 
   // Setters with save trigger
   set characterName(String val) { _characterName = val; _save(); notifyListeners(); }
@@ -77,6 +118,8 @@ class UserProfileManager extends ChangeNotifier {
   set currentLevel(int val) { _currentLevel = val; _save(); notifyListeners(); }
   set crystals(int val) { _crystals = val; _save(); notifyListeners(); }
   set dailyQuests(List<LotEQuest> val) { _dailyQuests = val; _save(); notifyListeners(); }
+  set monthlyQuests(List<LotEQuest> val) { _monthlyQuests = val; _save(); notifyListeners(); }
+  set yearlyQuests(List<LotEQuest> val) { _yearlyQuests = val; _save(); notifyListeners(); }
   set streak(int val) { _streak = val; _save(); notifyListeners(); }
   set lastActiveDate(DateTime? val) { _lastActiveDate = val; _save(); notifyListeners(); }
   set shortTermGoal(String val) { _shortTermGoal = val; _save(); notifyListeners(); }
@@ -84,13 +127,35 @@ class UserProfileManager extends ChangeNotifier {
   set hasCompletedInitialQuiz(bool val) { _hasCompletedInitialQuiz = val; _save(); notifyListeners(); }
   set healthyMealsLoggedToday(int val) { _healthyMealsLoggedToday = val; _save(); notifyListeners(); }
   set homePlanet(String val) { _homePlanet = val; _save(); notifyListeners(); }
-  set calisthenicsGoal(String val) { _calisthenicsGoal = val; _save(); notifyListeners(); }
-  set liftingGoal(String val) { _liftingGoal = val; _save(); notifyListeners(); }
-  set customGoal(String val) { _customGoal = val; _save(); notifyListeners(); }
-  
   set selectedFocuses(List<TrainingFocus> val) { _selectedFocuses = val; _save(); regenerateDailyQuests(); notifyListeners(); }
   set height(double val) { _height = val; _save(); notifyListeners(); }
-  set weight(double val) { _weight = val; _save(); notifyListeners(); }
+  set weight(double val) { _weight = val; _save(); checkWeightGoalProgress(); notifyListeners(); }
+  set startWeight(double val) { _startWeight = val; _save(); notifyListeners(); }
+  
+  set stepsGoal(double val) { _stepsGoal = val; _save(); notifyListeners(); }
+  set caloriesGoal(double val) { _caloriesGoal = val; _save(); notifyListeners(); }
+  set activeMinutesGoal(double val) { _activeMinutesGoal = val; _save(); notifyListeners(); }
+  set standHoursGoal(double val) { _standHoursGoal = val; _save(); notifyListeners(); }
+  set totalQuestsCompleted(int val) { _totalQuestsCompleted = val; _save(); notifyListeners(); }
+  set equippedFrame(String val) { _equippedFrame = val; _save(); notifyListeners(); }
+  set equippedTitle(String val) { _equippedTitle = val; _save(); notifyListeners(); }
+  set equippedAura(String val) { _equippedAura = val; _save(); notifyListeners(); }
+  set equippedBackground(String val) { _equippedBackground = val; _save(); notifyListeners(); }
+  set equippedAccessory(String val) { _equippedAccessory = val; _save(); notifyListeners(); }
+  
+  set goalWeight(double val) {
+    _goalWeight = val;
+    _startWeight = _weight;
+    _hasClaimedWeightGoalReward = false;
+    _save();
+    notifyListeners();
+  }
+  set distanceGoal(double val) { _distanceGoal = val; _save(); notifyListeners(); }
+  set weightHistory(List<WeightEntry> val) { _weightHistory = val; _save(); notifyListeners(); }
+  set unlockedShopItems(List<String> val) { _unlockedShopItems = val; _save(); notifyListeners(); }
+  set unlockedBadges(List<String> val) { _unlockedBadges = val; _save(); notifyListeners(); }
+  set hasClaimedWeightGoalReward(bool val) { _hasClaimedWeightGoalReward = val; _save(); notifyListeners(); }
+  set hasClaimedDistanceGoalReward(bool val) { _hasClaimedDistanceGoalReward = val; _save(); notifyListeners(); }
   set chest(double val) { _chest = val; _save(); notifyListeners(); }
   set arms(double val) { _arms = val; _save(); notifyListeners(); }
   set waist(double val) { _waist = val; _save(); notifyListeners(); }
@@ -381,7 +446,13 @@ class UserProfileManager extends ChangeNotifier {
       if (focusesJson != null) {
         try {
           final List<dynamic> raw = jsonDecode(focusesJson);
-          _selectedFocuses = raw.map((f) => TrainingFocus.values.firstWhere((e) => e.name == f)).toList();
+          _selectedFocuses = raw.map((f) {
+            if (f == 'weightGain' || f == 'bulking') return TrainingFocus.bulking;
+            return TrainingFocus.values.firstWhere(
+              (e) => e.name == f,
+              orElse: () => TrainingFocus.cardio,
+            );
+          }).toList();
         } catch (_) {
           _selectedFocuses = [TrainingFocus.calisthenics, TrainingFocus.cardio, TrainingFocus.cutting];
         }
@@ -391,11 +462,55 @@ class UserProfileManager extends ChangeNotifier {
 
       _height = prefs.getDouble('lote_body_height') ?? 70.0;
       _weight = prefs.getDouble('lote_body_weight') ?? 160.0;
+      _startWeight = prefs.getDouble('lote_start_weight') ?? 160.0;
+      _goalWeight = prefs.getDouble('lote_goal_weight') ?? 150.0;
+      _distanceGoal = prefs.getDouble('lote_distance_goal') ?? 2.0;
+      _hasClaimedWeightGoalReward = prefs.getBool('lote_claimed_weight_reward') ?? false;
+      _hasClaimedDistanceGoalReward = prefs.getBool('lote_claimed_distance_reward') ?? false;
+
+      final weightHistoryJson = prefs.getString('lote_weight_history');
+      if (weightHistoryJson != null) {
+        try {
+          final List<dynamic> raw = jsonDecode(weightHistoryJson);
+          _weightHistory = raw.map((w) => WeightEntry.fromJson(w)).toList();
+        } catch (_) {
+          _weightHistory = [WeightEntry(date: DateTime.now(), weight: _weight)];
+        }
+      } else {
+        _weightHistory = [WeightEntry(date: DateTime.now(), weight: _weight)];
+      }
+
+      _unlockedShopItems = prefs.getStringList('lote_unlocked_shop_items') ?? [];
+      _unlockedBadges = prefs.getStringList('lote_unlocked_badges') ?? [];
+
       _chest = prefs.getDouble('lote_body_chest') ?? 38.0;
       _arms = prefs.getDouble('lote_body_arms') ?? 13.0;
       _waist = prefs.getDouble('lote_body_waist') ?? 32.0;
       _hips = prefs.getDouble('lote_body_hips') ?? 40.0;
       _legs = prefs.getDouble('lote_body_legs') ?? 22.0;
+
+      _stepsGoal = prefs.getDouble('lote_steps_goal') ?? 10000.0;
+      _caloriesGoal = prefs.getDouble('lote_calories_goal') ?? 400.0;
+      _activeMinutesGoal = prefs.getDouble('lote_active_minutes_goal') ?? 30.0;
+      _standHoursGoal = prefs.getDouble('lote_stand_hours_goal') ?? 10.0;
+      _totalQuestsCompleted = prefs.getInt('lote_total_quests_completed') ?? 0;
+      _equippedFrame = prefs.getString('lote_equipped_frame') ?? 'None';
+      _equippedTitle = prefs.getString('lote_equipped_title') ?? 'None';
+      _equippedAura = prefs.getString('lote_equipped_aura') ?? 'None';
+      _equippedBackground = prefs.getString('lote_equipped_background') ?? 'None';
+      _equippedAccessory = prefs.getString('lote_equipped_accessory') ?? 'None';
+
+      final measurementHistoryJson = prefs.getString('lote_measurement_history');
+      if (measurementHistoryJson != null) {
+        try {
+          final List<dynamic> raw = jsonDecode(measurementHistoryJson);
+          _measurementHistory = raw.map((m) => BodyMeasurementEntry.fromJson(m)).toList();
+        } catch (_) {
+          _measurementHistory = [];
+        }
+      } else {
+        _measurementHistory = [];
+      }
 
       final questsJson = prefs.getString('lote_daily_quests');
       if (questsJson != null) {
@@ -404,11 +519,39 @@ class UserProfileManager extends ChangeNotifier {
           _dailyQuests = raw.map((q) => LotEQuest.fromJson(q)).toList();
         } catch (_) {
           final elementName = availableElements[_selectedElementIndex].name;
-          _dailyQuests = generateQuests(elementName, _selectedFocuses);
+          _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily);
         }
       } else {
         final elementName = availableElements[_selectedElementIndex].name;
-        _dailyQuests = generateQuests(elementName, _selectedFocuses);
+        _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily);
+      }
+
+      final monthlyQuestsJson = prefs.getString('lote_monthly_quests');
+      if (monthlyQuestsJson != null) {
+        try {
+          final List<dynamic> raw = jsonDecode(monthlyQuestsJson);
+          _monthlyQuests = raw.map((q) => LotEQuest.fromJson(q)).toList();
+        } catch (_) {
+          final elementName = availableElements[_selectedElementIndex].name;
+          _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly);
+        }
+      } else {
+        final elementName = availableElements[_selectedElementIndex].name;
+        _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly);
+      }
+
+      final yearlyQuestsJson = prefs.getString('lote_yearly_quests');
+      if (yearlyQuestsJson != null) {
+        try {
+          final List<dynamic> raw = jsonDecode(yearlyQuestsJson);
+          _yearlyQuests = raw.map((q) => LotEQuest.fromJson(q)).toList();
+        } catch (_) {
+          final elementName = availableElements[_selectedElementIndex].name;
+          _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly);
+        }
+      } else {
+        final elementName = availableElements[_selectedElementIndex].name;
+        _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly);
       }
 
       _streak = prefs.getInt('lote_streak') ?? 0;
@@ -424,9 +567,17 @@ class UserProfileManager extends ChangeNotifier {
       _longTermGoal = prefs.getString('lote_long_goal') ?? 'Reach Krenpowen Apprentice tier rank.';
       _hasCompletedInitialQuiz = prefs.getBool('lote_has_quiz') ?? false;
       _healthyMealsLoggedToday = prefs.getInt('lote_meals_today') ?? 0;
-      _calisthenicsGoal = prefs.getString('lote_calisthenics_goal') ?? 'Perform 20 mins of handstands or pulls.';
-      _liftingGoal = prefs.getString('lote_lifting_goal') ?? 'Deadlift 2x bodyweight milestone.';
-      _customGoal = prefs.getString('lote_custom_goal') ?? 'Complete 3 flexibility routines.';
+      final mealsJson = prefs.getString('lote_logged_meals');
+      if (mealsJson != null) {
+        try {
+          final List<dynamic> raw = jsonDecode(mealsJson);
+          _loggedMeals = raw.map((m) => MealEntry.fromJson(m)).toList();
+        } catch (_) {
+          _loggedMeals = [];
+        }
+      } else {
+        _loggedMeals = [];
+      }
       final defaultPlanet = availableElements[_selectedElementIndex].planetOfOrigin;
       _homePlanet = prefs.getString('lote_home_planet') ?? defaultPlanet;
 
@@ -457,9 +608,7 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setBool('lote_has_quiz', _hasCompletedInitialQuiz);
       await prefs.setInt('lote_meals_today', _healthyMealsLoggedToday);
       await prefs.setString('lote_home_planet', _homePlanet);
-      await prefs.setString('lote_calisthenics_goal', _calisthenicsGoal);
-      await prefs.setString('lote_lifting_goal', _liftingGoal);
-      await prefs.setString('lote_custom_goal', _customGoal);
+      await prefs.setString('lote_logged_meals', jsonEncode(_loggedMeals.map((m) => m.toJson()).toList()));
       
       await prefs.setDouble('lote_body_height', _height);
       await prefs.setDouble('lote_body_weight', _weight);
@@ -468,7 +617,30 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setDouble('lote_body_waist', _waist);
       await prefs.setDouble('lote_body_hips', _hips);
       await prefs.setDouble('lote_body_legs', _legs);
+
+      await prefs.setDouble('lote_steps_goal', _stepsGoal);
+      await prefs.setDouble('lote_calories_goal', _caloriesGoal);
+      await prefs.setDouble('lote_active_minutes_goal', _activeMinutesGoal);
+      await prefs.setDouble('lote_stand_hours_goal', _standHoursGoal);
+      await prefs.setInt('lote_total_quests_completed', _totalQuestsCompleted);
+      await prefs.setString('lote_equipped_frame', _equippedFrame);
+      await prefs.setString('lote_equipped_title', _equippedTitle);
+      await prefs.setString('lote_equipped_aura', _equippedAura);
+      await prefs.setString('lote_equipped_background', _equippedBackground);
+      await prefs.setString('lote_equipped_accessory', _equippedAccessory);
+      await prefs.setString('lote_measurement_history', jsonEncode(_measurementHistory.map((m) => m.toJson()).toList()));
       await prefs.setString('lote_selected_focuses', jsonEncode(_selectedFocuses.map((f) => f.name).toList()));
+
+      await prefs.setDouble('lote_start_weight', _startWeight);
+      await prefs.setDouble('lote_goal_weight', _goalWeight);
+      await prefs.setDouble('lote_distance_goal', _distanceGoal);
+      await prefs.setBool('lote_claimed_weight_reward', _hasClaimedWeightGoalReward);
+      await prefs.setBool('lote_claimed_distance_reward', _hasClaimedDistanceGoalReward);
+      await prefs.setStringList('lote_unlocked_shop_items', _unlockedShopItems);
+      await prefs.setStringList('lote_unlocked_badges', _unlockedBadges);
+      await prefs.setString('lote_weight_history', jsonEncode(_weightHistory.map((w) => w.toJson()).toList()));
+      await prefs.setString('lote_monthly_quests', jsonEncode(_monthlyQuests.map((q) => q.toJson()).toList()));
+      await prefs.setString('lote_yearly_quests', jsonEncode(_yearlyQuests.map((q) => q.toJson()).toList()));
 
       await prefs.setString('lote_dnd_stats', jsonEncode(_stats.toJson()));
       await prefs.setString('lote_character_sprite', jsonEncode(_sprite.toJson()));
@@ -478,9 +650,14 @@ class UserProfileManager extends ChangeNotifier {
 
   // XP & Rewards Engine
   void addXP(int amount) {
+    if (_currentLevel >= 100) {
+      _currentLevel = 100;
+      _currentXP = 0;
+      return;
+    }
     _currentXP += amount;
     int xpNeeded = requiredXPForLevel(_currentLevel);
-    if (_currentXP >= xpNeeded) {
+    while (_currentXP >= xpNeeded && _currentLevel < 100) {
       _currentXP -= xpNeeded;
       _currentLevel += 1;
       _crystals += 50; // Level up reward
@@ -489,13 +666,18 @@ class UserProfileManager extends ChangeNotifier {
       final statsList = List<StatType>.from(StatType.values);
       statsList.shuffle();
       _stats.increase(statsList.first, 1);
+      xpNeeded = requiredXPForLevel(_currentLevel);
+    }
+    if (_currentLevel >= 100) {
+      _currentLevel = 100;
+      _currentXP = 0;
     }
     _save();
     notifyListeners();
   }
 
   int requiredXPForLevel(int lvl) {
-    return 100 + (lvl * 50);
+    return 1000 + (lvl * 100) + (lvl * lvl * 5);
   }
 
   void earnCrystals(int amount) {
@@ -504,39 +686,355 @@ class UserProfileManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Quest Actions
-  bool completeQuest(LotEQuest quest, int rollValue) {
-    final idx = _dailyQuests.indexWhere((q) => q.id == quest.id);
-    if (idx == -1 || _dailyQuests[idx].isCompleted) {
-      return false;
+  // Shop Purchase Action
+  bool buyShopItem(ShopItem item) {
+    if (_crystals < item.cost) return false;
+    if (_unlockedShopItems.contains(item.name)) return false;
+
+    _crystals -= item.cost;
+    _unlockedShopItems.add(item.name);
+
+    // Apply stats boost if it's a stat elixir
+    if (item.type == 'stat') {
+      if (item.name.contains('STR')) _stats.increase(StatType.strength, 1);
+      else if (item.name.contains('DEX')) _stats.increase(StatType.dexterity, 1);
+      else if (item.name.contains('CON')) _stats.increase(StatType.constitution, 1);
+      else if (item.name.contains('INT')) _stats.increase(StatType.intelligence, 1);
+      else if (item.name.contains('WIS')) _stats.increase(StatType.wisdom, 1);
+      else if (item.name.contains('CHA')) _stats.increase(StatType.charisma, 1);
     }
 
-    final statBonus = _stats.getModifier(quest.statReward);
-    final totalRoll = rollValue + statBonus;
+    unlockBadge("Guild Patron");
+    _save();
+    notifyListeners();
+    return true;
+  }
 
-    if (totalRoll >= quest.difficultyRoll) {
-      _dailyQuests[idx].isCompleted = true;
-      addXP(quest.rewardXP);
-      earnCrystals(quest.rewardCrystals);
-      _stats.increase(quest.statReward, quest.statValue);
-      updateStreakOnActivity();
+  // Badge Unlock Engine
+  void unlockBadge(String name) {
+    if (!_unlockedBadges.contains(name)) {
+      _unlockedBadges.add(name);
+      // Grant badge completion rewards
+      addXP(200);
+      earnCrystals(50);
       _save();
       notifyListeners();
-      return true;
-    } else {
-      addXP((quest.rewardXP / 3).floor());
-      _save();
-      notifyListeners();
-      return false;
     }
   }
 
-  void logHealthyMeal() {
-    _healthyMealsLoggedToday += 1;
-    earnCrystals(10);
-    addXP(15);
-    _stats.increase(StatType.constitution, 1);
+  void checkBadges(HealthManager healthManager) {
+    if (healthManager.todaySteps >= 10000.0) {
+      unlockBadge("First Step");
+    }
+    if (healthManager.todaySteps >= 20000.0) {
+      unlockBadge("20k Steps Sentinel");
+    }
+    if (healthManager.activeMinutes >= 60.0) {
+      unlockBadge("Iron Will (1 Hr)");
+    }
+    if (healthManager.activeMinutes >= 120.0) {
+      unlockBadge("Unstoppable Force (2 Hr)");
+    }
+    if (_totalQuestsCompleted >= 100) {
+      unlockBadge("Quest Crusader (100 Quests)");
+    }
+    if (_totalQuestsCompleted >= 1000) {
+      unlockBadge("Legendary Champion (1000 Quests)");
+    }
+    if (_streak >= 7) {
+      unlockBadge("Streak Master");
+    }
+    if (_streak >= 14) {
+      unlockBadge("Vanguard Streak (14 Days)");
+    }
+    if (_streak >= 30) {
+      unlockBadge("Sovereign Streak (30 Days)");
+    }
+    if (_streak >= 100) {
+      unlockBadge("Immortal Streak (100 Days)");
+    }
+    if (_stats.strength >= 18 ||
+        _stats.dexterity >= 18 ||
+        _stats.constitution >= 18 ||
+        _stats.wisdom >= 18 ||
+        _stats.intelligence >= 18 ||
+        _stats.charisma >= 18) {
+      unlockBadge("Demi-God");
+    }
+    if (_hasCompletedInitialQuiz) {
+      unlockBadge("Lore Scholar");
+    }
+    
+    // Check daily distance target goal progress
+    checkDistanceGoalProgress(healthManager.todaySteps);
+  }
+
+  void checkDistanceGoalProgress(double todaySteps) {
+    final currentDistance = todaySteps / 2000.0;
+    if (!_hasClaimedDistanceGoalReward && currentDistance >= _distanceGoal) {
+      addXP(100);
+      earnCrystals(30);
+      _hasClaimedDistanceGoalReward = true;
+      _save();
+    }
+  }
+
+  // Target Progress Helper
+  void checkWeightGoalProgress() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    // Record in history, replacing today's entry if already present
+    _weightHistory.removeWhere((entry) =>
+        entry.date.year == today.year &&
+        entry.date.month == today.month &&
+        entry.date.day == today.day);
+    _weightHistory.add(WeightEntry(date: now, weight: _weight));
+
+    // Auto reward check
+    if (!_hasClaimedWeightGoalReward) {
+      final isCutting = _startWeight > _goalWeight;
+      if (isCutting) {
+        if (_weight <= _goalWeight) {
+          addXP(2000);
+          earnCrystals(1000);
+          _hasClaimedWeightGoalReward = true;
+          unlockBadge("Weight Target Achieved");
+        }
+      } else { // Bulking
+        if (_weight >= _goalWeight) {
+          addXP(2000);
+          earnCrystals(1000);
+          _hasClaimedWeightGoalReward = true;
+          unlockBadge("Weight Target Achieved");
+        }
+      }
+    }
+    _save();
+  }
+
+  // Quest Actions
+  bool completeQuest(LotEQuest quest) {
+    bool isDaily = false;
+    bool isMonthly = false;
+    bool isYearly = false;
+    int foundIndex = -1;
+
+    foundIndex = _dailyQuests.indexWhere((q) => q.id == quest.id);
+    if (foundIndex != -1) {
+      isDaily = true;
+    } else {
+      foundIndex = _monthlyQuests.indexWhere((q) => q.id == quest.id);
+      if (foundIndex != -1) {
+        isMonthly = true;
+      } else {
+        foundIndex = _yearlyQuests.indexWhere((q) => q.id == quest.id);
+        if (foundIndex != -1) {
+          isYearly = true;
+        }
+      }
+    }
+
+    if (foundIndex == -1) return false;
+
+    final questToComplete = isDaily
+        ? _dailyQuests[foundIndex]
+        : (isMonthly ? _monthlyQuests[foundIndex] : _yearlyQuests[foundIndex]);
+
+    if (questToComplete.isCompleted) return false;
+    if (questToComplete.progressCount < questToComplete.targetCount) return false;
+
+    if (isDaily) {
+      _dailyQuests[foundIndex].isCompleted = true;
+      _incrementMonthlyAndYearlyProgress(questToComplete.workoutType);
+    } else if (isMonthly) {
+      _monthlyQuests[foundIndex].isCompleted = true;
+    } else if (isYearly) {
+      _yearlyQuests[foundIndex].isCompleted = true;
+    }
+    _totalQuestsCompleted += 1;
+
+    addXP(questToComplete.rewardXP);
+    earnCrystals(questToComplete.rewardCrystals);
+    _stats.increase(questToComplete.statReward, questToComplete.statValue);
     updateStreakOnActivity();
+
+    // Unlocks badge on 5 completed quests
+    final completedDailies = _dailyQuests.where((q) => q.isCompleted).length;
+    if (completedDailies >= 5) {
+      unlockBadge("Flame Starter");
+    }
+
+    _save();
+    notifyListeners();
+    return true;
+  }
+
+  void _incrementMonthlyAndYearlyProgress(WorkoutCategory category) {
+    for (int i = 0; i < _monthlyQuests.length; i++) {
+      if (_monthlyQuests[i].workoutType == category && !_monthlyQuests[i].isCompleted) {
+        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1).clamp(0, _monthlyQuests[i].targetCount);
+      }
+    }
+    for (int i = 0; i < _yearlyQuests.length; i++) {
+      if (_yearlyQuests[i].workoutType == category && !_yearlyQuests[i].isCompleted) {
+        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1).clamp(0, _yearlyQuests[i].targetCount);
+      }
+    }
+  }
+
+  void logWorkout(WorkoutCategory category) {
+    for (int i = 0; i < _dailyQuests.length; i++) {
+      if (_dailyQuests[i].workoutType == category && !_dailyQuests[i].isCompleted) {
+        _dailyQuests[i].progressCount = (_dailyQuests[i].progressCount + 1).clamp(0, _dailyQuests[i].targetCount);
+      }
+    }
+    for (int i = 0; i < _monthlyQuests.length; i++) {
+      if (_monthlyQuests[i].workoutType == category && !_monthlyQuests[i].isCompleted) {
+        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1).clamp(0, _monthlyQuests[i].targetCount);
+      }
+    }
+    for (int i = 0; i < _yearlyQuests.length; i++) {
+      if (_yearlyQuests[i].workoutType == category && !_yearlyQuests[i].isCompleted) {
+        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1).clamp(0, _yearlyQuests[i].targetCount);
+      }
+    }
+    _save();
+    notifyListeners();
+  }
+
+  void logDetailedMeal({
+    required String name,
+    required double calories,
+    required double protein,
+    required double carbs,
+    required double fats,
+    required double sugar,
+  }) {
+    final entry = MealEntry(
+      id: UniqueKey().toString(),
+      date: DateTime.now(),
+      name: name,
+      calories: calories,
+      protein: protein,
+      carbs: carbs,
+      fats: fats,
+      sugar: sugar,
+    );
+    _loggedMeals.add(entry);
+    _healthyMealsLoggedToday += 1;
+    logWorkout(WorkoutCategory.nutrition);
+    _save();
+    notifyListeners();
+  }
+
+  double get todaySugar {
+    final now = DateTime.now();
+    return _loggedMeals
+        .where((m) => m.date.year == now.year && m.date.month == now.month && m.date.day == now.day)
+        .fold(0.0, (sum, m) => sum + m.sugar);
+  }
+
+  void logBodyMeasurements({
+    required double weight,
+    required double chest,
+    required double arms,
+    required double waist,
+    required double hips,
+    required double legs,
+  }) {
+    final entry = BodyMeasurementEntry(
+      id: UniqueKey().toString(),
+      date: DateTime.now(),
+      weight: weight,
+      chest: chest,
+      arms: arms,
+      waist: waist,
+      hips: hips,
+      legs: legs,
+    );
+    _measurementHistory.add(entry);
+    
+    _weight = weight;
+    _chest = chest;
+    _arms = arms;
+    _waist = waist;
+    _hips = hips;
+    _legs = legs;
+
+    _save();
+    notifyListeners();
+  }
+
+  void logRestDay() {
+    updateStreakOnActivity();
+    _save();
+    notifyListeners();
+  }
+
+  void toggleEquipItem(ShopItem item) {
+    if (!_unlockedShopItems.contains(item.name)) return;
+    
+    switch (item.type) {
+      case 'frame':
+        _equippedFrame = (_equippedFrame == item.name) ? 'None' : item.name;
+        break;
+      case 'title':
+        _equippedTitle = (_equippedTitle == item.name) ? 'None' : item.name;
+        break;
+      case 'aura':
+        _equippedAura = (_equippedAura == item.name) ? 'None' : item.name;
+        break;
+      case 'background':
+        _equippedBackground = (_equippedBackground == item.name) ? 'None' : item.name;
+        break;
+      case 'accessory':
+        _equippedAccessory = (_equippedAccessory == item.name) ? 'None' : item.name;
+        break;
+    }
+    _save();
+    notifyListeners();
+  }
+
+  void syncQuestsWithHealthData({required double todaySteps, required double activeMinutes}) {
+    if (activeMinutes >= 15.0) {
+      for (int i = 0; i < _dailyQuests.length; i++) {
+        final q = _dailyQuests[i];
+        if (q.workoutType == WorkoutCategory.strength ||
+            q.workoutType == WorkoutCategory.flexibility ||
+            q.workoutType == WorkoutCategory.cardio) {
+          if (_dailyQuests[i].progressCount < _dailyQuests[i].targetCount) {
+            _dailyQuests[i].progressCount = _dailyQuests[i].targetCount;
+          }
+        }
+      }
+    }
+    if (todaySteps >= 5000.0) {
+      for (int i = 0; i < _dailyQuests.length; i++) {
+        if (_dailyQuests[i].workoutType == WorkoutCategory.cardio) {
+          if (_dailyQuests[i].progressCount < _dailyQuests[i].targetCount) {
+            _dailyQuests[i].progressCount = _dailyQuests[i].targetCount;
+          }
+        }
+      }
+    }
+    _save();
+    notifyListeners();
+  }
+
+  void resetProgress() {
+    _currentLevel = 1;
+    _currentXP = 0;
+    _crystals = 100;
+    _streak = 0;
+    _stats = DNDStats();
+    _unlockedBadges = [];
+    _unlockedShopItems = [];
+    _loggedMeals = [];
+    _healthyMealsLoggedToday = 0;
+    _hasClaimedWeightGoalReward = false;
+    _hasClaimedDistanceGoalReward = false;
+    regenerateDailyQuests();
     _save();
     notifyListeners();
   }
@@ -552,7 +1050,17 @@ class UserProfileManager extends ChangeNotifier {
 
       if (diff > 0) {
         _healthyMealsLoggedToday = 0;
-        _dailyQuests = generateQuests(currentElement.name, _selectedFocuses);
+        _hasClaimedDistanceGoalReward = false;
+        final elementName = currentElement.name;
+        _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily);
+        
+        if (_lastActiveDate!.month != now.month) {
+          _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly);
+        }
+        if (_lastActiveDate!.year != now.year) {
+          _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly);
+        }
+
         if (diff > 1) {
           _streak = 0;
         }
@@ -595,7 +1103,10 @@ class UserProfileManager extends ChangeNotifier {
   }
 
   void regenerateDailyQuests() {
-    _dailyQuests = generateQuests(currentElement.name, _selectedFocuses);
+    final elementName = currentElement.name;
+    _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily);
+    _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly);
+    _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly);
     _save();
     notifyListeners();
   }

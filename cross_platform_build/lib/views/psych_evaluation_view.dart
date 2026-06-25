@@ -326,6 +326,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     manager.waist = double.tryParse(_waistController.text) ?? 32.0;
     manager.hips = double.tryParse(_hipsController.text) ?? 40.0;
     manager.legs = double.tryParse(_legsController.text) ?? 22.0;
+    manager.resetProgress();
     manager.hasCompletedInitialQuiz = true;
   }
 
@@ -333,55 +334,58 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   Widget build(BuildContext context) {
     final profileManager = Provider.of<UserProfileManager>(context, listen: false);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF050505),
-      body: Stack(
-        children: [
-          // Ambient thematic glows
-          Positioned(
-            left: -50,
-            top: -50,
-            child: Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFFFF1616).withOpacity(0.12),
-              ),
-              child: Image.network(
-                'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1000',
-                errorBuilder: (_, __, ___) => const SizedBox(),
-                color: Colors.black.withOpacity(0.9),
-                colorBlendMode: BlendMode.dstIn,
-              ),
-            ),
-          ),
-          Positioned(
-            right: -50,
-            bottom: -50,
-            child: Container(
-              width: 350,
-              height: 350,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: const Color(0xFF3F51B5).withOpacity(0.12),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
-                child: AnimatedSize(
-                  duration: const Duration(milliseconds: 300),
-                  child: !_evaluationComplete
-                      ? _buildQuizScreen()
-                      : _buildResultScreen(profileManager),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF050505),
+        body: Stack(
+          children: [
+            // Ambient thematic glows
+            Positioned(
+              left: -50,
+              top: -50,
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFFFF1616).withOpacity(0.12),
+                ),
+                child: Image.network(
+                  'https://images.unsplash.com/photo-1541701494587-cb58502866ab?q=80&w=1000',
+                  errorBuilder: (_, __, ___) => const SizedBox(),
+                  color: Colors.black.withOpacity(0.9),
+                  colorBlendMode: BlendMode.dstIn,
                 ),
               ),
             ),
-          ),
-        ],
+            Positioned(
+              right: -50,
+              bottom: -50,
+              child: Container(
+                width: 350,
+                height: 350,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF3F51B5).withOpacity(0.12),
+                ),
+              ),
+            ),
+            SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+                  child: AnimatedSize(
+                    duration: const Duration(milliseconds: 300),
+                    child: !_evaluationComplete
+                        ? _buildQuizScreen()
+                        : _buildResultScreen(profileManager),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -833,7 +837,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         return "Gravity-defying pull-ups, push-ups, and dips.";
       case TrainingFocus.lifting:
         return "Forge raw muscle with squat, bench, and deadlifts.";
-      case TrainingFocus.weightGain:
+      case TrainingFocus.bulking:
         return "Build structural mass and dense weight support.";
       case TrainingFocus.cutting:
         return "Deficit conditioning to burn off excess layers.";

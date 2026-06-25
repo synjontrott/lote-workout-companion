@@ -16,6 +16,7 @@ public class HealthKitManager: ObservableObject {
     @Published public var todaySteps: Double = 0.0
     @Published public var todayCalories: Double = 0.0
     @Published public var activeMinutes: Double = 0.0
+    @Published public var todayStandHours: Double = 0.0
     @Published public var recentWorkouts: [HKWorkout] = []
     
     private var healthStore: HKHealthStore?
@@ -33,6 +34,7 @@ public class HealthKitManager: ObservableObject {
             HKObjectType.quantityType(forIdentifier: .stepCount)!,
             HKObjectType.quantityType(forIdentifier: .activeEnergyBurned)!,
             HKObjectType.quantityType(forIdentifier: .appleExerciseTime)!,
+            HKObjectType.categoryType(forIdentifier: .appleStandHour)!,
             HKWorkoutType.workoutType()
         ]
         
@@ -85,6 +87,18 @@ public class HealthKitManager: ObservableObject {
             healthStore.execute(exerciseQuery)
         }
         
+        // Fetch Stand Hours
+        if let standType = HKObjectType.categoryType(forIdentifier: .appleStandHour) {
+            let standQuery = HKSampleQuery(sampleType: standType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
+                guard let categorySamples = samples as? [HKCategorySample] else { return }
+                let stoodCount = categorySamples.filter { $0.value == HKCategoryValueAppleStandHour.stood.rawValue }.count
+                DispatchQueue.main.async {
+                    self.todayStandHours = Double(stoodCount)
+                }
+            }
+            healthStore.execute(standQuery)
+        }
+        
         // Fetch Workouts
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
         let workoutQuery = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: 10, sortDescriptors: [sortDescriptor]) { _, samples, error in
@@ -97,9 +111,10 @@ public class HealthKitManager: ObservableObject {
     }
     
     // Fallback Mock System: For manual entries if HealthKit is not allowed or supported
-    public func simulateActivity(steps: Double, calories: Double, minutes: Double) {
+    public func simulateActivity(steps: Double, calories: Double, minutes: Double, standHours: Double) {
         self.todaySteps += steps
         self.todayCalories += calories
         self.activeMinutes += minutes
+        self.todayStandHours += standHours
     }
 }
