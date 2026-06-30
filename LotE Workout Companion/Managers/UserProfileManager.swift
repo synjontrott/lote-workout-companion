@@ -148,6 +148,24 @@ public class UserProfileManager: ObservableObject {
         didSet { save() }
     }
     
+    @Published public var notificationFrequency: String {
+        didSet {
+            save()
+            scheduleLocalNotifications()
+        }
+    }
+    
+    @Published public var monthlyChallengeProgress: Double {
+        didSet {
+            save()
+            checkMonthlyChallengeBadge()
+        }
+    }
+    
+    @Published public var previousStreak: Int {
+        didSet { save() }
+    }
+    
     @Published public var monthlyQuests: [LotEQuest] {
         didSet { save() }
     }
@@ -405,8 +423,8 @@ public class UserProfileManager: ObservableObject {
             standardDetails: "Neurotoxins that slow down nervous impulses, inducing paralysis and peace.",
             corruptDetails: "Necrotoxins that rot physical flesh instantly on a cellular scale.",
             balancedDetails: "Synthesizing customized antidotes and complex combat serums.",
-            primaryColorHex: "#AA00FF",
-            accentColorHex: "#00E676",
+            primaryColorHex: "#00E676",
+            accentColorHex: "#AA00FF",
             planetOfOrigin: "Battacaria",
             inherentDark: true
         ),
@@ -426,7 +444,11 @@ public class UserProfileManager: ObservableObject {
     ]
     
     public var currentElement: LotEElement {
-        UserProfileManager.availableElements[selectedElementIndex]
+        UserProfileManager.availableElements[Self.normalizedElementIndex(selectedElementIndex)]
+    }
+
+    private static func normalizedElementIndex(_ index: Int) -> Int {
+        min(max(index, 0), availableElements.count - 1)
     }
     
     // MARK: - Warrior Tier Calculation
@@ -445,7 +467,7 @@ public class UserProfileManager: ObservableObject {
         let name = UserDefaults.standard.string(forKey: "lote_char_name") ?? "Recruit"
         self.characterName = name
         
-        let elementIdx = UserDefaults.standard.integer(forKey: "lote_selected_element_idx")
+        let elementIdx = Self.normalizedElementIndex(UserDefaults.standard.integer(forKey: "lote_selected_element_idx"))
         self.selectedElementIndex = elementIdx
         
         let savedStyle = UserDefaults.standard.string(forKey: "lote_expression_style") ?? ExpressionStyle.standard.rawValue
@@ -561,6 +583,10 @@ public class UserProfileManager: ObservableObject {
         let savedCrystals = UserDefaults.standard.integer(forKey: "lote_crystals")
         self.crystals = savedCrystals == 0 ? 100 : savedCrystals
         
+        self.notificationFrequency = UserDefaults.standard.string(forKey: "lote_notification_frequency") ?? "Medium"
+        self.monthlyChallengeProgress = UserDefaults.standard.double(forKey: "lote_monthly_challenge_progress")
+        self.previousStreak = UserDefaults.standard.integer(forKey: "lote_previous_streak")
+        
         let loadedQuests: [LotEQuest]
         if let questsData = UserDefaults.standard.data(forKey: "lote_daily_quests"),
            let decodedQuests = try? JSONDecoder().decode([LotEQuest].self, from: questsData) {
@@ -630,6 +656,9 @@ public class UserProfileManager: ObservableObject {
         UserDefaults.standard.set(hasCompletedInitialQuiz, forKey: "lote_has_quiz")
         UserDefaults.standard.set(healthyMealsLoggedToday, forKey: "lote_meals_today")
         UserDefaults.standard.set(homePlanet, forKey: "lote_home_planet")
+        UserDefaults.standard.set(notificationFrequency, forKey: "lote_notification_frequency")
+        UserDefaults.standard.set(monthlyChallengeProgress, forKey: "lote_monthly_challenge_progress")
+        UserDefaults.standard.set(previousStreak, forKey: "lote_previous_streak")
         
         if let mealsData = try? JSONEncoder().encode(loggedMeals) {
             UserDefaults.standard.set(mealsData, forKey: "lote_logged_meals")
@@ -964,6 +993,11 @@ public class UserProfileManager: ObservableObject {
         save()
     }
     
+    public func deleteDetailedMeal(id: UUID) {
+        loggedMeals.removeAll(where: { $0.id == id })
+        save()
+    }
+    
     public func logBodyMeasurements(weight: Double, chest: Double, arms: Double, waist: Double, hips: Double, legs: Double) {
         let entry = BodyMeasurementEntry(weight: weight, chest: chest, arms: arms, waist: waist, hips: hips, legs: legs)
         measurementHistory.append(entry)
@@ -1081,6 +1115,7 @@ public class UserProfileManager: ObservableObject {
                 
                 if diff > 1 {
                     // Streak broken
+                    previousStreak = streak
                     streak = 0
                 }
             }
@@ -1103,6 +1138,7 @@ public class UserProfileManager: ObservableObject {
                 streak += 1
             } else if diff > 1 {
                 // Streak broken and restarted
+                previousStreak = streak
                 streak = 1
             } else if streak == 0 {
                 // Streak started
@@ -1126,5 +1162,115 @@ public class UserProfileManager: ObservableObject {
         self.dailyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .daily)
         self.monthlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .monthly)
         self.yearlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .yearly)
+    }
+    
+    // MARK: - Streak Recovery
+    public func recoverStreak() -> Bool {
+        guard previousStreak > 0, crystals >= 100 else { return false }
+        crystals -= 100
+        streak = previousStreak + 1
+        previousStreak = 0
+        save()
+        return true
+    }
+    
+    // MARK: - Notification Manager
+    public func scheduleLocalNotifications() {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        
+        guard notificationFrequency != "Off" else { return }
+        
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            guard granted else { return }
+            
+            let quip: String
+            switch self.currentElement.name {
+            case "Fire":
+                quip = "Stoke the flames! Get back to your workout goals. Level up before your fire fades!"
+            case "Water":
+                quip = "The sea is calling, your workout awaits! Keep flowing or stagnant waters will settle."
+            case "Earth":
+                quip = "Root yourself in discipline. Build your foundation like the mountains."
+            case "Air":
+                quip = "Float swift, strike fast. Do not let your momentum vanish into thin air."
+            default:
+                quip = "Train hard, warrior. Level up your stats today!"
+            }
+            
+            let content = UNMutableNotificationContent()
+            content.title = "Elsaither Reminder"
+            content.body = quip
+            content.sound = .default
+            
+            let count = self.notificationFrequency == "High" ? 3 : (self.notificationFrequency == "Medium" ? 2 : 1)
+            let daysInterval = self.notificationFrequency == "Low" ? 7.0 : 1.0
+            
+            for i in 1...count {
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: daysInterval * 86400 * Double(i) / Double(count), repeats: true)
+                let request = UNNotificationRequest(identifier: "lote_remind_\(i)", content: content, trigger: trigger)
+                UNUserNotificationCenter.current().add(request)
+            }
+        }
+    }
+    
+    // MARK: - Monthly Challenges
+    public struct MonthlyChallenge {
+        public let monthName: String
+        public let targetDescription: String
+        public let targetMetric: String
+        public let targetAmount: Double
+        public var currentAmount: Double
+    }
+    
+    public var activeMonthlyChallenge: MonthlyChallenge {
+        let calendar = Calendar.current
+        let month = calendar.component(.month, from: Date())
+        
+        switch month {
+        case 1: return MonthlyChallenge(monthName: "January", targetDescription: "Do 1,000 Pushups", targetMetric: "reps", targetAmount: 1000, currentAmount: monthlyChallengeProgress)
+        case 2: return MonthlyChallenge(monthName: "February", targetDescription: "Perform 300 minutes of Cardio", targetMetric: "mins", targetAmount: 300, currentAmount: monthlyChallengeProgress)
+        case 3: return MonthlyChallenge(monthName: "March", targetDescription: "Perform 120 minutes of Yoga/Flexibility", targetMetric: "mins", targetAmount: 120, currentAmount: monthlyChallengeProgress)
+        case 4: return MonthlyChallenge(monthName: "April", targetDescription: "Drink 90 Liters of water", targetMetric: "Liters", targetAmount: 90, currentAmount: monthlyChallengeProgress)
+        case 5: return MonthlyChallenge(monthName: "May", targetDescription: "Walk 50 miles", targetMetric: "miles", targetAmount: 50, currentAmount: monthlyChallengeProgress)
+        case 6: return MonthlyChallenge(monthName: "June", targetDescription: "Complete 20 Strength Forge workouts", targetMetric: "workouts", targetAmount: 20, currentAmount: monthlyChallengeProgress)
+        case 7: return MonthlyChallenge(monthName: "July", targetDescription: "Perform 150 minutes of Meditation", targetMetric: "mins", targetAmount: 150, currentAmount: monthlyChallengeProgress)
+        case 8: return MonthlyChallenge(monthName: "August", targetDescription: "Drink 100 Liters of water", targetMetric: "Liters", targetAmount: 100, currentAmount: monthlyChallengeProgress)
+        case 9: return MonthlyChallenge(monthName: "September", targetDescription: "Log 250,000 steps", targetMetric: "steps", targetAmount: 250000, currentAmount: monthlyChallengeProgress)
+        case 10: return MonthlyChallenge(monthName: "October", targetDescription: "Do 1,200 Squats", targetMetric: "reps", targetAmount: 1200, currentAmount: monthlyChallengeProgress)
+        case 11: return MonthlyChallenge(monthName: "November", targetDescription: "Complete 15 Flexibility sessions", targetMetric: "sessions", targetAmount: 15, currentAmount: monthlyChallengeProgress)
+        default: return MonthlyChallenge(monthName: "December", targetDescription: "Complete 40 Daily Quests", targetMetric: "quests", targetAmount: 40, currentAmount: monthlyChallengeProgress)
+        }
+    }
+    
+    public func advanceMonthlyChallenge(amount: Double) {
+        monthlyChallengeProgress += amount
+        checkMonthlyChallengeBadge()
+    }
+    
+    private func checkMonthlyChallengeBadge() {
+        let challenge = activeMonthlyChallenge
+        if challenge.currentAmount >= challenge.targetAmount {
+            let badgeMap: [String: String] = [
+                "January": "January Resolution Badge",
+                "February": "February Cardio Badge",
+                "March": "March Flexibility Badge",
+                "April": "April Hydration Badge",
+                "May": "May Walkabout Badge",
+                "June": "June Strength Badge",
+                "July": "July Zen Badge",
+                "August": "August Hydration Badge",
+                "September": "September Steps Badge",
+                "October": "October Squats Badge",
+                "November": "November Flexibility Badge",
+                "December": "December Quests Badge"
+            ]
+            if let specificBadge = badgeMap[challenge.monthName] {
+                if !unlockedBadges.contains(specificBadge) {
+                    unlockedBadges.append(specificBadge)
+                    crystals += 100 // Reward crystals for monthly challenge completion
+                    save()
+                }
+            }
+        }
     }
 }

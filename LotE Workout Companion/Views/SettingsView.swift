@@ -206,16 +206,15 @@ struct SettingsView: View {
                     )
                     .padding(.horizontal)
                     
-                    // Customize triggers
-                    VStack(alignment: .leading, spacing: 14) {
+                    // Sovereign Adjustments Card
+                    VStack(alignment: .leading, spacing: 15) {
                         Text("SOVEREIGN ADJUSTMENTS")
                             .font(.custom("Orbitron-Bold", size: 13).bold())
                             .foregroundColor(.gray)
                             .tracking(2)
-                            .padding(.horizontal)
                         
-                        VStack(spacing: 10) {
-                            // Element select sheet
+                        VStack(alignment: .leading, spacing: 12) {
+                            // Element Theme Selector Button
                             Button(action: {
                                 showingElementSelect = true
                             }) {
@@ -226,15 +225,57 @@ struct SettingsView: View {
                                         .font(.custom("Exo2-Bold", size: 14))
                                         .foregroundColor(.white)
                                     Spacer()
+                                    Text(profileManager.currentElement.name)
+                                        .font(.caption2)
+                                        .foregroundColor(.gray)
                                     Image(systemName: "chevron.right")
                                         .foregroundColor(.gray)
                                 }
-                                .padding()
-                                .background(Color.white.opacity(0.02))
-                                .cornerRadius(10)
+                                .padding(.vertical, 8)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            Divider().background(Color.white.opacity(0.1))
+                            
+                            // Cognitive Profile Picker
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("MOTIVATIONAL MINDSET PROFILE")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                                
+                                Picker("Mindset Profile", selection: Binding(
+                                    get: { profileManager.cognitiveProfile ?? .neurotypical },
+                                    set: { profileManager.cognitiveProfile = $0 }
+                                )) {
+                                    ForEach(CognitiveProfile.allCases, id: \.self) { cp in
+                                        Text(cp == .neurotypical ? "Neurotypical" : (cp == .adhd ? "ADHD" : (cp == .autistic ? "Autism" : "AuDHD")))
+                                            .tag(cp)
+                                    }
+                                }
+                                .pickerStyle(SegmentedPickerStyle())
+                                .padding(.vertical, 4)
                             }
                             
-                            // Character sprite creator sheet
+                            Divider().background(Color.white.opacity(0.1))
+                            
+                            // Notification Frequency Picker
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("NOTIFICATION REMINDER FREQUENCY")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                                
+                                Picker("Notification Frequency", selection: $profileManager.notificationFrequency) {
+                                    ForEach(["Off", "Low", "Medium", "High"], id: \.self) { freq in
+                                        Text(freq).tag(freq)
+                                    }
+                                }
+                                .pickerStyle(SegmentedPickerStyle())
+                                .padding(.vertical, 4)
+                            }
+                            
+                            Divider().background(Color.white.opacity(0.1))
+                            
+                            // Character Sprite Reforge Button
                             Button(action: {
                                 showingSpriteCreate = true
                             }) {
@@ -248,30 +289,19 @@ struct SettingsView: View {
                                     Image(systemName: "chevron.right")
                                         .foregroundColor(.gray)
                                 }
-                                .padding()
-                                .background(Color.white.opacity(0.02))
-                                .cornerRadius(10)
+                                .padding(.vertical, 8)
                             }
-                            
-                            // Reset psych eval
-                            Button(action: {
-                                profileManager.hasCompletedInitialQuiz = false
-                                profileManager.cognitiveProfile = nil
-                            }) {
-                                HStack {
-                                    Image(systemName: "brain.headprofile")
-                                        .foregroundColor(.orange)
-                                    Text("Recalibrate Psychological Profile")
-                                        .font(.custom("Exo2-Bold", size: 14))
-                                        .foregroundColor(.white)
-                                    Spacer()
-                                    Image(systemName: "arrow.counterclockwise")
-                                        .foregroundColor(.orange)
-                                }
-                                .padding()
-                                .background(Color.white.opacity(0.02))
-                                .cornerRadius(10)
-                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    .padding(20)
+                    .background(Color.white.opacity(0.02))
+                    .cornerRadius(16)
+                    .overlay(
+                         RoundedRectangle(cornerRadius: 16)
+                             .stroke(profileManager.currentElement.primaryColor.opacity(0.15), lineWidth: 1)
+                    )
+                    .padding(.horizontal)
                             
                             // Reset All Progress
                             Button(action: {
@@ -291,12 +321,10 @@ struct SettingsView: View {
                                 .background(Color.white.opacity(0.02))
                                 .cornerRadius(10)
                             }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
+                        .padding(.bottom, 40)
                     }
-                }
-                .padding(.bottom, 40)
-            }
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()

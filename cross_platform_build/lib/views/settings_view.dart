@@ -506,7 +506,7 @@ class _SettingsViewState extends State<SettingsView> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       children: [
-                        // Tune Element Channels Button
+                        // Choose Element Theme Button
                         _buildAdjustButton(
                           icon: Icons.local_fire_department,
                           label: "Choose Element Theme",
@@ -519,7 +519,127 @@ class _SettingsViewState extends State<SettingsView> {
                             );
                           },
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 16),
+
+                        // Cognitive Profile Selector
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "MOTIVATIONAL MINDSET PROFILE",
+                              style: GoogleFonts.exo2(
+                                fontSize: 10,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.02),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.white10),
+                              ),
+                              child: Row(
+                                children: [
+                                  CognitiveProfile.neurotypical,
+                                  CognitiveProfile.adhd,
+                                  CognitiveProfile.autistic,
+                                  CognitiveProfile.audhd
+                                ].map((cp) {
+                                  final isSelected = profile.cognitiveProfile == cp;
+                                  final text = cp == CognitiveProfile.neurotypical
+                                      ? "NT"
+                                      : (cp == CognitiveProfile.adhd ? "ADHD" : (cp == CognitiveProfile.autistic ? "Autism" : "AuDHD"));
+                                  return Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          profile.cognitiveProfile = cp;
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: isSelected ? themeColor : Colors.transparent,
+                                          foregroundColor: isSelected ? Colors.black : Colors.white,
+                                          padding: const EdgeInsets.symmetric(vertical: 8),
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          text,
+                                          style: GoogleFonts.orbitron(
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Notification Frequency Selector
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "NOTIFICATION FREQUENCY",
+                              style: GoogleFonts.exo2(
+                                fontSize: 10,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.02),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.white10),
+                              ),
+                              child: Row(
+                                children: ["Off", "Low", "Medium", "High"].map((freq) {
+                                  final isSelected = profile.notificationFrequency == freq;
+                                  return Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          profile.notificationFrequency = freq;
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: isSelected ? themeColor : Colors.transparent,
+                                          foregroundColor: isSelected ? Colors.black : Colors.white,
+                                          padding: const EdgeInsets.symmetric(vertical: 8),
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          freq,
+                                          style: GoogleFonts.orbitron(
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
 
                         // Re-Forge Character Sprite Button
                         _buildAdjustButton(
@@ -536,17 +656,6 @@ class _SettingsViewState extends State<SettingsView> {
                         ),
                         const SizedBox(height: 10),
 
-                        // Recalibrate Psychological Profile Button
-                        _buildAdjustButton(
-                          icon: Icons.psychology,
-                          label: "Recalibrate Psychological Profile",
-                          color: Colors.orange,
-                          onTap: () {
-                            profile.hasCompletedInitialQuiz = false;
-                            profile.cognitiveProfile = null;
-                          },
-                        ),
-                        const SizedBox(height: 10),
                         // Reset All Progress Button
                         _buildAdjustButton(
                           icon: Icons.delete_forever,

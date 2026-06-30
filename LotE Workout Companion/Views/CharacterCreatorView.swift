@@ -53,13 +53,13 @@ struct CharacterCreatorView: View {
                     VStack(spacing: 15) {
                         // Drawing grid canvas
                         VStack(spacing: 1) {
-                            ForEach(0..<16, id: \.self) { r in
+                            ForEach(pixelGrid.indices, id: \.self) { r in
                                 HStack(spacing: 1) {
-                                    ForEach(0..<16, id: \.self) { c in
+                                    ForEach(pixelGrid[r].indices, id: \.self) { c in
                                         let pixelVal = pixelGrid[r][c]
                                         Rectangle()
                                             .fill(colorForPixelValue(pixelVal))
-                                            .frame(width: 15, height: 15)
+                                            .frame(width: pixelGrid.count > 16 ? 6 : 15, height: pixelGrid.count > 16 ? 6 : 15)
                                             .overlay(
                                                 Rectangle()
                                                     .stroke(Color.white.opacity(0.05), lineWidth: 0.5)
@@ -266,188 +266,155 @@ struct CharacterCreatorView: View {
     }
     
     private func clearCanvas() {
-        pixelGrid = Array(repeating: Array(repeating: 0, count: 16), count: 16)
+        pixelGrid = Array(repeating: Array(repeating: 0, count: 50), count: 50)
     }
     
     // MARK: - Preset Compositor
     private func generateBaseFromPresets() {
-        var grid = Array(repeating: Array(repeating: 0, count: 16), count: 16)
+        var grid = Array(repeating: Array(repeating: 0, count: 50), count: 50)
         
-        // 1. Draw Aura (Value 5)
-        grid[1][3] = 5; grid[1][12] = 5
-        grid[3][1] = 5; grid[3][14] = 5
-        grid[5][2] = 5; grid[5][13] = 5
-        grid[7][1] = 5; grid[7][14] = 5
-        grid[9][2] = 5; grid[9][13] = 5
-        grid[11][1] = 5; grid[11][14] = 5
-        grid[13][3] = 5; grid[13][12] = 5
-        grid[14][4] = 5; grid[14][11] = 5
-        
-        // 2. Draw Legs/Feet (Value 4 or 1)
-        if planetPreset == "Warrion" {
-            grid[14][5] = 1; grid[14][10] = 1
-            grid[15][5] = 4; grid[15][10] = 4
-        } else if planetPreset == "Ninjonia" && sexPreset == "Female" {
-            for c in 4...11 {
-                grid[14][c] = 4
+        // 1. Draw Aura (Value 5) - glowing orbits and particle accents around the margins
+        for r in 0..<50 {
+            for c in 0..<50 {
+                let dx = Double(c - 25)
+                let dy = Double(r - 25)
+                let dist = sqrt(dx*dx + dy*dy)
+                if dist >= 21.0 && dist <= 23.5 {
+                    if (r + c) % 3 == 0 {
+                        grid[r][c] = 5
+                    }
+                }
             }
-            grid[15][6] = 1; grid[15][9] = 1
-        } else {
-            grid[14][5] = 4; grid[14][10] = 4
-            grid[15][5] = 4; grid[15][10] = 4
         }
         
-        // 3. Draw Body & Arms (Outfit = 4, Skin = 1)
-        switch planetPreset {
-        case "Ninjonia":
-            if sexPreset == "Female" {
-                grid[9][7] = 1; grid[9][8] = 1 // neck
-                grid[10][5] = 4; grid[10][6] = 4; grid[10][7] = 1; grid[10][8] = 1; grid[10][9] = 4; grid[10][10] = 4
-                for c in 5...10 { grid[11][c] = 4 }
-                for c in 4...11 { grid[12][c] = 4 }
-                for c in 3...12 { grid[13][c] = 4 }
-                for r in 10...12 {
-                    grid[r][3] = 1
-                    grid[r][12] = 1
-                }
-            } else {
-                grid[9][7] = 1; grid[9][8] = 1 // neck
-                grid[10][5] = 1; grid[10][6] = 1; grid[10][7] = 4; grid[10][8] = 4; grid[10][9] = 4; grid[10][10] = 4
-                grid[11][5] = 1; grid[11][6] = 4; grid[11][7] = 4; grid[11][8] = 4; grid[11][9] = 4; grid[11][10] = 4
-                for c in 5...10 {
-                    grid[12][c] = 4
-                    grid[13][c] = 4
-                }
-                for r in 10...12 {
-                    grid[r][3] = 1; grid[r][4] = 1
-                }
-                for r in 10...12 {
-                    grid[r][11] = 4; grid[r][12] = 4
-                }
-                grid[13][11] = 1; grid[13][12] = 1
-                grid[13][3] = 1; grid[13][4] = 1
+        // 2. Draw Legs / Feet (Value 4 or 1)
+        for r in 42...47 {
+            for c in 18...22 { grid[r][c] = 4 }
+            for c in 28...32 { grid[r][c] = 4 }
+        }
+        for c in 17...23 { grid[48][c] = 4; grid[49][c] = 4 }
+        for c in 27...33 { grid[48][c] = 4; grid[49][c] = 4 }
+        
+        // 3. Draw Body & Armor (Value 4 = Armor, Value 1 = Skin)
+        for r in 24...41 {
+            for c in 15...35 {
+                grid[r][c] = 4
             }
-            
-        case "Techno":
-            for r in 9...13 {
-                for c in 5...10 {
-                    grid[r][c] = 4
-                }
-            }
-            for r in 10...12 {
-                grid[r][3] = 4; grid[r][4] = 4
-                grid[r][11] = 4; grid[r][12] = 4
-            }
-            grid[13][3] = 1; grid[13][4] = 1
-            grid[13][11] = 1; grid[13][12] = 1
-            
-            grid[8][5] = 4; grid[8][10] = 4
-            grid[8][6] = 4; grid[8][7] = 4; grid[8][8] = 4; grid[8][9] = 4
-            
-        case "Warrion":
-            if sexPreset == "Female" {
-                grid[9][7] = 1; grid[9][8] = 1 // neck
-                for c in 5...10 { grid[10][c] = 4 } // fur top
-                for c in 5...10 { grid[11][c] = 1 } // bare midriff
-                for c in 5...10 { grid[12][c] = 4 } // belt
-                for c in 4...11 { grid[13][c] = 4 } // skirt
-            } else {
-                grid[9][7] = 1; grid[9][8] = 1 // neck
-                grid[10][5] = 1; grid[10][6] = 4; grid[10][7] = 1; grid[10][8] = 1; grid[10][9] = 4; grid[10][10] = 1 // straps
-                grid[11][5] = 1; grid[11][6] = 1; grid[11][7] = 4; grid[11][8] = 4; grid[11][9] = 1; grid[11][10] = 1
-                for c in 5...10 { grid[12][c] = 4 }
-                grid[13][5] = 1; grid[13][6] = 4; grid[13][7] = 4; grid[13][8] = 4; grid[13][9] = 4; grid[13][10] = 1
-            }
-            for r in 10...12 {
-                grid[r][3] = 1; grid[r][4] = 1
-                grid[r][11] = 1; grid[r][12] = 1
-            }
-            grid[13][3] = 1; grid[13][4] = 1; grid[13][11] = 1; grid[13][12] = 1
-            
-        case "Battacaria":
-            grid[9][7] = 4; grid[9][8] = 4
-            grid[9][4] = 4; grid[10][4] = 4 // left heavy pauldron
-            for r in 10...11 {
-                for c in 5...10 {
-                    grid[r][c] = 4
-                }
-            }
-            for c in 4...11 {
-                grid[12][c] = 4
-            }
-            for c in 4...11 {
-                grid[13][c] = 4
-            }
-            for r in 10...12 {
-                grid[r][3] = 4
-            }
-            grid[10][11] = 1; grid[10][12] = 1
-            grid[11][11] = 1; grid[11][12] = 1
-            grid[12][11] = 4; grid[12][12] = 4 // gauntlet
-            grid[13][3] = 4; grid[13][11] = 4; grid[13][12] = 4
-            
-        default:
-            for r in 9...13 {
-                for c in 5...10 {
-                    grid[r][c] = 4
-                }
-            }
-            for r in 10...12 {
-                grid[r][4] = 4; grid[r][11] = 4
-            }
-            grid[14][5] = 4; grid[14][10] = 4
         }
         
-        // 4. Draw Face/Skin (Value 1)
-        for r in 4...8 {
-            for c in 5...10 {
-                if grid[r][c] != 4 {
+        // Customize Torso by Planet Style
+        if planetPreset == "Ninjonia" {
+            for r in 24...25 {
+                for c in 23...27 {
                     grid[r][c] = 1
                 }
             }
-        }
-        if planetPreset == "Battacaria" {
-            grid[4][5] = 4; grid[4][10] = 4
-            grid[5][5] = 4; grid[5][6] = 4; grid[5][9] = 4; grid[5][10] = 4
+            for r in 21...23 {
+                for c in 18...32 {
+                    grid[r][c] = 4
+                }
+            }
+            for i in 0...10 {
+                grid[26 + i][18 + i] = 5
+                grid[26 + i][19 + i] = 5
+            }
+        } else if planetPreset == "Techno" {
+            for r in 28...32 {
+                for c in 22...28 {
+                    grid[r][c] = 5
+                }
+            }
+            for c in 15...19 { grid[24][c] = 5; grid[25][c] = 5 }
+            for c in 31...35 { grid[24][c] = 5; grid[25][c] = 5 }
+        } else if planetPreset == "Warrion" {
+            for r in 24...27 {
+                for c in 13...16 { grid[r][c] = 2 }
+                for c in 34...37 { grid[r][c] = 2 }
+            }
+            for r in 26...35 {
+                for c in 13...14 { grid[r][c] = 1 }
+                for c in 36...37 { grid[r][c] = 1 }
+            }
+        } else {
+            for r in 23...26 {
+                for c in 12...16 { grid[r][c] = 4 }
+                for c in 34...38 { grid[r][c] = 4 }
+            }
+            for r in 28...35 {
+                grid[r][25] = 5
+            }
         }
         
-        // 5. Draw Eyes (Value 3)
-        grid[6][6] = 3
-        grid[6][9] = 3
+        // 4. Draw Head / Face (Value 1 = Skin, Value 3 = Eyes)
+        for r in 12...23 {
+            for c in 18...32 {
+                grid[r][c] = 1
+            }
+        }
         
-        // 6. Draw Hair (Value 2)
+        // Visor/Mask variations on face
+        if planetPreset == "Techno" {
+            for r in 15...17 {
+                for c in 19...31 {
+                    grid[r][c] = 3
+                }
+            }
+        } else if planetPreset == "Battacaria" {
+            for r in 11...23 {
+                for c in 18...32 {
+                    grid[r][c] = 4
+                }
+            }
+            for r in 14...16 {
+                for c in 21...29 {
+                    grid[r][c] = 3
+                }
+            }
+        } else {
+            grid[15][21] = 3; grid[15][22] = 3
+            grid[16][21] = 3; grid[16][22] = 3
+            grid[15][28] = 3; grid[15][29] = 3
+            grid[16][28] = 3; grid[16][29] = 3
+        }
+        
+        // 5. Draw Hair (Value 2)
         switch hairStylePreset {
         case "Spiky":
-            for c in 5...10 { grid[3][c] = 2 }
-            grid[2][5] = 2; grid[2][7] = 2; grid[2][8] = 2; grid[2][10] = 2
-            grid[1][5] = 2; grid[1][10] = 2
-            grid[4][4] = 2; grid[4][11] = 2
-            grid[5][4] = 2; grid[5][11] = 2
+            for c in 17...33 { grid[11][c] = 2 }
+            for c in 16...34 { grid[10][c] = 2 }
+            for col in [17, 20, 23, 27, 30, 33] {
+                grid[9][col] = 2; grid[8][col] = 2
+            }
+            for r in 12...17 {
+                grid[r][17] = 2
+                grid[r][33] = 2
+            }
             
         case "Long":
-            for c in 5...10 { grid[3][c] = 2 }
-            for c in 4...11 { grid[4][c] = 2 }
-            grid[5][4] = 2; grid[5][11] = 2
-            grid[6][4] = 2; grid[6][11] = 2
-            grid[7][4] = 2; grid[7][11] = 2
-            grid[8][4] = 2; grid[8][11] = 2
-            grid[9][4] = 2; grid[9][11] = 2
-            grid[10][4] = 2; grid[10][11] = 2
+            for r in 7...11 {
+                for c in 16...34 { grid[r][c] = 2 }
+            }
+            for r in 12...28 {
+                for c in 15...17 { grid[r][c] = 2 }
+                for c in 33...35 { grid[r][c] = 2 }
+            }
             
         case "Short":
-            for c in 4...11 { grid[3][c] = 2 }
-            grid[4][4] = 2; grid[4][11] = 2
-            grid[5][4] = 2; grid[5][11] = 2
+            for r in 9...11 {
+                for c in 18...32 { grid[r][c] = 2 }
+            }
+            for r in 12...15 {
+                grid[r][17] = 2
+                grid[r][33] = 2
+            }
             
         case "Mohawk":
-            grid[1][7] = 2; grid[1][8] = 2
-            grid[2][7] = 2; grid[2][8] = 2
-            grid[3][7] = 2; grid[3][8] = 2
-            grid[4][7] = 2; grid[4][8] = 2
+            for r in 5...11 {
+                for c in 24...26 { grid[r][c] = 2 }
+            }
             
         default:
-            for c in 4...11 { grid[3][c] = 2 }
-            grid[2][5] = 2; grid[2][10] = 2
+            for c in 18...32 { grid[11][c] = 2 }
         }
         
         pixelGrid = grid

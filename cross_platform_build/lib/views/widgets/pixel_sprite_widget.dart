@@ -41,10 +41,10 @@ class PixelSpriteWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(16, (r) {
+      children: List.generate(grid.length, (r) {
         return Row(
           mainAxisSize: MainAxisSize.min,
-          children: List.generate(16, (c) {
+          children: List.generate(grid[r].length, (c) {
             final val = grid[r][c];
             return Container(
               width: pixelSize,

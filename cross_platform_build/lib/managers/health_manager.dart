@@ -25,6 +25,8 @@ class HealthManager extends ChangeNotifier {
     final List<HealthDataType> types = [
       HealthDataType.STEPS,
       HealthDataType.ACTIVE_ENERGY_BURNED,
+      HealthDataType.WORKOUT,
+      HealthDataType.APPLE_STAND_TIME,
     ];
 
     try {

@@ -44,6 +44,10 @@ class UserProfileManager extends ChangeNotifier {
   double _hips = 40.0;
   double _legs = 22.0;
 
+  String _notificationFrequency = 'Medium';
+  double _monthlyChallengeProgress = 0.0;
+  int _previousStreak = 0;
+
   double _stepsGoal = 10000.0;
   double _caloriesGoal = 400.0;
   double _activeMinutesGoal = 30.0;
@@ -107,9 +111,13 @@ class UserProfileManager extends ChangeNotifier {
   String get equippedBackground => _equippedBackground;
   String get equippedAccessory => _equippedAccessory;
 
+  String get notificationFrequency => _notificationFrequency;
+  double get monthlyChallengeProgress => _monthlyChallengeProgress;
+  int get previousStreak => _previousStreak;
+
   // Setters with save trigger
   set characterName(String val) { _characterName = val; _save(); notifyListeners(); }
-  set selectedElementIndex(int val) { _selectedElementIndex = val; _save(); regenerateDailyQuests(); notifyListeners(); }
+  set selectedElementIndex(int val) { _selectedElementIndex = _normalizedElementIndex(val); _save(); regenerateDailyQuests(); notifyListeners(); }
   set expressionStyle(ExpressionStyle val) { _expressionStyle = val; _save(); notifyListeners(); }
   set cognitiveProfile(CognitiveProfile? val) { _cognitiveProfile = val; _save(); notifyListeners(); }
   set stats(DNDStats val) { _stats = val; _save(); notifyListeners(); }
@@ -161,6 +169,26 @@ class UserProfileManager extends ChangeNotifier {
   set waist(double val) { _waist = val; _save(); notifyListeners(); }
   set hips(double val) { _hips = val; _save(); notifyListeners(); }
   set legs(double val) { _legs = val; _save(); notifyListeners(); }
+
+  set notificationFrequency(String val) {
+    _notificationFrequency = val;
+    _save();
+    _scheduleNotificationsMock();
+    notifyListeners();
+  }
+
+  set monthlyChallengeProgress(double val) {
+    _monthlyChallengeProgress = val;
+    _save();
+    _checkMonthlyChallengeBadge();
+    notifyListeners();
+  }
+
+  set previousStreak(int val) {
+    _previousStreak = val;
+    _save();
+    notifyListeners();
+  }
 
   // Available Elements Lore Database
   static const List<LotEElement> availableElements = [
@@ -355,8 +383,8 @@ class UserProfileManager extends ChangeNotifier {
       standardDetails: "Neurotoxins that slow down nervous impulses, inducing paralysis and peace.",
       corruptDetails: "Necrotoxins that rot physical flesh instantly on a cellular scale.",
       balancedDetails: "Synthesizing customized antidotes and complex combat serums.",
-      primaryColorHex: "#AA00FF",
-      accentColorHex: "#00E676",
+      primaryColorHex: "#00E676",
+      accentColorHex: "#AA00FF",
       planetOfOrigin: "Battacaria",
       inherentDark: true,
     ),
@@ -375,7 +403,11 @@ class UserProfileManager extends ChangeNotifier {
     )
   ];
 
-  LotEElement get currentElement => availableElements[_selectedElementIndex];
+  LotEElement get currentElement => availableElements[_normalizedElementIndex(_selectedElementIndex)];
+
+  static int _normalizedElementIndex(int index) {
+    return index.clamp(0, availableElements.length - 1).toInt();
+  }
 
   // Warrior Tier Calculation
   WarriorTier get currentTier {
@@ -398,7 +430,7 @@ class UserProfileManager extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       _characterName = prefs.getString('lote_char_name') ?? 'Recruit';
-      _selectedElementIndex = prefs.getInt('lote_selected_element_idx') ?? 0;
+      _selectedElementIndex = _normalizedElementIndex(prefs.getInt('lote_selected_element_idx') ?? 0);
 
       final savedStyle = prefs.getString('lote_expression_style') ?? ExpressionStyle.standard.name;
       _expressionStyle = ExpressionStyle.values.firstWhere(
@@ -555,6 +587,9 @@ class UserProfileManager extends ChangeNotifier {
       }
 
       _streak = prefs.getInt('lote_streak') ?? 0;
+      _notificationFrequency = prefs.getString('lote_notification_frequency') ?? 'Medium';
+      _monthlyChallengeProgress = prefs.getDouble('lote_monthly_challenge_progress') ?? 0.0;
+      _previousStreak = prefs.getInt('lote_previous_streak') ?? 0;
 
       final dateMs = prefs.getInt('lote_last_active_ms');
       if (dateMs != null) {
@@ -608,6 +643,9 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setBool('lote_has_quiz', _hasCompletedInitialQuiz);
       await prefs.setInt('lote_meals_today', _healthyMealsLoggedToday);
       await prefs.setString('lote_home_planet', _homePlanet);
+      await prefs.setString('lote_notification_frequency', _notificationFrequency);
+      await prefs.setDouble('lote_monthly_challenge_progress', _monthlyChallengeProgress);
+      await prefs.setInt('lote_previous_streak', _previousStreak);
       await prefs.setString('lote_logged_meals', jsonEncode(_loggedMeals.map((m) => m.toJson()).toList()));
       
       await prefs.setDouble('lote_body_height', _height);
@@ -928,6 +966,12 @@ class UserProfileManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteDetailedMeal(String id) {
+    _loggedMeals.removeWhere((m) => m.id == id);
+    _save();
+    notifyListeners();
+  }
+
   double get todaySugar {
     final now = DateTime.now();
     return _loggedMeals
@@ -1062,6 +1106,7 @@ class UserProfileManager extends ChangeNotifier {
         }
 
         if (diff > 1) {
+          _previousStreak = _streak;
           _streak = 0;
         }
         _lastActiveDate = now;
@@ -1084,6 +1129,7 @@ class UserProfileManager extends ChangeNotifier {
       if (diff == 1) {
         _streak += 1;
       } else if (diff > 1) {
+        _previousStreak = _streak;
         _streak = 1;
       } else if (_streak == 0) {
         _streak = 1;
@@ -1110,4 +1156,161 @@ class UserProfileManager extends ChangeNotifier {
     _save();
     notifyListeners();
   }
+
+  // MARK: - Streak Recovery
+  bool recoverStreak() {
+    if (_previousStreak > 0 && _crystals >= 100) {
+      _crystals -= 100;
+      _streak = _previousStreak + 1;
+      _previousStreak = 0;
+      _save();
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
+  // MARK: - Notification Manager
+  void _scheduleNotificationsMock() {
+    // Custom notifications would be scheduled using local notification APIs here
+  }
+
+  // MARK: - Monthly Challenges
+  MonthlyChallenge get activeMonthlyChallenge {
+    final month = DateTime.now().month;
+    switch (month) {
+      case 1:
+        return MonthlyChallenge(
+            monthName: "January",
+            targetDescription: "Do 1,000 Pushups",
+            targetMetric: "reps",
+            targetAmount: 1000.0,
+            currentAmount: _monthlyChallengeProgress);
+      case 2:
+        return MonthlyChallenge(
+            monthName: "February",
+            targetDescription: "Perform 300 minutes of Cardio",
+            targetMetric: "mins",
+            targetAmount: 300.0,
+            currentAmount: _monthlyChallengeProgress);
+      case 3:
+        return MonthlyChallenge(
+            monthName: "March",
+            targetDescription: "Perform 120 minutes of Yoga/Flexibility",
+            targetMetric: "mins",
+            targetAmount: 120.0,
+            currentAmount: _monthlyChallengeProgress);
+      case 4:
+        return MonthlyChallenge(
+            monthName: "April",
+            targetDescription: "Drink 90 Liters of water",
+            targetMetric: "Liters",
+            targetAmount: 90.0,
+            currentAmount: _monthlyChallengeProgress);
+      case 5:
+        return MonthlyChallenge(
+            monthName: "May",
+            targetDescription: "Walk 50 miles",
+            targetMetric: "miles",
+            targetAmount: 50.0,
+            currentAmount: _monthlyChallengeProgress);
+      case 6:
+        return MonthlyChallenge(
+            monthName: "June",
+            targetDescription: "Complete 20 Strength Forge workouts",
+            targetMetric: "workouts",
+            targetAmount: 20.0,
+            currentAmount: _monthlyChallengeProgress);
+      case 7:
+        return MonthlyChallenge(
+            monthName: "July",
+            targetDescription: "Perform 150 minutes of Meditation",
+            targetMetric: "mins",
+            targetAmount: 150.0,
+            currentAmount: _monthlyChallengeProgress);
+      case 8:
+        return MonthlyChallenge(
+            monthName: "August",
+            targetDescription: "Drink 100 Liters of water",
+            targetMetric: "Liters",
+            targetAmount: 100.0,
+            currentAmount: _monthlyChallengeProgress);
+      case 9:
+        return MonthlyChallenge(
+            monthName: "September",
+            targetDescription: "Log 250,000 steps",
+            targetMetric: "steps",
+            targetAmount: 250000.0,
+            currentAmount: _monthlyChallengeProgress);
+      case 10:
+        return MonthlyChallenge(
+            monthName: "October",
+            targetDescription: "Do 1,200 Squats",
+            targetMetric: "reps",
+            targetAmount: 1200.0,
+            currentAmount: _monthlyChallengeProgress);
+      case 11:
+        return MonthlyChallenge(
+            monthName: "November",
+            targetDescription: "Complete 15 Flexibility sessions",
+            targetMetric: "sessions",
+            targetAmount: 15.0,
+            currentAmount: _monthlyChallengeProgress);
+      default:
+        return MonthlyChallenge(
+            monthName: "December",
+            targetDescription: "Complete 40 Daily Quests",
+            targetMetric: "quests",
+            targetAmount: 40.0,
+            currentAmount: _monthlyChallengeProgress);
+    }
+  }
+
+  void advanceMonthlyChallenge(double amount) {
+    _monthlyChallengeProgress += amount;
+    _checkMonthlyChallengeBadge();
+    _save();
+    notifyListeners();
+  }
+
+  void _checkMonthlyChallengeBadge() {
+    final challenge = activeMonthlyChallenge;
+    if (challenge.currentAmount >= challenge.targetAmount) {
+      final Map<String, String> badgeMap = {
+        "January": "January Resolution Badge",
+        "February": "February Cardio Badge",
+        "March": "March Flexibility Badge",
+        "April": "April Hydration Badge",
+        "May": "May Walkabout Badge",
+        "June": "June Strength Badge",
+        "July": "July Zen Badge",
+        "August": "August Hydration Badge",
+        "September": "September Steps Badge",
+        "October": "October Squats Badge",
+        "November": "November Flexibility Badge",
+        "December": "December Quests Badge"
+      };
+      final specificBadge = badgeMap[challenge.monthName];
+      if (specificBadge != null && !_unlockedBadges.contains(specificBadge)) {
+        _unlockedBadges.add(specificBadge);
+        _crystals += 100; // Reward crystals
+      }
+    }
+  }
+}
+
+class MonthlyChallenge {
+  final String monthName;
+  final String targetDescription;
+  final String targetMetric;
+  final double targetAmount;
+  final double currentAmount;
+
+  MonthlyChallenge({
+    required this.monthName,
+    required this.targetDescription,
+    required this.targetMetric,
+    required this.targetAmount,
+    required this.currentAmount,
+  });
 }

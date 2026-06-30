@@ -93,7 +93,6 @@ struct CharacterStatsView: View {
                     Picker("Profile Stance", selection: $selectedTab) {
                         Text("Stats").tag("Stats")
                         Text("Badges").tag("Badges")
-                        Text("Shop").tag("Shop")
                     }
                     .pickerStyle(SegmentedPickerStyle())
                     .padding(.horizontal)
@@ -227,103 +226,6 @@ struct CharacterStatsView: View {
                             }
                             .padding(.horizontal)
                         }
-                    } else if selectedTab == "Shop" {
-                        // Shop Section
-                        VStack(alignment: .leading, spacing: 15) {
-                            HStack {
-                                Text("CRYSTALS SHOP")
-                                    .font(.custom("Orbitron-Bold", size: 13).bold())
-                                    .foregroundColor(.gray)
-                                    .tracking(2)
-                                Spacer()
-                                HStack(spacing: 5) {
-                                    Image(systemName: "sparkles")
-                                        .foregroundColor(.orange)
-                                    Text("\(profileManager.crystals) 💎")
-                                        .font(.custom("Orbitron-Bold", size: 14).bold())
-                                        .foregroundColor(.white)
-                                }
-                            }
-                            .padding(.horizontal)
-                            
-                            VStack(spacing: 12) {
-                                ForEach(ShopItem.availableItems) { item in
-                                    let isUnlocked = profileManager.unlockedShopItems.contains(item.name)
-                                    HStack(spacing: 15) {
-                                        Circle()
-                                            .fill(isUnlocked ? Color.green.opacity(0.1) : profileManager.currentElement.primaryColor.opacity(0.05))
-                                            .frame(width: 44, height: 44)
-                                            .overlay(
-                                                Image(systemName: iconForShopItemType(item.type))
-                                                    .foregroundColor(isUnlocked ? .green : profileManager.currentElement.primaryColor)
-                                            )
-                                        
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(item.name)
-                                                .font(.custom("Exo2-Bold", size: 14))
-                                                .foregroundColor(.white)
-                                            Text(item.description)
-                                                .font(.custom("Exo2-Regular", size: 11))
-                                                .foregroundColor(.gray)
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        if isUnlocked {
-                                            if item.type == "stat" || item.type == "badge" {
-                                                Text("UNLOCKED")
-                                                    .font(.custom("Orbitron-Bold", size: 10).bold())
-                                                    .foregroundColor(.green)
-                                                    .padding(.horizontal, 8)
-                                                    .padding(.vertical, 4)
-                                                    .background(Color.green.opacity(0.15))
-                                                    .cornerRadius(6)
-                                            } else {
-                                                let equipped = isEquipped(item)
-                                                Button(action: {
-                                                    profileManager.toggleEquipItem(item)
-                                                }) {
-                                                    Text(equipped ? "UNEQUIP" : "EQUIP")
-                                                        .font(.custom("Orbitron-Bold", size: 10).bold())
-                                                        .foregroundColor(equipped ? .orange : .green)
-                                                        .padding(.horizontal, 8)
-                                                        .padding(.vertical, 4)
-                                                        .background(equipped ? Color.orange.opacity(0.15) : Color.green.opacity(0.15))
-                                                        .cornerRadius(6)
-                                                }
-                                            }
-                                        } else {
-                                            Button(action: {
-                                                _ = profileManager.buyShopItem(item)
-                                            }) {
-                                                HStack(spacing: 4) {
-                                                    Text("\(item.cost)")
-                                                        .font(.custom("Orbitron-Bold", size: 11).bold())
-                                                    Image(systemName: "sparkles")
-                                                        .font(.system(size: 10))
-                                                }
-                                                .foregroundColor(.white)
-                                                .padding(.vertical, 6)
-                                                .padding(.horizontal, 12)
-                                                .background(
-                                                    RoundedRectangle(cornerRadius: 6)
-                                                        .fill(profileManager.crystals >= item.cost ? profileManager.currentElement.primaryColor : Color.gray)
-                                                )
-                                            }
-                                            .disabled(profileManager.crystals < item.cost)
-                                        }
-                                    }
-                                    .padding()
-                                    .background(Color.white.opacity(0.02))
-                                    .cornerRadius(12)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .stroke(isUnlocked ? Color.green.opacity(0.3) : Color.white.opacity(0.05), lineWidth: 1)
-                                    )
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
                     }
                 }
                 .padding(.bottom, 40)
@@ -385,20 +287,11 @@ struct CharacterStatsView: View {
         case "frame": return "square.and.pencil"
         case "title": return "person.text.rectangle"
         case "aura": return "sparkles"
+        case "background": return "photo"
+        case "accessory": return "shield.fill"
         case "stat": return "bolt.fill"
         case "badge": return "checkmark.seal.fill"
         default: return "cart.fill"
-        }
-    }
-    
-    private func isEquipped(_ item: ShopItem) -> Bool {
-        switch item.type {
-        case "frame": return profileManager.equippedFrame == item.name
-        case "title": return profileManager.equippedTitle == item.name
-        case "aura": return profileManager.equippedAura == item.name
-        case "background": return profileManager.equippedBackground == item.name
-        case "accessory": return profileManager.equippedAccessory == item.name
-        default: return false
         }
     }
 }

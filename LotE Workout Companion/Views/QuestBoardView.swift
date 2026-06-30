@@ -855,12 +855,46 @@ struct QuestBoardView: View {
                                     .font(.system(size: 9).bold())
                                     .foregroundColor(.gray)
                                 ForEach(workout.instructions, id: \.self) { inst in
-                                    HStack(alignment: .top, spacing: 4) {
-                                        Text("•")
-                                            .foregroundColor(profileManager.currentElement.primaryColor)
-                                        Text(inst)
-                                            .font(.custom("Exo2-Regular", size: 10))
-                                            .foregroundColor(.gray)
+                                    Group {
+                                        if inst.hasPrefix("TARGET MUSCLES:") {
+                                            HStack(alignment: .top, spacing: 6) {
+                                                Image(systemName: "figure.strengthtraining.functional")
+                                                    .font(.system(size: 9))
+                                                    .foregroundColor(.orange)
+                                                Text(inst)
+                                                    .font(.custom("Exo2-Bold", size: 10))
+                                                    .foregroundColor(.orange)
+                                            }
+                                            .padding(.vertical, 2)
+                                        } else if inst.hasPrefix("SETUP & WIDTH:") {
+                                            HStack(alignment: .top, spacing: 6) {
+                                                Image(systemName: "arrow.left.and.right")
+                                                    .font(.system(size: 9))
+                                                    .foregroundColor(.cyan)
+                                                Text(inst)
+                                                    .font(.custom("Exo2-Bold", size: 10))
+                                                    .foregroundColor(.cyan)
+                                            }
+                                            .padding(.vertical, 2)
+                                        } else if inst.hasPrefix("DIFFICULTY KEY:") {
+                                            HStack(alignment: .top, spacing: 6) {
+                                                Image(systemName: "gauge.medium")
+                                                    .font(.system(size: 9))
+                                                    .foregroundColor(.yellow)
+                                                Text(inst)
+                                                    .font(.custom("Exo2-Bold", size: 10))
+                                                    .foregroundColor(.yellow)
+                                            }
+                                            .padding(.vertical, 2)
+                                        } else {
+                                            HStack(alignment: .top, spacing: 4) {
+                                                Text("•")
+                                                    .foregroundColor(profileManager.currentElement.primaryColor)
+                                                Text(inst)
+                                                    .font(.custom("Exo2-Regular", size: 10))
+                                                    .foregroundColor(.gray)
+                                            }
+                                        }
                                     }
                                 }
                             }

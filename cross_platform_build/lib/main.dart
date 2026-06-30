@@ -5,8 +5,10 @@ import 'managers/health_manager.dart';
 import 'views/psych_evaluation_view.dart';
 import 'views/dashboard_view.dart';
 import 'views/quest_board_view.dart';
+import 'views/nutrition_view.dart';
 import 'views/character_stats_view.dart';
 import 'views/settings_view.dart';
+import 'views/shop_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,13 +29,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Legends of the Elsaither Workout Companion',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF050505),
-        primaryColor: const Color(0xFFFF1616),
-      ),
+      title: 'LotE Workout Companion',
+      theme: ThemeData.dark(),
       home: const MainHomeWrapper(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -51,7 +50,9 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
   final List<Widget> _views = const [
     DashboardView(),
     QuestBoardView(),
+    NutritionView(),
     CharacterStatsView(),
+    ShopView(),
     SettingsView(),
   ];
 
@@ -82,8 +83,8 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: accentColor,
         unselectedItemColor: Colors.grey,
-        selectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        unselectedLabelStyle: const TextStyle(fontSize: 10),
+        selectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+        unselectedLabelStyle: const TextStyle(fontSize: 9),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.terminal),
@@ -94,8 +95,16 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
             label: "Quests",
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.restaurant),
+            label: "Feast Log",
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.badge),
             label: "Warrior Sheet",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_cart),
+            label: "Armory",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.tune),

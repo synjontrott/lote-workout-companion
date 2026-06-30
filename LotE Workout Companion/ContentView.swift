@@ -44,7 +44,17 @@ struct ContentView: View {
                         Label("Quests", systemImage: "shield.fill")
                     }
                     
-                    // TAB 3: D&D Character Sheets
+                    // TAB 3: Feast Log (Nutrition)
+                    NavigationView {
+                        NutritionView(profileManager: profileManager)
+                            .navigationBarHidden(true)
+                    }
+                    .navigationViewStyle(StackNavigationViewStyle())
+                    .tabItem {
+                        Label("Feast Log", systemImage: "leaf.fill")
+                    }
+                    
+                    // TAB 4: D&D Character Sheets
                     NavigationView {
                         CharacterStatsView(profileManager: profileManager)
                             .navigationBarHidden(true)
@@ -54,7 +64,17 @@ struct ContentView: View {
                         Label("Warrior Sheet", systemImage: "person.text.rectangle.fill")
                     }
                     
-                    // TAB 4: Systems Settings & Simulator
+                    // TAB 4: Armory Shop
+                    NavigationView {
+                        ShopView(profileManager: profileManager)
+                            .navigationBarHidden(true)
+                    }
+                    .navigationViewStyle(StackNavigationViewStyle())
+                    .tabItem {
+                        Label("Armory", systemImage: "cart.fill")
+                    }
+                    
+                    // TAB 5: Systems Settings & Simulator
                     NavigationView {
                         SettingsView(profileManager: profileManager, healthManager: healthManager)
                             .navigationBarHidden(true)

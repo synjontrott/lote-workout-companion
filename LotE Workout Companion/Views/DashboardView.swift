@@ -52,6 +52,7 @@ struct DashboardView: View {
                     energyActivityGauges
                     sugarTrackerCard
                     targetGoalProgressView
+                    monthlyChallengeCard
                     psychAdaptiveSection
                 }
             }
@@ -112,7 +113,7 @@ struct DashboardView: View {
                     eye: eyeColor,
                     outfit: outfitColor,
                     aura: auraColor,
-                    pixelSize: 4.5
+                    pixelSize: 1.6
                 )
                 .offset(y: spriteBobbingOffset)
                 
@@ -197,6 +198,23 @@ struct DashboardView: View {
                     Label("\(profileManager.crystals) 💎", systemImage: "sparkles")
                         .font(.system(size: 10).bold())
                         .foregroundColor(.orange)
+                }
+                
+                if profileManager.previousStreak > 0 && profileManager.streak == 0 {
+                    Button(action: {
+                        let _ = profileManager.recoverStreak()
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.clockwise.circle.fill")
+                            Text("Recover \(profileManager.previousStreak) Day Streak (100 💎)")
+                                .font(.system(size: 9).bold())
+                        }
+                        .foregroundColor(.orange)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
+                        .background(Color.orange.opacity(0.12))
+                        .cornerRadius(6)
+                    }
                 }
                 
                 if profileManager.equippedAccessory != "None" {
@@ -442,6 +460,81 @@ struct DashboardView: View {
             )
             .padding(.horizontal)
         }
+    }
+    
+    @ViewBuilder
+    private var monthlyChallengeCard: some View {
+        let challenge = profileManager.activeMonthlyChallenge
+        let themeColor = profileManager.currentElement.primaryColor
+        let progressPercent = challenge.targetAmount > 0 ? min(challenge.currentAmount / challenge.targetAmount, 1.0) : 0.0
+        
+        VStack(alignment: .leading, spacing: 14) {
+            HStack {
+                Text("MONTHLY CHALLENGE: \(challenge.monthName.uppercased())")
+                    .font(.custom("Orbitron-Bold", size: 12).bold())
+                    .foregroundColor(themeColor)
+                    .tracking(2)
+                Spacer()
+                Text("🏆 Badge Reward")
+                    .font(.custom("Orbitron-Bold", size: 10))
+                    .foregroundColor(.orange)
+            }
+            
+            Text(challenge.targetDescription)
+                .font(.custom("Exo2-Bold", size: 14))
+                .foregroundColor(.white)
+            
+            VStack(spacing: 6) {
+                HStack {
+                    Text("\(Int(challenge.currentAmount)) / \(Int(challenge.targetAmount)) \(challenge.targetMetric)")
+                        .font(.custom("Exo2-Medium", size: 11))
+                        .foregroundColor(.gray)
+                    Spacer()
+                    Text("\(Int(progressPercent * 100))%")
+                        .font(.custom("Orbitron-Bold", size: 11).bold())
+                        .foregroundColor(.white)
+                }
+                
+                // Custom progress bar
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(Color.white.opacity(0.06))
+                        RoundedRectangle(cornerRadius: 4)
+                            .fill(LinearGradient(colors: [themeColor, themeColor.opacity(0.6)], startPoint: .leading, endPoint: .trailing))
+                            .frame(width: geo.size.width * CGFloat(progressPercent))
+                    }
+                }
+                .frame(height: 8)
+            }
+            
+            // Advance progress manual helper
+            HStack {
+                Text("Auto-advances via quests, or manually log reps/miles:")
+                    .font(.system(size: 9))
+                    .foregroundColor(.gray)
+                Spacer()
+                Button(action: {
+                    profileManager.advanceMonthlyChallenge(amount: challenge.targetMetric == "reps" ? 50 : (challenge.targetMetric == "Liters" ? 3 : 1))
+                }) {
+                    Text("+ Log Progress")
+                        .font(.system(size: 9).bold())
+                        .foregroundColor(themeColor)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
+                        .background(themeColor.opacity(0.12))
+                        .cornerRadius(4)
+                }
+            }
+        }
+        .padding(16)
+        .background(Color.white.opacity(0.02))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(themeColor.opacity(0.15), lineWidth: 1)
+        )
+        .padding(.horizontal)
     }
     
     @ViewBuilder
@@ -1123,9 +1216,9 @@ struct PixelSpriteView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(0..<16, id: \.self) { r in
+            ForEach(grid.indices, id: \.self) { r in
                 HStack(spacing: 0) {
-                    ForEach(0..<16, id: \.self) { c in
+                    ForEach(grid[r].indices, id: \.self) { c in
                         let val = grid[r][c]
                         Rectangle()
                             .fill(colorForValue(val))

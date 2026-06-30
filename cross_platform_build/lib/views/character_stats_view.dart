@@ -160,7 +160,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
-                        children: ["Stats", "Badges", "Shop"].map((tab) {
+                        children: ["Stats", "Badges"].map((tab) {
                           final isSelected = _selectedTab == tab;
                           return Expanded(
                             child: Padding(
@@ -325,8 +325,6 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                       ),
                     ] else if (_selectedTab == "Badges") ...[
                       _buildBadgesSection(profile, themeColor),
-                    ] else if (_selectedTab == "Shop") ...[
-                      _buildShopSection(profile, themeColor),
                     ],
                   ],
                 ),
@@ -336,189 +334,6 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
         ),
       );
     }
-
-  Widget _buildShopSection(UserProfileManager profile, Color themeColor) {
-    final shopItems = ShopItem.availableItems;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "CRYSTALS SHOP",
-                style: GoogleFonts.orbitron(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
-                  letterSpacing: 2,
-                ),
-              ),
-              Row(
-                children: [
-                  const Icon(Icons.auto_awesome, color: Colors.orange, size: 16),
-                  const SizedBox(width: 4),
-                  Text(
-                    "${profile.crystals} 💎",
-                    style: GoogleFonts.orbitron(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-        const SizedBox(height: 14),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: shopItems.map((item) {
-              final isUnlocked = profile.unlockedShopItems.contains(item.name);
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.02),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isUnlocked ? Colors.green.withOpacity(0.3) : Colors.white.withOpacity(0.05),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isUnlocked ? Colors.green.withOpacity(0.1) : themeColor.withOpacity(0.05),
-                        ),
-                        child: Icon(
-                          _iconForShopItemType(item.type),
-                          color: isUnlocked ? Colors.green : themeColor,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.name,
-                              style: GoogleFonts.exo2(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              item.description,
-                              style: GoogleFonts.exo2(
-                                fontSize: 11,
-                                color: Colors.grey,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      if (isUnlocked)
-                        Builder(
-                          builder: (context) {
-                            if (item.type == "stat" || item.type == "badge") {
-                              return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.green.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  "UNLOCKED",
-                                  style: GoogleFonts.orbitron(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              final equipped = _isEquipped(profile, item);
-                              return ElevatedButton(
-                                onPressed: () {
-                                  profile.toggleEquipItem(item);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: equipped ? Colors.orange.withOpacity(0.15) : Colors.green.withOpacity(0.15),
-                                  shadowColor: Colors.transparent,
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                ),
-                                child: Text(
-                                  equipped ? "UNEQUIP" : "EQUIP",
-                                  style: GoogleFonts.orbitron(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: equipped ? Colors.orange : Colors.green,
-                                  ),
-                                ),
-                              );
-                            }
-                          }
-                        )
-                      else
-                        ElevatedButton(
-                          onPressed: profile.crystals >= item.cost
-                              ? () => profile.buyShopItem(item)
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: themeColor,
-                            disabledBackgroundColor: Colors.grey,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "${item.cost}",
-                                style: GoogleFonts.orbitron(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(width: 2),
-                              const Icon(Icons.auto_awesome, size: 10, color: Colors.white),
-                            ],
-                          ),
-                        )
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        )
-      ],
-    );
-  }
 
   Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {
     final badges = FitnessBadge.allBadges;
@@ -638,17 +453,6 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
     );
   }
 
-  IconData _iconForShopItemType(String type) {
-    switch (type) {
-      case "frame": return Icons.border_outer;
-      case "title": return Icons.badge;
-      case "aura": return Icons.bubble_chart;
-      case "stat": return Icons.bolt;
-      case "badge": return Icons.verified;
-      default: return Icons.shopping_cart;
-    }
-  }
-
   IconData _iconForBadge(String iconName) {
     switch (iconName) {
       case "walk": return Icons.directions_walk;
@@ -747,14 +551,5 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
     );
   }
 
-  bool _isEquipped(UserProfileManager profile, ShopItem item) {
-    switch (item.type) {
-      case "frame": return profile.equippedFrame == item.name;
-      case "title": return profile.equippedTitle == item.name;
-      case "aura": return profile.equippedAura == item.name;
-      case "background": return profile.equippedBackground == item.name;
-      case "accessory": return profile.equippedAccessory == item.name;
-      default: return false;
-    }
-  }
+
 }

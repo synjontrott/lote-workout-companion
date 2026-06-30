@@ -136,8 +136,10 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     final eye = profile.currentElement.primaryColor;
     final aura = profile.currentElement.accentColor;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF050505),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF050505),
       body: Stack(
         children: [
           // Background elemental theme glow
@@ -230,7 +232,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                       eyeColor: eye,
                                       outfitColor: outfit,
                                       auraColor: aura,
-                                      pixelSize: 4.0,
+                                      pixelSize: 1.6,
                                     ),
                                   );
                                 },
@@ -391,6 +393,37 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                     ),
                                   ],
                                 ),
+                                 if (profile.previousStreak > 0 && profile.streak == 0) ...[
+                                   const SizedBox(height: 6),
+                                   InkWell(
+                                     onTap: () {
+                                       profile.recoverStreak();
+                                     },
+                                     borderRadius: BorderRadius.circular(6),
+                                     child: Container(
+                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                       decoration: BoxDecoration(
+                                         color: Colors.orange.withOpacity(0.12),
+                                         borderRadius: BorderRadius.circular(6),
+                                       ),
+                                       child: Row(
+                                         mainAxisSize: MainAxisSize.min,
+                                         children: [
+                                           const Icon(Icons.refresh, color: Colors.orange, size: 10),
+                                           const SizedBox(width: 4),
+                                           Text(
+                                             "Recover ${profile.previousStreak} Day Streak (100 💎)",
+                                             style: GoogleFonts.orbitron(
+                                               fontSize: 8,
+                                               fontWeight: FontWeight.bold,
+                                               color: Colors.orange,
+                                             ),
+                                           ),
+                                         ],
+                                       ),
+                                     ),
+                                   ),
+                                 ],
                                 if (profile.equippedAccessory != "None") ...[
                                   const SizedBox(height: 6),
                                   Text(
@@ -1004,6 +1037,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                       ),
                     ),
                   ),
+                  _buildMonthlyChallengeCard(profile),
                   const SizedBox(height: 24),
 
                   // MARK: - Psych-Adaptive Section
@@ -1029,7 +1063,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
             _buildMeasurementLogModal(profile),
         ],
       ),
-    );
+    ),);
   }
 
   Widget _buildMeasurementLogModal(UserProfileManager profile) {
@@ -1857,6 +1891,124 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
           ),
         );
       }
+    );
+  }
+  Widget _buildMonthlyChallengeCard(UserProfileManager profile) {
+    final challenge = profile.activeMonthlyChallenge;
+    final themeColor = profile.currentElement.primaryColor;
+    final progressPercent = challenge.targetAmount > 0
+        ? (challenge.currentAmount / challenge.targetAmount).clamp(0.0, 1.0)
+        : 0.0;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.02),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: themeColor.withOpacity(0.15),
+            width: 1,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "MONTHLY CHALLENGE: ${challenge.monthName.toUpperCase()}",
+                  style: GoogleFonts.orbitron(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: themeColor,
+                    letterSpacing: 2,
+                  ),
+                ),
+                const Text(
+                  "🏆 Badge Reward",
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.orange,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              challenge.targetDescription,
+              style: GoogleFonts.exo2(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "${challenge.currentAmount.toInt()} / ${challenge.targetAmount.toInt()} ${challenge.targetMetric}",
+                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                ),
+                Text(
+                  "${(progressPercent * 100).toInt()}%",
+                  style: GoogleFonts.orbitron(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progressPercent,
+                minHeight: 6,
+                backgroundColor: Colors.white.withOpacity(0.06),
+                valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    "Auto-advances via quests, or manually log reps/miles:",
+                    style: TextStyle(fontSize: 8, color: Colors.grey),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    profile.advanceMonthlyChallenge(
+                      challenge.targetMetric == "reps" ? 50.0 : (challenge.targetMetric == "Liters" ? 3.0 : 1.0),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: themeColor.withOpacity(0.12),
+                    foregroundColor: themeColor,
+                    shadowColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    minimumSize: Size.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  child: const Text(
+                    "+ Log Progress",
+                    style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

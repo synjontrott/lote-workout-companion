@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -228,8 +227,10 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
   Widget build(BuildContext context) {
     final profile = Provider.of<UserProfileManager>(context);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF050505),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF050505),
       body: Stack(
         children: [
           // Scrollable board contents
@@ -583,7 +584,7 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
             _buildMealLogOverlay(profile),
         ],
       ),
-    );
+    ),);
   }
 
   Widget _buildDopamineQuickMenu(UserProfileManager profile) {
@@ -1820,21 +1821,76 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                             style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey),
                           ),
                           const SizedBox(height: 4),
-                          ...workout.instructions.map((inst) => Padding(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("• ", style: TextStyle(color: profile.currentElement.primaryColor)),
-                                Expanded(
-                                  child: Text(
-                                    inst,
-                                    style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey),
-                                  ),
+                          ...workout.instructions.map((inst) {
+                            if (inst.startsWith("TARGET MUSCLES:")) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.fitness_center, size: 10, color: Colors.orange),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: Text(
+                                        inst,
+                                        style: GoogleFonts.exo2(fontSize: 10, color: Colors.orange, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          )),
+                              );
+                            } else if (inst.startsWith("SETUP & WIDTH:")) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.straighten, size: 10, color: Colors.cyan),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: Text(
+                                        inst,
+                                        style: GoogleFonts.exo2(fontSize: 10, color: Colors.cyan, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else if (inst.startsWith("DIFFICULTY KEY:")) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.speed, size: 10, color: Colors.yellow),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: Text(
+                                        inst,
+                                        style: GoogleFonts.exo2(fontSize: 10, color: Colors.yellow, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 2),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("• ", style: TextStyle(color: profile.currentElement.primaryColor)),
+                                    Expanded(
+                                      child: Text(
+                                        inst,
+                                        style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          }),
                           const SizedBox(height: 14),
                           SizedBox(
                             width: double.infinity,
