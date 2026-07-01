@@ -34,9 +34,8 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
   String _tailAge = "30";
   String _tailWeight = "170";
   String _tailEquipment = "Bodyweight Only";
-  String _tailSpace = "Small Room";
   String _tailDifficulty = "Medium";
-  WorkoutCategory _tailCategory = WorkoutCategory.strength;
+  MuscleGroup _tailMuscleGroup = MuscleGroup.chest;
 
   // Dice/animation controller (stub, unused now but kept for compatibility)
   late AnimationController _spinController;
@@ -1481,13 +1480,12 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
   }
 
   Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {
-    // Filter workouts from SuggestedWorkout.allWorkouts
     final filtered = SuggestedWorkout.allWorkouts.where((w) {
-      final isCategoryMatch = w.category == _tailCategory;
+      final isMuscleGroupMatch = w.muscleGroup == _tailMuscleGroup;
       final isDifficultyMatch = w.difficulty.toLowerCase() == _tailDifficulty.toLowerCase();
-      final isEquipmentMatch = _tailEquipment == "Full Gym" || w.equipment.toLowerCase().contains(_tailEquipment.toLowerCase());
-      final isSpaceMatch = _tailSpace == "Outdoors" || w.space.toLowerCase().contains(_tailSpace.toLowerCase());
-      return isCategoryMatch && isDifficultyMatch && isEquipmentMatch && isSpaceMatch;
+      final isEquipmentMatch = _tailEquipment == "Full Gym" || 
+          w.equipment.toLowerCase().replaceAll('-', '').contains(_tailEquipment.toLowerCase().replaceAll('-', ''));
+      return isMuscleGroupMatch && isDifficultyMatch && isEquipmentMatch;
     }).toList();
 
     return Padding(
@@ -1645,35 +1643,6 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                               ],
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text("SPACE", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
-                                const SizedBox(height: 4),
-                                Theme(
-                                  data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
-                                  child: DropdownButtonFormField<String>(
-                                    value: _tailSpace,
-                                    isDense: true,
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: Colors.white.withOpacity(0.04),
-                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
-                                    ),
-                                    style: const TextStyle(color: Colors.white, fontSize: 11),
-                                    items: ["Small Room", "Large Space", "Outdoors"]
-                                        .map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-                                    onChanged: (val) {
-                                      if (val != null) setState(() { _tailSpace = val; });
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -1712,12 +1681,12 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("WORKOUT TYPE", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                const Text("MUSCLE GROUP", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
                                 const SizedBox(height: 4),
                                 Theme(
                                   data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
-                                  child: DropdownButtonFormField<WorkoutCategory>(
-                                    value: _tailCategory,
+                                  child: DropdownButtonFormField<MuscleGroup>(
+                                    value: _tailMuscleGroup,
                                     isDense: true,
                                     decoration: InputDecoration(
                                       filled: true,
@@ -1726,10 +1695,10 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
                                     ),
                                     style: const TextStyle(color: Colors.white, fontSize: 11),
-                                    items: WorkoutCategory.values
-                                        .map((c) => DropdownMenuItem(value: c, child: Text(c.name[0].toUpperCase() + c.name.substring(1)))).toList(),
+                                    items: MuscleGroup.values
+                                        .map((mg) => DropdownMenuItem(value: mg, child: Text(mg.displayName))).toList(),
                                     onChanged: (val) {
-                                      if (val != null) setState(() { _tailCategory = val; });
+                                      if (val != null) setState(() { _tailMuscleGroup = val; });
                                     },
                                   ),
                                 ),
@@ -1745,7 +1714,7 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
 
                 // Workouts list
                 ...(filtered.isEmpty
-                        ? [_generateDynamicSuggestedWorkout(_tailCategory, _tailDifficulty, _tailEquipment, _tailSpace)]
+                        ? [_generateDynamicSuggestedWorkout(_tailMuscleGroup, _tailDifficulty, _tailEquipment)]
                         : filtered)
                     .map((workout) {
                     final tailored = _tailorWorkout(workout);
@@ -1896,13 +1865,55 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {
-                                profile.addXP(20);
-                                profile.earnCrystals(10);
-                                profile.logWorkout(workout.category);
-                                _showOutcomeDialog(
-                                  title: "WORKOUT CONQUERED! 💪",
-                                  message: "Workout complete! You conquered ${workout.name} and gained +20 XP, +10 Crystals, and forged your character attributes.",
-                                  themeColor: profile.currentElement.primaryColor,
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      backgroundColor: const Color(0xFF0F0F0F),
+                                      title: Text(
+                                        "COMPLETE WORKOUT?",
+                                        style: GoogleFonts.orbitron(
+                                          color: profile.currentElement.primaryColor,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      content: Text(
+                                        "Are you sure you have completed '${workout.name}'? This will reward you with +20 XP, +10 Crystals, and advance your goals.",
+                                        style: const TextStyle(
+                                          color: Colors.white70,
+                                          fontFamily: "Exo2",
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context).pop(),
+                                          child: const Text("CANCEL", style: TextStyle(color: Colors.grey)),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            profile.addXP(20);
+                                            profile.earnCrystals(10);
+                                            profile.logWorkout(workout.category);
+                                            _showOutcomeDialog(
+                                              title: "WORKOUT CONQUERED! 💪",
+                                              message: "Workout complete! You conquered ${workout.name} and gained +20 XP, +10 Crystals, and forged your character attributes.",
+                                              themeColor: profile.currentElement.primaryColor,
+                                            );
+                                          },
+                                          child: Text(
+                                            "YES, LOG IT",
+                                            style: TextStyle(
+                                              color: profile.currentElement.primaryColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -1975,83 +1986,24 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
     return (sets: finalSets, reps: finalReps);
   }
 
-  SuggestedWorkout _generateDynamicSuggestedWorkout(WorkoutCategory category, String difficulty, String equipment, String space) {
-    String name;
-    String description;
-    List<String> instructions;
-    String reps;
-    int sets;
-
-    switch (category) {
-      case WorkoutCategory.cardio:
-        name = "$difficulty Tailored Cardio Cruise";
-        description = "A dynamic cardio routine using $equipment in a $space.";
-        instructions = [
-          "Warm up with light movements for 3 minutes.",
-          "Execute cardiovascular intervals focusing on steady pacing.",
-          "Utilize $equipment to increase intensity.",
-          "Cool down with deep breathing."
-        ];
-        reps = difficulty == "Easy" ? "15 mins" : difficulty == "Medium" ? "30 mins" : "45 mins";
-        sets = difficulty == "Easy" ? 1 : difficulty == "Medium" ? 2 : 3;
-        break;
-      case WorkoutCategory.strength:
-        name = "$difficulty Custom Strength Builder";
-        description = "Target multiple muscle groups using $equipment.";
-        instructions = [
-          "Perform dynamic warm up.",
-          "Perform compound sets focusing on slow controlled movement.",
-          "Adjust weight or resistance based on $equipment.",
-          "Rest 90 seconds between sets."
-        ];
-        reps = difficulty == "Easy" ? "8-10 reps" : difficulty == "Medium" ? "10-12 reps" : "12-15 reps";
-        sets = difficulty == "Easy" ? 3 : difficulty == "Medium" ? 4 : 5;
-        break;
-      case WorkoutCategory.flexibility:
-        name = "$difficulty Flow & Mobility";
-        description = "Improve range of motion and joint stability in your $space.";
-        instructions = [
-          "Adopt deep breathing cadence.",
-          "Hold active stretches for 30 seconds each.",
-          "Focus on hip and shoulder mobility using $equipment.",
-          "End with full body relaxation."
-        ];
-        reps = "30 secs holds";
-        sets = difficulty == "Easy" ? 2 : difficulty == "Medium" ? 3 : 4;
-        break;
-      case WorkoutCategory.nutrition:
-        name = "$difficulty Clean Fuel Preparation";
-        description = "Tailored nutritional routine to optimize muscle recovery.";
-        instructions = [
-          "Prepare a whole-food meal emphasizing lean protein.",
-          "Incorporate green vegetables and complex carbohydrates.",
-          "Limit sugar intake to under 30g daily.",
-          "Hydrate with electrolyte mineral water."
-        ];
-        reps = "1 healthy meal";
-        sets = 1;
-        break;
-      case WorkoutCategory.meditation:
-        name = "$difficulty Oracle Mind Focus";
-        description = "Quiet the mind and sharpen cognitive focus.";
-        instructions = [
-          "Sit in a comfortable position in your $space.",
-          "Focus on the breath, letting thoughts pass without judgment.",
-          "Extend breath count to 5 seconds inhale, 5 seconds exhale.",
-          "Visualize achieving your weekly workout campaign goals."
-        ];
-        reps = difficulty == "Easy" ? "5 mins" : difficulty == "Medium" ? "10 mins" : "20 mins";
-        sets = 1;
-        break;
-    }
+  SuggestedWorkout _generateDynamicSuggestedWorkout(MuscleGroup muscleGroup, String difficulty, String equipment) {
+    String name = "$difficulty Custom ${muscleGroup.displayName} Builder";
+    String description = "Target the ${muscleGroup.displayName} using $equipment.";
+    List<String> instructions = [
+      "Perform dynamic warm up.",
+      "Perform compound sets targeting ${muscleGroup.displayName}.",
+      "Adjust weight or resistance based on $equipment.",
+      "Rest 60-90 seconds between sets."
+    ];
+    String reps = difficulty == "Easy" ? "8-10 reps" : difficulty == "Medium" ? "10-12 reps" : "12-15 reps";
+    int sets = difficulty == "Easy" ? 3 : difficulty == "Medium" ? 4 : 5;
 
     return SuggestedWorkout(
-      id: "dynamic_${category.name.toLowerCase()}_${difficulty.toLowerCase()}",
+      id: "dynamic_${muscleGroup.name}_${difficulty.toLowerCase()}",
       name: name,
-      category: category,
+      muscleGroup: muscleGroup,
       difficulty: difficulty,
       equipment: equipment,
-      space: space,
       description: description,
       instructions: instructions,
       sets: sets,

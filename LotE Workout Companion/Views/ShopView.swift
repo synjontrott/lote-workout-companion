@@ -3,6 +3,8 @@ import SwiftUI
 struct ShopView: View {
     @ObservedObject var profileManager: UserProfileManager
     @State private var selectedCategory: String = "Name Plates"
+    @State private var itemToConfirm: ShopItem? = nil
+    @State private var showingPurchaseConfirmation = false
     
     let categories = ["Name Plates", "Auras", "Backgrounds", "Legendary Items", "Stats & More"]
     
@@ -183,7 +185,8 @@ struct ShopView: View {
                                     }
                                 } else {
                                     Button(action: {
-                                        _ = profileManager.buyShopItem(item)
+                                        itemToConfirm = item
+                                        showingPurchaseConfirmation = true
                                     }) {
                                         HStack(spacing: 4) {
                                             Text("\(item.cost)")
@@ -219,6 +222,107 @@ struct ShopView: View {
                     }
                     .padding(.vertical, 8)
                 }
+            }
+            
+            // Purchase confirmation overlay dialog
+            if showingPurchaseConfirmation, let item = itemToConfirm {
+                Color.black.opacity(0.85)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        showingPurchaseConfirmation = false
+                    }
+                
+                VStack(spacing: 20) {
+                    Text("CONFIRM ACQUISITION")
+                        .font(.custom("Orbitron-Bold", size: 15).bold())
+                        .foregroundColor(.white)
+                        .tracking(2)
+                    
+                    ItemPixelSpriteView(
+                        name: item.name,
+                        type: item.type,
+                        elementColor: profileManager.currentElement.primaryColor
+                    )
+                    .frame(width: 72, height: 72)
+                    .background(Color.white.opacity(0.04))
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(profileManager.currentElement.primaryColor.opacity(0.3), lineWidth: 1))
+                    
+                    VStack(spacing: 6) {
+                        Text(item.name)
+                            .font(.custom("Exo2-Bold", size: 16))
+                            .foregroundColor(.white)
+                        
+                        Text(item.type.uppercased())
+                            .font(.custom("Orbitron-Bold", size: 8).bold())
+                            .foregroundColor(profileManager.currentElement.primaryColor)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(profileManager.currentElement.primaryColor.opacity(0.12))
+                            .cornerRadius(4)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("EXPANDED DESCRIPTION:")
+                            .font(.custom("Orbitron-Bold", size: 9))
+                            .foregroundColor(.gray)
+                        Text(item.description)
+                            .font(.custom("Exo2-Regular", size: 12))
+                            .foregroundColor(.white)
+                            .lineLimit(nil)
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding(14)
+                    .background(Color.white.opacity(0.03))
+                    .cornerRadius(10)
+                    
+                    HStack(spacing: 6) {
+                        Text("Exchange rate:")
+                            .font(.custom("Exo2-Medium", size: 13))
+                            .foregroundColor(.gray)
+                        Text("\(item.cost)")
+                            .font(.custom("Orbitron-Bold", size: 14).bold())
+                            .foregroundColor(.white)
+                        Text("💎")
+                            .font(.system(size: 13))
+                    }
+                    
+                    VStack(spacing: 8) {
+                        Button(action: {
+                            _ = profileManager.buyShopItem(item)
+                            showingPurchaseConfirmation = false
+                        }) {
+                            Text("CONFIRM PURCHASE")
+                                .font(.custom("Orbitron-Bold", size: 12).bold())
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(profileManager.currentElement.primaryColor)
+                                .cornerRadius(8)
+                        }
+                        
+                        Button(action: {
+                            showingPurchaseConfirmation = false
+                        }) {
+                            Text("CANCEL")
+                                .font(.custom("Orbitron-Bold", size: 10).bold())
+                                .foregroundColor(.gray)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(Color.clear)
+                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.gray, lineWidth: 1))
+                        }
+                    }
+                }
+                .padding(20)
+                .frame(width: 300)
+                .background(Color(hex: "#0c0c0c"))
+                .cornerRadius(16)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(profileManager.currentElement.primaryColor.opacity(0.4), lineWidth: 1.5)
+                )
+                .transition(.scale)
             }
         }
     }

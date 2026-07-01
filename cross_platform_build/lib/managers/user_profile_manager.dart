@@ -52,6 +52,13 @@ class UserProfileManager extends ChangeNotifier {
   double _caloriesGoal = 400.0;
   double _activeMinutesGoal = 30.0;
   double _standHoursGoal = 10.0;
+  
+  double _targetCalories = 2500.0;
+  double _targetProtein = 150.0;
+  double _targetCarbs = 250.0;
+  double _targetFats = 80.0;
+  double _targetSugar = 50.0;
+  
   int _totalQuestsCompleted = 0;
   List<BodyMeasurementEntry> _measurementHistory = [];
   String _equippedFrame = 'None';
@@ -59,6 +66,24 @@ class UserProfileManager extends ChangeNotifier {
   String _equippedAura = 'None';
   String _equippedBackground = 'None';
   String _equippedAccessory = 'None';
+
+  double _todayWaterIntake = 0.0;
+  double _waterIntakeGoal = 3.0;
+  bool _useImperialUnits = false;
+  Map<String, double> _personalRecords = {
+    "Pullups": 5.0,
+    "Pushups": 20.0,
+    "Squats": 30.0,
+    "Dips": 8.0,
+    "Run (Miles)": 1.0,
+    "Handstand Hold (Sec)": 15.0,
+    "Bench Press": 135.0,
+    "Deadlift": 185.0,
+    "Barbell Squat": 155.0,
+    "Overhead Press": 95.0,
+  };
+  Map<String, List<PREntry>> _prHistory = {};
+  List<WorkoutSession> _loggedWorkoutSessions = [];
 
   // Getters
   String get characterName => _characterName;
@@ -103,6 +128,11 @@ class UserProfileManager extends ChangeNotifier {
   double get caloriesGoal => _caloriesGoal;
   double get activeMinutesGoal => _activeMinutesGoal;
   double get standHoursGoal => _standHoursGoal;
+  double get targetCalories => _targetCalories;
+  double get targetProtein => _targetProtein;
+  double get targetCarbs => _targetCarbs;
+  double get targetFats => _targetFats;
+  double get targetSugar => _targetSugar;
   int get totalQuestsCompleted => _totalQuestsCompleted;
   List<BodyMeasurementEntry> get measurementHistory => _measurementHistory;
   String get equippedFrame => _equippedFrame;
@@ -144,6 +174,13 @@ class UserProfileManager extends ChangeNotifier {
   set caloriesGoal(double val) { _caloriesGoal = val; _save(); notifyListeners(); }
   set activeMinutesGoal(double val) { _activeMinutesGoal = val; _save(); notifyListeners(); }
   set standHoursGoal(double val) { _standHoursGoal = val; _save(); notifyListeners(); }
+  
+  set targetCalories(double val) { _targetCalories = val; _save(); notifyListeners(); }
+  set targetProtein(double val) { _targetProtein = val; _save(); notifyListeners(); }
+  set targetCarbs(double val) { _targetCarbs = val; _save(); notifyListeners(); }
+  set targetFats(double val) { _targetFats = val; _save(); notifyListeners(); }
+  set targetSugar(double val) { _targetSugar = val; _save(); notifyListeners(); }
+  
   set totalQuestsCompleted(int val) { _totalQuestsCompleted = val; _save(); notifyListeners(); }
   set equippedFrame(String val) { _equippedFrame = val; _save(); notifyListeners(); }
   set equippedTitle(String val) { _equippedTitle = val; _save(); notifyListeners(); }
@@ -169,6 +206,47 @@ class UserProfileManager extends ChangeNotifier {
   set waist(double val) { _waist = val; _save(); notifyListeners(); }
   set hips(double val) { _hips = val; _save(); notifyListeners(); }
   set legs(double val) { _legs = val; _save(); notifyListeners(); }
+
+  double get todayWaterIntake => _todayWaterIntake;
+  set todayWaterIntake(double val) { _todayWaterIntake = val; _save(); notifyListeners(); }
+
+  double get waterIntakeGoal => _waterIntakeGoal;
+  set waterIntakeGoal(double val) { _waterIntakeGoal = val; _save(); notifyListeners(); }
+
+  bool get useImperialUnits => _useImperialUnits;
+  set useImperialUnits(bool val) { _useImperialUnits = val; _save(); notifyListeners(); }
+
+  double get waterIntakeGoalOz => (_waterIntakeGoal * 33.814).roundToDouble();
+  set waterIntakeGoalOz(double val) {
+    _waterIntakeGoal = val / 33.814;
+    _save();
+    notifyListeners();
+  }
+
+  double get todayWaterIntakeOz => (_todayWaterIntake * 33.814).roundToDouble();
+  set todayWaterIntakeOz(double val) {
+    _todayWaterIntake = (val / 33.814).clamp(0.0, double.infinity);
+    _save();
+    notifyListeners();
+  }
+
+  Map<String, double> get personalRecords => _personalRecords;
+  set personalRecords(Map<String, double> val) {
+    _personalRecords = val;
+    regenerateDailyQuests();
+    _save();
+    notifyListeners();
+  }
+
+  Map<String, List<PREntry>> get prHistory => _prHistory;
+  set prHistory(Map<String, List<PREntry>> val) {
+    _prHistory = val;
+    _save();
+    notifyListeners();
+  }
+
+  List<WorkoutSession> get loggedWorkoutSessions => _loggedWorkoutSessions;
+  set loggedWorkoutSessions(List<WorkoutSession> val) { _loggedWorkoutSessions = val; _save(); notifyListeners(); }
 
   set notificationFrequency(String val) {
     _notificationFrequency = val;
@@ -202,6 +280,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Allows for both precise crafting flames and sudden bursts of dark energy.",
       primaryColorHex: "#FF1616",
       accentColorHex: "#FF5E00",
+      secondaryColorHex: "#FFC400",
+      detailColorHex: "#FFF8E1",
       planetOfOrigin: "Ninjonia",
       inherentDark: false,
     ),
@@ -215,6 +295,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Mastery of fluid water flows combined with corrosive outbursts.",
       primaryColorHex: "#00A3FF",
       accentColorHex: "#00E5FF",
+      secondaryColorHex: "#00BFA5",
+      detailColorHex: "#E0F7FA",
       planetOfOrigin: "Techno",
       inherentDark: false,
     ),
@@ -228,6 +310,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "A perfect blend of solid structural defenses and aggressive, shattering spikes.",
       primaryColorHex: "#4CAF50",
       accentColorHex: "#795548",
+      secondaryColorHex: "#9E9E9E",
+      detailColorHex: "#8D6E63",
       planetOfOrigin: "Warrion",
       inherentDark: false,
     ),
@@ -241,6 +325,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Combines high mobility streams with heavy, suffocating pressure fields.",
       primaryColorHex: "#A5D6FF",
       accentColorHex: "#F6F7FC",
+      secondaryColorHex: "#CFD8DC",
+      detailColorHex: "#FFFFFF",
       planetOfOrigin: "Ninjonia",
       inherentDark: false,
     ),
@@ -254,6 +340,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Unifying mechanical conduction with wild electromagnetic discharge.",
       primaryColorHex: "#00F0FF",
       accentColorHex: "#FFEA00",
+      secondaryColorHex: "#7C4DFF",
+      detailColorHex: "#FFFFFF",
       planetOfOrigin: "Techno",
       inherentDark: false,
     ),
@@ -267,6 +355,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Forging pristine defenses that decay into toxic rusted fragments on impact.",
       primaryColorHex: "#B0BEC5",
       accentColorHex: "#FFD700",
+      secondaryColorHex: "#546E7A",
+      detailColorHex: "#ECEFF1",
       planetOfOrigin: "Warrion",
       inherentDark: false,
     ),
@@ -280,6 +370,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Immobilizing enemies in clear ice, then detonating it with dark frost energy.",
       primaryColorHex: "#26C6DA",
       accentColorHex: "#FFFFFF",
+      secondaryColorHex: "#B2EBF2",
+      detailColorHex: "#E0F7FA",
       planetOfOrigin: "Ninjonia",
       inherentDark: false,
     ),
@@ -293,6 +385,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Unbreakable bone shields that latch onto attackers and drain life force.",
       primaryColorHex: "#EEEEEE",
       accentColorHex: "#D7CCC8",
+      secondaryColorHex: "#9E9E9E",
+      detailColorHex: "#3E2723",
       planetOfOrigin: "Warrion",
       inherentDark: false,
     ),
@@ -306,6 +400,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Controlling vapor density to suffocating points, shifting between mist and poison.",
       primaryColorHex: "#80CBC4",
       accentColorHex: "#E1BEE7",
+      secondaryColorHex: "#B2DFDB",
+      detailColorHex: "#FFF9C4",
       planetOfOrigin: "Techno",
       inherentDark: false,
     ),
@@ -317,8 +413,10 @@ class UserProfileManager extends ChangeNotifier {
       standardDetails: "High-concentration light beams for drilling, welding, and focused attacks.",
       corruptDetails: "Erratic radioactive pulses that spread decay and chaotic light energy.",
       balancedDetails: "Precise surgical targeting overlay with highly destructive explosive pulses.",
-      primaryColorHex: "#FF007F",
-      accentColorHex: "#7B1FA2",
+      primaryColorHex: "#FF0055",
+      accentColorHex: "#FF80DF",
+      secondaryColorHex: "#FFFFFF",
+      detailColorHex: "#FF00FF",
       planetOfOrigin: "Techno",
       inherentDark: false,
     ),
@@ -332,6 +430,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Maintaining portal nodes while tearing localized space with void micro-rifts.",
       primaryColorHex: "#3F51B5",
       accentColorHex: "#E040FB",
+      secondaryColorHex: "#1A237E",
+      detailColorHex: "#FFEB3B",
       planetOfOrigin: "Nidosis",
       inherentDark: false,
     ),
@@ -346,6 +446,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Balanced output of raw negative energy and sovereign control.",
       primaryColorHex: "#880E4F",
       accentColorHex: "#FFB300",
+      secondaryColorHex: "#3E2723",
+      detailColorHex: "#E040FB",
       planetOfOrigin: "Battacaria",
       inherentDark: true,
     ),
@@ -359,6 +461,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Controlling the boundary of life and rot to siphon endurance.",
       primaryColorHex: "#4A148C",
       accentColorHex: "#212121",
+      secondaryColorHex: "#263238",
+      detailColorHex: "#FFFFFF",
       planetOfOrigin: "Battacaria",
       inherentDark: true,
     ),
@@ -372,6 +476,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Wielding double-sided blades of surgical energy and raw plasma fire.",
       primaryColorHex: "#00E5FF",
       accentColorHex: "#37474F",
+      secondaryColorHex: "#78909C",
+      detailColorHex: "#FFFFFF",
       planetOfOrigin: "Battacaria",
       inherentDark: true,
     ),
@@ -385,6 +491,8 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Synthesizing customized antidotes and complex combat serums.",
       primaryColorHex: "#00E676",
       accentColorHex: "#AA00FF",
+      secondaryColorHex: "#8E24AA",
+      detailColorHex: "#CCFF90",
       planetOfOrigin: "Battacaria",
       inherentDark: true,
     ),
@@ -398,12 +506,20 @@ class UserProfileManager extends ChangeNotifier {
       balancedDetails: "Stealth infiltration coupled with blind darkness fields for quick assassination.",
       primaryColorHex: "#263238",
       accentColorHex: "#311B92",
+      secondaryColorHex: "#212121",
+      detailColorHex: "#000000",
       planetOfOrigin: "Battacaria",
       inherentDark: false,
     )
   ];
 
-  LotEElement get currentElement => availableElements[_normalizedElementIndex(_selectedElementIndex)];
+  LotEElement get currentElement {
+    final base = availableElements[_normalizedElementIndex(_selectedElementIndex)];
+    if (_expressionStyle == ExpressionStyle.corrupt) {
+      return base.corruptedVersion();
+    }
+    return base;
+  }
 
   static int _normalizedElementIndex(int index) {
     return index.clamp(0, availableElements.length - 1).toInt();
@@ -525,12 +641,69 @@ class UserProfileManager extends ChangeNotifier {
       _caloriesGoal = prefs.getDouble('lote_calories_goal') ?? 400.0;
       _activeMinutesGoal = prefs.getDouble('lote_active_minutes_goal') ?? 30.0;
       _standHoursGoal = prefs.getDouble('lote_stand_hours_goal') ?? 10.0;
+      
+      _targetCalories = prefs.getDouble('lote_target_calories') ?? 2500.0;
+      _targetProtein = prefs.getDouble('lote_target_protein') ?? 150.0;
+      _targetCarbs = prefs.getDouble('lote_target_carbs') ?? 250.0;
+      _targetFats = prefs.getDouble('lote_target_fats') ?? 80.0;
+      _targetSugar = prefs.getDouble('lote_target_sugar') ?? 50.0;
+      
       _totalQuestsCompleted = prefs.getInt('lote_total_quests_completed') ?? 0;
       _equippedFrame = prefs.getString('lote_equipped_frame') ?? 'None';
       _equippedTitle = prefs.getString('lote_equipped_title') ?? 'None';
       _equippedAura = prefs.getString('lote_equipped_aura') ?? 'None';
       _equippedBackground = prefs.getString('lote_equipped_background') ?? 'None';
       _equippedAccessory = prefs.getString('lote_equipped_accessory') ?? 'None';
+
+      _todayWaterIntake = prefs.getDouble('lote_today_water_intake') ?? 0.0;
+      _waterIntakeGoal = prefs.getDouble('lote_water_intake_goal') ?? 3.0;
+      _useImperialUnits = prefs.getBool('lote_use_imperial_units') ?? false;
+
+      final prsJson = prefs.getString('lote_personal_records');
+      if (prsJson != null) {
+        try {
+          final Map<String, dynamic> raw = jsonDecode(prsJson);
+          _personalRecords = raw.map((k, v) => MapEntry(k, (v as num).toDouble()));
+          if (!_personalRecords.containsKey("Bench Press")) _personalRecords["Bench Press"] = 135.0;
+          if (!_personalRecords.containsKey("Deadlift")) _personalRecords["Deadlift"] = 185.0;
+          if (!_personalRecords.containsKey("Barbell Squat")) _personalRecords["Barbell Squat"] = 155.0;
+          if (!_personalRecords.containsKey("Overhead Press")) _personalRecords["Overhead Press"] = 95.0;
+        } catch (_) {}
+      }
+
+      final prHistoryJson = prefs.getString('lote_pr_history');
+      if (prHistoryJson != null) {
+        try {
+          final Map<String, dynamic> raw = jsonDecode(prHistoryJson);
+          _prHistory = raw.map((k, v) => MapEntry(
+              k,
+              (v as List<dynamic>)
+                  .map((e) => PREntry.fromJson(e as Map<String, dynamic>))
+                  .toList()));
+        } catch (_) {}
+      } else {
+        final daysAgo = DateTime.now().subtract(const Duration(days: 3));
+        _prHistory = {
+          "Pullups": [PREntry(date: daysAgo, value: 5.0)],
+          "Pushups": [PREntry(date: daysAgo, value: 20.0)],
+          "Squats": [PREntry(date: daysAgo, value: 30.0)],
+          "Dips": [PREntry(date: daysAgo, value: 8.0)],
+          "Run (Miles)": [PREntry(date: daysAgo, value: 1.0)],
+          "Handstand Hold (Sec)": [PREntry(date: daysAgo, value: 15.0)],
+          "Bench Press": [PREntry(date: daysAgo, value: 135.0)],
+          "Deadlift": [PREntry(date: daysAgo, value: 185.0)],
+          "Barbell Squat": [PREntry(date: daysAgo, value: 155.0)],
+          "Overhead Press": [PREntry(date: daysAgo, value: 95.0)],
+        };
+      }
+
+      final sessionsJson = prefs.getString('lote_logged_workout_sessions');
+      if (sessionsJson != null) {
+        try {
+          final List<dynamic> raw = jsonDecode(sessionsJson);
+          _loggedWorkoutSessions = raw.map((s) => WorkoutSession.fromJson(s)).toList();
+        } catch (_) {}
+      }
 
       final measurementHistoryJson = prefs.getString('lote_measurement_history');
       if (measurementHistoryJson != null) {
@@ -660,6 +833,11 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setDouble('lote_calories_goal', _caloriesGoal);
       await prefs.setDouble('lote_active_minutes_goal', _activeMinutesGoal);
       await prefs.setDouble('lote_stand_hours_goal', _standHoursGoal);
+      await prefs.setDouble('lote_target_calories', _targetCalories);
+      await prefs.setDouble('lote_target_protein', _targetProtein);
+      await prefs.setDouble('lote_target_carbs', _targetCarbs);
+      await prefs.setDouble('lote_target_fats', _targetFats);
+      await prefs.setDouble('lote_target_sugar', _targetSugar);
       await prefs.setInt('lote_total_quests_completed', _totalQuestsCompleted);
       await prefs.setString('lote_equipped_frame', _equippedFrame);
       await prefs.setString('lote_equipped_title', _equippedTitle);
@@ -668,6 +846,13 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setString('lote_equipped_accessory', _equippedAccessory);
       await prefs.setString('lote_measurement_history', jsonEncode(_measurementHistory.map((m) => m.toJson()).toList()));
       await prefs.setString('lote_selected_focuses', jsonEncode(_selectedFocuses.map((f) => f.name).toList()));
+
+      await prefs.setDouble('lote_today_water_intake', _todayWaterIntake);
+      await prefs.setDouble('lote_water_intake_goal', _waterIntakeGoal);
+      await prefs.setBool('lote_use_imperial_units', _useImperialUnits);
+      await prefs.setString('lote_personal_records', jsonEncode(_personalRecords));
+      await prefs.setString('lote_pr_history', jsonEncode(_prHistory.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()))));
+      await prefs.setString('lote_logged_workout_sessions', jsonEncode(_loggedWorkoutSessions.map((s) => s.toJson()).toList()));
 
       await prefs.setDouble('lote_start_weight', _startWeight);
       await prefs.setDouble('lote_goal_weight', _goalWeight);
@@ -851,6 +1036,30 @@ class UserProfileManager extends ChangeNotifier {
     _save();
   }
 
+  WorkoutCategory? get activeMonthlyChallengeCategory {
+    final month = DateTime.now().month;
+    switch (month) {
+      case 1:
+      case 6:
+      case 10:
+        return WorkoutCategory.strength;
+      case 2:
+      case 5:
+      case 9:
+        return WorkoutCategory.cardio;
+      case 3:
+      case 11:
+        return WorkoutCategory.flexibility;
+      case 4:
+      case 8:
+        return WorkoutCategory.nutrition;
+      case 7:
+        return WorkoutCategory.meditation;
+      default:
+        return null;
+    }
+  }
+
   // Quest Actions
   bool completeQuest(LotEQuest quest) {
     bool isDaily = false;
@@ -885,6 +1094,22 @@ class UserProfileManager extends ChangeNotifier {
     if (isDaily) {
       _dailyQuests[foundIndex].isCompleted = true;
       _incrementMonthlyAndYearlyProgress(questToComplete.workoutType);
+
+      final activeCat = activeMonthlyChallengeCategory;
+      if (activeCat != null && questToComplete.workoutType == activeCat) {
+        final challenge = activeMonthlyChallenge;
+        double amount;
+        if (challenge.targetMetric == "reps") {
+          amount = 50.0;
+        } else if (challenge.targetMetric == "Liters") {
+          amount = 3.0;
+        } else if (challenge.targetMetric == "miles") {
+          amount = 2.0;
+        } else {
+          amount = questToComplete.requiredMinutes > 0 ? questToComplete.requiredMinutes.toDouble() : 15.0;
+        }
+        advanceMonthlyChallenge(amount);
+      }
     } else if (isMonthly) {
       _monthlyQuests[foundIndex].isCompleted = true;
     } else if (isYearly) {
@@ -921,12 +1146,69 @@ class UserProfileManager extends ChangeNotifier {
     }
   }
 
-  void logWorkout(WorkoutCategory category) {
+  void evaluateQuestsCompletion() {
+    final now = DateTime.now();
+    final todaySessions = _loggedWorkoutSessions.where((s) =>
+        s.date.year == now.year && s.date.month == now.month && s.date.day == now.day).toList();
+    
+    final strengthDuration = todaySessions.where((s) => s.type == "Strength").fold(0.0, (sum, s) => sum + s.durationMinutes);
+    final cardioDuration = todaySessions.where((s) => s.type == "Cardio" || s.type == "Running").fold(0.0, (sum, s) => sum + s.durationMinutes);
+    final yogaDuration = todaySessions.where((s) => s.type == "Yoga").fold(0.0, (sum, s) => sum + s.durationMinutes);
+
     for (int i = 0; i < _dailyQuests.length; i++) {
-      if (_dailyQuests[i].workoutType == category && !_dailyQuests[i].isCompleted) {
-        _dailyQuests[i].progressCount = (_dailyQuests[i].progressCount + 1).clamp(0, _dailyQuests[i].targetCount);
+      final q = _dailyQuests[i];
+      if (q.isCompleted) continue;
+
+      switch (q.workoutType) {
+        case WorkoutCategory.strength:
+          if (strengthDuration >= q.requiredMinutes) {
+            _dailyQuests[i].progressCount = q.targetCount;
+          }
+          break;
+        case WorkoutCategory.cardio:
+          if (cardioDuration >= q.requiredMinutes) {
+            _dailyQuests[i].progressCount = q.targetCount;
+          }
+          break;
+        case WorkoutCategory.flexibility:
+          if (yogaDuration >= q.requiredMinutes) {
+            _dailyQuests[i].progressCount = q.targetCount;
+          }
+          break;
+        case WorkoutCategory.nutrition:
+          if (q.title.toLowerCase().contains("water") || q.title.toLowerCase().contains("hydration") ||
+              q.questDescription.toLowerCase().contains("water") || q.questDescription.toLowerCase().contains("hydration")) {
+            if (_todayWaterIntake >= _waterIntakeGoal) {
+              _dailyQuests[i].progressCount = q.targetCount;
+            }
+          }
+          break;
+        default:
+          break;
       }
     }
+  }
+
+  void logWorkout(WorkoutCategory category, {double durationMinutes = 15.0}) {
+    final String type;
+    switch (category) {
+      case WorkoutCategory.strength: type = "Strength"; break;
+      case WorkoutCategory.cardio: type = "Cardio"; break;
+      case WorkoutCategory.flexibility: type = "Yoga"; break;
+      case WorkoutCategory.nutrition: type = "Nutrition"; break;
+      default: type = "Cardio"; break;
+    }
+
+    final session = WorkoutSession(
+      id: UniqueKey().toString(),
+      type: type,
+      durationMinutes: durationMinutes,
+      date: DateTime.now(),
+    );
+    _loggedWorkoutSessions.add(session);
+
+    evaluateQuestsCompletion();
+
     for (int i = 0; i < _monthlyQuests.length; i++) {
       if (_monthlyQuests[i].workoutType == category && !_monthlyQuests[i].isCompleted) {
         _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1).clamp(0, _monthlyQuests[i].targetCount);
@@ -1040,25 +1322,60 @@ class UserProfileManager extends ChangeNotifier {
     notifyListeners();
   }
 
-  void syncQuestsWithHealthData({required double todaySteps, required double activeMinutes}) {
-    if (activeMinutes >= 15.0) {
-      for (int i = 0; i < _dailyQuests.length; i++) {
-        final q = _dailyQuests[i];
-        if (q.workoutType == WorkoutCategory.strength ||
-            q.workoutType == WorkoutCategory.flexibility ||
-            q.workoutType == WorkoutCategory.cardio) {
-          if (_dailyQuests[i].progressCount < _dailyQuests[i].targetCount) {
-            _dailyQuests[i].progressCount = _dailyQuests[i].targetCount;
-          }
+  void syncQuestsWithHealthData({
+    required double todaySteps,
+    required double activeMinutes,
+    List<Map<String, dynamic>> recentWorkouts = const [],
+  }) {
+    final now = DateTime.now();
+    for (final hw in recentWorkouts) {
+      final DateTime? startDate = DateTime.tryParse(hw['startDate'] ?? '');
+      if (startDate != null && startDate.year == now.year && startDate.month == now.month && startDate.day == now.day) {
+        final activityType = hw['activityType'] ?? '';
+        final String type;
+        
+        // Determine mapped type. A walking workout is mapped to 'Walking', which is excluded from Strength/Yoga sync.
+        if (activityType == 'functionalStrengthTraining' || activityType == 'traditionalStrengthTraining' || activityType == 'coreTraining') {
+          type = "Strength";
+        } else if (activityType == 'walking') {
+          type = "Walking";
+        } else if (activityType == 'running') {
+          type = "Running";
+        } else if (activityType == 'cycling' || activityType == 'rowing' || activityType == 'stairClimbing') {
+          type = "Cardio";
+        } else if (activityType == 'yoga' || activityType == 'flexibility') {
+          type = "Yoga";
+        } else {
+          type = "Cardio";
+        }
+
+        final double durationMins = (hw['duration'] as num?)?.toDouble() ?? 0.0;
+
+        // Check if session is already present
+        final exists = _loggedWorkoutSessions.any((s) =>
+            s.date.year == startDate.year &&
+            s.date.month == startDate.month &&
+            s.date.day == startDate.day &&
+            s.type == type &&
+            (s.durationMinutes - durationMins).abs() < 0.1);
+
+        if (!exists) {
+          _loggedWorkoutSessions.add(WorkoutSession(
+            id: UniqueKey().toString(),
+            type: type,
+            durationMinutes: durationMins,
+            date: startDate,
+          ));
         }
       }
     }
+
+    evaluateQuestsCompletion();
+
     if (todaySteps >= 5000.0) {
       for (int i = 0; i < _dailyQuests.length; i++) {
         if (_dailyQuests[i].workoutType == WorkoutCategory.cardio) {
-          if (_dailyQuests[i].progressCount < _dailyQuests[i].targetCount) {
-            _dailyQuests[i].progressCount = _dailyQuests[i].targetCount;
-          }
+          _dailyQuests[i].progressCount = _dailyQuests[i].targetCount;
         }
       }
     }
@@ -1078,6 +1395,34 @@ class UserProfileManager extends ChangeNotifier {
     _healthyMealsLoggedToday = 0;
     _hasClaimedWeightGoalReward = false;
     _hasClaimedDistanceGoalReward = false;
+    
+    _personalRecords = {
+      "Pullups": 5.0,
+      "Pushups": 20.0,
+      "Squats": 30.0,
+      "Dips": 8.0,
+      "Run (Miles)": 1.0,
+      "Handstand Hold (Sec)": 15.0,
+      "Bench Press": 135.0,
+      "Deadlift": 185.0,
+      "Barbell Squat": 155.0,
+      "Overhead Press": 95.0,
+    };
+    
+    final daysAgo = DateTime.now().subtract(const Duration(days: 3));
+    _prHistory = {
+      "Pullups": [PREntry(date: daysAgo, value: 5.0)],
+      "Pushups": [PREntry(date: daysAgo, value: 20.0)],
+      "Squats": [PREntry(date: daysAgo, value: 30.0)],
+      "Dips": [PREntry(date: daysAgo, value: 8.0)],
+      "Run (Miles)": [PREntry(date: daysAgo, value: 1.0)],
+      "Handstand Hold (Sec)": [PREntry(date: daysAgo, value: 15.0)],
+      "Bench Press": [PREntry(date: daysAgo, value: 135.0)],
+      "Deadlift": [PREntry(date: daysAgo, value: 185.0)],
+      "Barbell Squat": [PREntry(date: daysAgo, value: 155.0)],
+      "Overhead Press": [PREntry(date: daysAgo, value: 95.0)],
+    };
+    
     regenerateDailyQuests();
     _save();
     notifyListeners();
@@ -1094,15 +1439,16 @@ class UserProfileManager extends ChangeNotifier {
 
       if (diff > 0) {
         _healthyMealsLoggedToday = 0;
+        _todayWaterIntake = 0.0;
         _hasClaimedDistanceGoalReward = false;
         final elementName = currentElement.name;
-        _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily);
+        _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily, prs: _personalRecords, waterGoal: _waterIntakeGoal);
         
         if (_lastActiveDate!.month != now.month) {
-          _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly);
+          _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
         }
         if (_lastActiveDate!.year != now.year) {
-          _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly);
+          _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
         }
 
         if (diff > 1) {
@@ -1150,9 +1496,9 @@ class UserProfileManager extends ChangeNotifier {
 
   void regenerateDailyQuests() {
     final elementName = currentElement.name;
-    _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily);
-    _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly);
-    _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly);
+    _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily, prs: _personalRecords, waterGoal: _waterIntakeGoal);
+    _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
+    _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
     _save();
     notifyListeners();
   }
@@ -1296,6 +1642,16 @@ class UserProfileManager extends ChangeNotifier {
         _crystals += 100; // Reward crystals
       }
     }
+  }
+
+  void logPR(String key, double value) {
+    _personalRecords[key] = value;
+    final list = _prHistory[key] ?? [];
+    list.add(PREntry(date: DateTime.now(), value: value));
+    _prHistory[key] = list;
+    regenerateDailyQuests();
+    _save();
+    notifyListeners();
   }
 }
 

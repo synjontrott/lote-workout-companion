@@ -28,25 +28,64 @@ class _SettingsViewState extends State<SettingsView> {
   late final TextEditingController _caloriesGoalController;
   late final TextEditingController _activeMinutesGoalController;
   late final TextEditingController _standHoursGoalController;
+  
+  late final TextEditingController _targetCaloriesController;
+  late final TextEditingController _targetProteinController;
+  late final TextEditingController _targetCarbsController;
+  late final TextEditingController _targetFatsController;
+  late final TextEditingController _targetSugarController;
+
+  late final TextEditingController _prPullupsController;
+  late final TextEditingController _prPushupsController;
+  late final TextEditingController _prSquatsController;
+  late final TextEditingController _prDipsController;
+  late final TextEditingController _prRunController;
+  late final TextEditingController _prHandstandController;
+  late final TextEditingController _prBenchPressController;
+  late final TextEditingController _prDeadliftController;
+  late final TextEditingController _prBarbellSquatController;
+  late final TextEditingController _prOverheadPressController;
 
   @override
   void initState() {
     super.initState();
     final profile = Provider.of<UserProfileManager>(context, listen: false);
-    _heightController = TextEditingController(text: profile.height.toString());
-    _weightController = TextEditingController(text: profile.weight.toString());
-    _startWeightController = TextEditingController(text: profile.startWeight.toString());
-    _goalWeightController = TextEditingController(text: profile.goalWeight.toString());
-    _distanceGoalController = TextEditingController(text: profile.distanceGoal.toString());
-    _chestController = TextEditingController(text: profile.chest.toString());
-    _armsController = TextEditingController(text: profile.arms.toString());
-    _waistController = TextEditingController(text: profile.waist.toString());
-    _hipsController = TextEditingController(text: profile.hips.toString());
-    _legsController = TextEditingController(text: profile.legs.toString());
+    _heightController = TextEditingController();
+    _weightController = TextEditingController();
+    _startWeightController = TextEditingController();
+    _goalWeightController = TextEditingController();
+    _chestController = TextEditingController();
+    _armsController = TextEditingController();
+    _waistController = TextEditingController();
+    _hipsController = TextEditingController();
+    _legsController = TextEditingController();
+    _distanceGoalController = TextEditingController();
+    
+    _updateControllerTexts(profile);
+    
     _stepsGoalController = TextEditingController(text: profile.stepsGoal.toString());
     _caloriesGoalController = TextEditingController(text: profile.caloriesGoal.toString());
     _activeMinutesGoalController = TextEditingController(text: profile.activeMinutesGoal.toString());
     _standHoursGoalController = TextEditingController(text: profile.standHoursGoal.toString());
+    
+    _targetCaloriesController = TextEditingController(text: profile.targetCalories.toStringAsFixed(0));
+    _targetProteinController = TextEditingController(text: profile.targetProtein.toStringAsFixed(0));
+    _targetCarbsController = TextEditingController(text: profile.targetCarbs.toStringAsFixed(0));
+    _targetFatsController = TextEditingController(text: profile.targetFats.toStringAsFixed(0));
+    _targetSugarController = TextEditingController(text: profile.targetSugar.toStringAsFixed(0));
+
+    _prPullupsController = TextEditingController();
+    _prPushupsController = TextEditingController();
+    _prSquatsController = TextEditingController();
+    _prDipsController = TextEditingController();
+    _prRunController = TextEditingController();
+    _prHandstandController = TextEditingController();
+    _prBenchPressController = TextEditingController();
+    _prDeadliftController = TextEditingController();
+    _prBarbellSquatController = TextEditingController();
+    _prOverheadPressController = TextEditingController();
+    
+    _updatePRControllerTexts(profile);
   }
 
   @override
@@ -65,6 +104,23 @@ class _SettingsViewState extends State<SettingsView> {
     _caloriesGoalController.dispose();
     _activeMinutesGoalController.dispose();
     _standHoursGoalController.dispose();
+    
+    _targetCaloriesController.dispose();
+    _targetProteinController.dispose();
+    _targetCarbsController.dispose();
+    _targetFatsController.dispose();
+    _targetSugarController.dispose();
+
+    _prPullupsController.dispose();
+    _prPushupsController.dispose();
+    _prSquatsController.dispose();
+    _prDipsController.dispose();
+    _prRunController.dispose();
+    _prHandstandController.dispose();
+    _prBenchPressController.dispose();
+    _prDeadliftController.dispose();
+    _prBarbellSquatController.dispose();
+    _prOverheadPressController.dispose();
     super.dispose();
   }
 
@@ -266,23 +322,17 @@ class _SettingsViewState extends State<SettingsView> {
                             children: [
                               Expanded(
                                 child: _buildMetricConfigField(
-                                  label: "HEIGHT (INCHES)",
+                                  label: profile.useImperialUnits ? "HEIGHT (IN)" : "HEIGHT (CM)",
                                   controller: _heightController,
-                                  onChanged: (val) {
-                                    final d = double.tryParse(val);
-                                    if (d != null) profile.height = d;
-                                  },
+                                  onChanged: (val) => _saveDoubleField(val, false, (v) => profile.height = v, profile),
                                 ),
                               ),
                               const SizedBox(width: 15),
                               Expanded(
                                 child: _buildMetricConfigField(
-                                  label: "WEIGHT (LBS)",
+                                  label: profile.useImperialUnits ? "WEIGHT (LBS)" : "WEIGHT (KG)",
                                   controller: _weightController,
-                                  onChanged: (val) {
-                                    final d = double.tryParse(val);
-                                    if (d != null) profile.weight = d;
-                                  },
+                                  onChanged: (val) => _saveDoubleField(val, true, (v) => profile.weight = v, profile),
                                 ),
                               ),
                             ],
@@ -292,23 +342,17 @@ class _SettingsViewState extends State<SettingsView> {
                             children: [
                               Expanded(
                                 child: _buildMetricConfigField(
-                                  label: "START WEIGHT (LBS)",
+                                  label: profile.useImperialUnits ? "START WEIGHT (LBS)" : "START WEIGHT (KG)",
                                   controller: _startWeightController,
-                                  onChanged: (val) {
-                                    final d = double.tryParse(val);
-                                    if (d != null) profile.startWeight = d;
-                                  },
+                                  onChanged: (val) => _saveDoubleField(val, true, (v) => profile.startWeight = v, profile),
                                 ),
                               ),
                               const SizedBox(width: 15),
                               Expanded(
                                 child: _buildMetricConfigField(
-                                  label: "GOAL WEIGHT (LBS)",
+                                  label: profile.useImperialUnits ? "GOAL WEIGHT (LBS)" : "GOAL WEIGHT (KG)",
                                   controller: _goalWeightController,
-                                  onChanged: (val) {
-                                    final d = double.tryParse(val);
-                                    if (d != null) profile.goalWeight = d;
-                                  },
+                                  onChanged: (val) => _saveDoubleField(val, true, (v) => profile.goalWeight = v, profile),
                                 ),
                               ),
                             ],
@@ -318,23 +362,17 @@ class _SettingsViewState extends State<SettingsView> {
                             children: [
                               Expanded(
                                 child: _buildMetricConfigField(
-                                  label: "CHEST (INCHES)",
+                                  label: profile.useImperialUnits ? "CHEST (IN)" : "CHEST (CM)",
                                   controller: _chestController,
-                                  onChanged: (val) {
-                                    final d = double.tryParse(val);
-                                    if (d != null) profile.chest = d;
-                                  },
+                                  onChanged: (val) => _saveDoubleField(val, false, (v) => profile.chest = v, profile),
                                 ),
                               ),
                               const SizedBox(width: 15),
                               Expanded(
                                 child: _buildMetricConfigField(
-                                  label: "ARMS (INCHES)",
+                                  label: profile.useImperialUnits ? "ARMS (IN)" : "ARMS (CM)",
                                   controller: _armsController,
-                                  onChanged: (val) {
-                                    final d = double.tryParse(val);
-                                    if (d != null) profile.arms = d;
-                                  },
+                                  onChanged: (val) => _saveDoubleField(val, false, (v) => profile.arms = v, profile),
                                 ),
                               ),
                             ],
@@ -344,23 +382,17 @@ class _SettingsViewState extends State<SettingsView> {
                             children: [
                               Expanded(
                                 child: _buildMetricConfigField(
-                                  label: "WAIST (INCHES)",
+                                  label: profile.useImperialUnits ? "WAIST (IN)" : "WAIST (CM)",
                                   controller: _waistController,
-                                  onChanged: (val) {
-                                    final d = double.tryParse(val);
-                                    if (d != null) profile.waist = d;
-                                  },
+                                  onChanged: (val) => _saveDoubleField(val, false, (v) => profile.waist = v, profile),
                                 ),
                               ),
                               const SizedBox(width: 15),
                               Expanded(
                                 child: _buildMetricConfigField(
-                                  label: "HIPS (INCHES)",
+                                  label: profile.useImperialUnits ? "HIPS (IN)" : "HIPS (CM)",
                                   controller: _hipsController,
-                                  onChanged: (val) {
-                                    final d = double.tryParse(val);
-                                    if (d != null) profile.hips = d;
-                                  },
+                                  onChanged: (val) => _saveDoubleField(val, false, (v) => profile.hips = v, profile),
                                 ),
                               ),
                             ],
@@ -370,12 +402,9 @@ class _SettingsViewState extends State<SettingsView> {
                             children: [
                               Expanded(
                                 child: _buildMetricConfigField(
-                                  label: "LEGS (INCHES)",
+                                  label: profile.useImperialUnits ? "LEGS (IN)" : "LEGS (CM)",
                                   controller: _legsController,
-                                  onChanged: (val) {
-                                    final d = double.tryParse(val);
-                                    if (d != null) profile.legs = d;
-                                  },
+                                  onChanged: (val) => _saveDoubleField(val, false, (v) => profile.legs = v, profile),
                                 ),
                               ),
                               const SizedBox(width: 15),
@@ -470,16 +499,253 @@ class _SettingsViewState extends State<SettingsView> {
                             children: [
                               Expanded(
                                 child: _buildMetricConfigField(
-                                  label: "DAILY CARDIO GOAL (MILES)",
+                                  label: profile.useImperialUnits ? "DAILY CARDIO GOAL (MILES)" : "DAILY CARDIO GOAL (KM)",
                                   controller: _distanceGoalController,
                                   onChanged: (val) {
                                     final d = double.tryParse(val);
-                                    if (d != null) profile.distanceGoal = d;
+                                    if (d != null) {
+                                      double finalVal = d;
+                                      if (!profile.useImperialUnits) {
+                                        finalVal = d / 1.609344;
+                                      }
+                                      profile.distanceGoal = finalVal;
+                                    }
                                   },
                                 ),
                               ),
                               const SizedBox(width: 15),
                               const Spacer(),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // FEAST & BIO-FUEL TELEMETRY GOALS Card
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.02),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: themeColor.withOpacity(0.15),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "FEAST & BIO-FUEL TELEMETRY GOALS",
+                            style: GoogleFonts.orbitron(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "CALORIE INTAKE (KCAL)",
+                                  controller: _targetCaloriesController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.targetCalories = d;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "PROTEIN TARGET (G)",
+                                  controller: _targetProteinController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.targetProtein = d;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "CARBS TARGET (G)",
+                                  controller: _targetCarbsController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.targetCarbs = d;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "FATS TARGET (G)",
+                                  controller: _targetFatsController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.targetFats = d;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "SUGAR LIMIT (G)",
+                                  controller: _targetSugarController,
+                                  onChanged: (val) {
+                                    final d = double.tryParse(val);
+                                    if (d != null) profile.targetSugar = d;
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              const Spacer(),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // WARRIOR PERSONAL RECORDS (PRs) Card
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.02),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: themeColor.withOpacity(0.15),
+                          width: 1,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "WARRIOR PERSONAL RECORDS (PRs)",
+                            style: GoogleFonts.orbitron(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "PULLUPS PR (REPS)",
+                                  controller: _prPullupsController,
+                                  onChanged: (val) => _savePRField(val, "Pullups", "rep", profile),
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "PUSHUPS PR (REPS)",
+                                  controller: _prPushupsController,
+                                  onChanged: (val) => _savePRField(val, "Pushups", "rep", profile),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "SQUATS PR (REPS)",
+                                  controller: _prSquatsController,
+                                  onChanged: (val) => _savePRField(val, "Squats", "rep", profile),
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "DIPS PR (REPS)",
+                                  controller: _prDipsController,
+                                  onChanged: (val) => _savePRField(val, "Dips", "rep", profile),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: profile.useImperialUnits ? "RUN PR (MILES)" : "RUN PR (KM)",
+                                  controller: _prRunController,
+                                  onChanged: (val) => _savePRField(val, "Run (Miles)", "cardio", profile),
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: "HANDSTAND HOLD (SEC)",
+                                  controller: _prHandstandController,
+                                  onChanged: (val) => _savePRField(val, "Handstand Hold (Sec)", "rep", profile),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: profile.useImperialUnits ? "BENCH PRESS (LBS)" : "BENCH PRESS (KG)",
+                                  controller: _prBenchPressController,
+                                  onChanged: (val) => _savePRField(val, "Bench Press", "weight", profile),
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: profile.useImperialUnits ? "DEADLIFT (LBS)" : "DEADLIFT (KG)",
+                                  controller: _prDeadliftController,
+                                  onChanged: (val) => _savePRField(val, "Deadlift", "weight", profile),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: profile.useImperialUnits ? "BARBELL SQUAT (LBS)" : "BARBELL SQUAT (KG)",
+                                  controller: _prBarbellSquatController,
+                                  onChanged: (val) => _savePRField(val, "Barbell Squat", "weight", profile),
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildMetricConfigField(
+                                  label: profile.useImperialUnits ? "OVERHEAD PRESS (LBS)" : "OVERHEAD PRESS (KG)",
+                                  controller: _prOverheadPressController,
+                                  onChanged: (val) => _savePRField(val, "Overhead Press", "weight", profile),
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -518,6 +784,69 @@ class _SettingsViewState extends State<SettingsView> {
                               ),
                             );
                           },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Unit System Selector
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "SYSTEM MEASUREMENT UNITS",
+                              style: GoogleFonts.exo2(
+                                fontSize: 10,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.02),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.white10),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        profile.useImperialUnits = false;
+                                        _updateControllerTexts(profile);
+                                        _updatePRControllerTexts(profile);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: !profile.useImperialUnits ? themeColor : Colors.transparent,
+                                        foregroundColor: !profile.useImperialUnits ? Colors.black : Colors.white,
+                                        elevation: 0,
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                                      ),
+                                      child: const Text("Metric (L, KG, CM)", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        profile.useImperialUnits = true;
+                                        _updateControllerTexts(profile);
+                                        _updatePRControllerTexts(profile);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: profile.useImperialUnits ? themeColor : Colors.transparent,
+                                        foregroundColor: profile.useImperialUnits ? Colors.black : Colors.white,
+                                        elevation: 0,
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                                      ),
+                                      child: const Text("Imperial (oz, LBS, IN)", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
 
@@ -662,7 +991,35 @@ class _SettingsViewState extends State<SettingsView> {
                           label: "Reset All Progress (Clean Slate)",
                           color: Colors.red,
                           onTap: () {
-                            profile.resetProgress();
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor: const Color(0xFF0F0F0F),
+                                  title: Text(
+                                    "RESET ALL PROGRESS?",
+                                    style: GoogleFonts.orbitron(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold),
+                                  ),
+                                  content: const Text(
+                                    "This will permanently erase all your stats, character customizations, logged workouts, and level progress. This action cannot be undone.",
+                                    style: TextStyle(color: Colors.white70, fontFamily: "Exo2", fontSize: 13),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      child: const Text("CANCEL", style: TextStyle(color: Colors.grey)),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        profile.resetProgress();
+                                      },
+                                      child: const Text("RESET EVERYTHING", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
                           },
                         ),
                       ],
@@ -797,5 +1154,98 @@ class _SettingsViewState extends State<SettingsView> {
         )
       ],
     );
+  }
+
+  void _updateControllerTexts(UserProfileManager profile) {
+    final useImperial = profile.useImperialUnits;
+    
+    String formatVal(double val, bool isWeight) {
+      double converted = val;
+      if (!useImperial) {
+        if (isWeight) {
+          converted = val * 0.45359237;
+        } else {
+          converted = val * 2.54;
+        }
+      }
+      return converted == 0.0 ? "" : converted.toStringAsFixed(1);
+    }
+
+    _heightController.text = formatVal(profile.height, false);
+    _weightController.text = formatVal(profile.weight, true);
+    _startWeightController.text = formatVal(profile.startWeight, true);
+    _goalWeightController.text = formatVal(profile.goalWeight, true);
+    _chestController.text = formatVal(profile.chest, false);
+    _armsController.text = formatVal(profile.arms, false);
+    _waistController.text = formatVal(profile.waist, false);
+    _hipsController.text = formatVal(profile.hips, false);
+    _legsController.text = formatVal(profile.legs, false);
+
+    double dist = profile.distanceGoal;
+    if (!useImperial) {
+      dist = dist * 1.609344;
+    }
+    _distanceGoalController.text = dist == 0.0 ? "" : dist.toStringAsFixed(1);
+  }
+
+  void _saveDoubleField(String val, bool isWeight, void Function(double) setter, UserProfileManager profile) {
+    final d = double.tryParse(val);
+    if (d != null) {
+      double finalVal = d;
+      if (!profile.useImperialUnits) {
+        if (isWeight) {
+          finalVal = d / 0.45359237;
+        } else {
+          finalVal = d / 2.54;
+        }
+      }
+      setter(finalVal);
+    }
+  }
+
+  void _updatePRControllerTexts(UserProfileManager profile) {
+    final useImperial = profile.useImperialUnits;
+
+    String formatRep(double val) => val.toStringAsFixed(0);
+    String formatWeight(double val) {
+      double converted = val;
+      if (!useImperial) {
+        converted = val * 0.45359237;
+      }
+      return converted.toStringAsFixed(0);
+    }
+    String formatRun(double val) {
+      double converted = val;
+      if (!useImperial) {
+        converted = val * 1.609344;
+      }
+      return converted.toStringAsFixed(1);
+    }
+
+    _prPullupsController.text = formatRep(profile.personalRecords["Pullups"] ?? 5.0);
+    _prPushupsController.text = formatRep(profile.personalRecords["Pushups"] ?? 20.0);
+    _prSquatsController.text = formatRep(profile.personalRecords["Squats"] ?? 30.0);
+    _prDipsController.text = formatRep(profile.personalRecords["Dips"] ?? 8.0);
+    _prRunController.text = formatRun(profile.personalRecords["Run (Miles)"] ?? 1.0);
+    _prHandstandController.text = formatRep(profile.personalRecords["Handstand Hold (Sec)"] ?? 15.0);
+    _prBenchPressController.text = formatWeight(profile.personalRecords["Bench Press"] ?? 135.0);
+    _prDeadliftController.text = formatWeight(profile.personalRecords["Deadlift"] ?? 185.0);
+    _prBarbellSquatController.text = formatWeight(profile.personalRecords["Barbell Squat"] ?? 155.0);
+    _prOverheadPressController.text = formatWeight(profile.personalRecords["Overhead Press"] ?? 95.0);
+  }
+
+  void _savePRField(String val, String key, String type, UserProfileManager profile) {
+    final d = double.tryParse(val);
+    if (d != null) {
+      double finalVal = d;
+      if (!profile.useImperialUnits) {
+        if (type == "weight") {
+          finalVal = d / 0.45359237;
+        } else if (type == "cardio") {
+          finalVal = d / 1.609344;
+        }
+      }
+      profile.logPR(key, finalVal);
+    }
   }
 }

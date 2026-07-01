@@ -21,17 +21,16 @@ class _NutritionViewState extends State<NutritionView> {
   String _mealFats = "";
   String _mealSugar = "";
 
-  // Target values
-  final double calorieTarget = 2500;
-  final double proteinTarget = 150;
-  final double carbsTarget = 250;
-  final double fatsTarget = 80;
-  final double sugarLimit = 50;
-
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<UserProfileManager>(context);
     final themeColor = profile.currentElement.primaryColor;
+    
+    final double calorieTarget = profile.targetCalories;
+    final double proteinTarget = profile.targetProtein;
+    final double carbsTarget = profile.targetCarbs;
+    final double fatsTarget = profile.targetFats;
+    final double sugarLimit = profile.targetSugar;
     
     // Filter meals for today
     final now = DateTime.now();
@@ -207,6 +206,230 @@ class _NutritionViewState extends State<NutritionView> {
                       unit: "g",
                       color: Colors.red,
                       icon: Icons.warning_amber_rounded,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // HYDRATION TELEMETRY Card
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.02),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.white.withOpacity(0.05)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "HYDRATION TELEMETRY",
+                          style: GoogleFonts.orbitron(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        Text(
+                          "💧 ACTIVE",
+                          style: GoogleFonts.orbitron(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              profile.useImperialUnits
+                                  ? "${profile.todayWaterIntakeOz.toStringAsFixed(0)} / ${profile.waterIntakeGoalOz.toStringAsFixed(0)} oz"
+                                  : "${profile.todayWaterIntake.toStringAsFixed(2)} / ${profile.waterIntakeGoal.toStringAsFixed(2)} L",
+                              style: GoogleFonts.orbitron(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const Text(
+                              "Daily Intake Target",
+                              style: TextStyle(
+                                fontFamily: "Exo2",
+                                fontSize: 10,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Goal Adjuster stepper
+                        Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (profile.useImperialUnits) {
+                                  final currentGoal = profile.waterIntakeGoalOz;
+                                  if (currentGoal > 8.0) {
+                                    profile.waterIntakeGoalOz = currentGoal - 8.0;
+                                  }
+                                } else {
+                                  final currentGoal = profile.waterIntakeGoal;
+                                  if (currentGoal > 0.5) {
+                                    profile.waterIntakeGoal = currentGoal - 0.25;
+                                  }
+                                }
+                              },
+                              icon: const Icon(Icons.remove_circle_outline, color: Colors.grey, size: 18),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Goal",
+                              style: GoogleFonts.orbitron(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed: () {
+                                if (profile.useImperialUnits) {
+                                  profile.waterIntakeGoalOz = profile.waterIntakeGoalOz + 8.0;
+                                } else {
+                                  profile.waterIntakeGoal = profile.waterIntakeGoal + 0.25;
+                                }
+                              },
+                              icon: const Icon(Icons.add_circle_outline, color: Colors.grey, size: 18),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    // Hydration Progress Bar
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: profile.waterIntakeGoal > 0 ? (profile.todayWaterIntake / profile.waterIntakeGoal).clamp(0.0, 1.0) : 0.0,
+                        minHeight: 8,
+                        backgroundColor: Colors.white.withOpacity(0.04),
+                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Increment buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (profile.useImperialUnits) ...[
+                          ElevatedButton(
+                            onPressed: () {
+                              if (profile.todayWaterIntakeOz >= 8.0) {
+                                profile.todayWaterIntakeOz -= 8.0;
+                                profile.evaluateQuestsCompletion();
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red.withOpacity(0.12),
+                              foregroundColor: Colors.redAccent,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              minimumSize: Size.zero,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                            ),
+                            child: const Text("-8 oz", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              profile.todayWaterIntakeOz += 8.0;
+                              profile.evaluateQuestsCompletion();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent.withOpacity(0.12),
+                              foregroundColor: Colors.blueAccent,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              minimumSize: Size.zero,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                            ),
+                            child: const Text("+8 oz", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              profile.todayWaterIntakeOz += 16.0;
+                              profile.evaluateQuestsCompletion();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent.withOpacity(0.12),
+                              foregroundColor: Colors.blueAccent,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              minimumSize: Size.zero,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                            ),
+                            child: const Text("+16 oz", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                          ),
+                        ] else ...[
+                          ElevatedButton(
+                            onPressed: () {
+                              if (profile.todayWaterIntake >= 0.25) {
+                                profile.todayWaterIntake -= 0.25;
+                                profile.evaluateQuestsCompletion();
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red.withOpacity(0.12),
+                              foregroundColor: Colors.redAccent,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              minimumSize: Size.zero,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                            ),
+                            child: const Text("-0.25 L", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              profile.todayWaterIntake += 0.25;
+                              profile.evaluateQuestsCompletion();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent.withOpacity(0.12),
+                              foregroundColor: Colors.blueAccent,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              minimumSize: Size.zero,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                            ),
+                            child: const Text("+0.25 L", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              profile.todayWaterIntake += 0.5;
+                              profile.evaluateQuestsCompletion();
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent.withOpacity(0.12),
+                              foregroundColor: Colors.blueAccent,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              minimumSize: Size.zero,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                            ),
+                            child: const Text("+0.50 L", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ],
                     ),
                   ],
                 ),

@@ -38,14 +38,15 @@ struct QuestBoardView: View {
     @State private var tailAge: String = "30"
     @State private var tailWeight: String = "170"
     @State private var tailEquipment: String = "Bodyweight Only"
-    @State private var tailSpace: String = "Small Room"
     @State private var tailDifficulty: String = "Medium"
-    @State private var tailCategory: WorkoutCategory = .strength
+    @State private var tailMuscleGroup: MuscleGroup = .chest
     
     // Action outcome popup states
     @State private var finalOutcomeText: String = ""
     @State private var showOutcomeAlert: Bool = false
     @State private var wasSuccessful: Bool = false
+    @State private var showingWorkoutCompleteConfirmation: Bool = false
+    @State private var workoutPendingCompletion: SuggestedWorkout? = nil
     
     // Tailored Dopamine Menu (dynamic based on element and selected focuses)
     var tailoredDopamineMenu: [DopamineItem] {
@@ -740,35 +741,19 @@ struct QuestBoardView: View {
                         }
                     }
                     
-                    HStack(spacing: 10) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("EQUIPMENT")
-                                .font(.system(size: 9).bold())
-                                .foregroundColor(.gray)
-                            Picker("Equipment", selection: $tailEquipment) {
-                                Text("Bodyweight Only").tag("Bodyweight Only")
-                                Text("Dumbbells").tag("Dumbbells")
-                                Text("Pull-up Bar").tag("Pull-up Bar")
-                                Text("Full Gym").tag("Full Gym")
-                            }
-                            .pickerStyle(MenuPickerStyle())
-                            .background(Color.white.opacity(0.04))
-                            .cornerRadius(6)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("EQUIPMENT")
+                            .font(.system(size: 9).bold())
+                            .foregroundColor(.gray)
+                        Picker("Equipment", selection: $tailEquipment) {
+                            Text("Bodyweight Only").tag("Bodyweight Only")
+                            Text("Dumbbells").tag("Dumbbells")
+                            Text("Pull-up Bar").tag("Pull-up Bar")
+                            Text("Full Gym").tag("Full Gym")
                         }
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("SPACE")
-                                .font(.system(size: 9).bold())
-                                .foregroundColor(.gray)
-                            Picker("Space", selection: $tailSpace) {
-                                Text("Small Room").tag("Small Room")
-                                Text("Large Space").tag("Large Space")
-                                Text("Outdoors").tag("Outdoors")
-                            }
-                            .pickerStyle(MenuPickerStyle())
-                            .background(Color.white.opacity(0.04))
-                            .cornerRadius(6)
-                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .background(Color.white.opacity(0.04))
+                        .cornerRadius(6)
                     }
                     
                     HStack(spacing: 10) {
@@ -789,12 +774,12 @@ struct QuestBoardView: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text("WORKOUT TYPE")
+                            Text("MUSCLE GROUP")
                                 .font(.system(size: 9).bold())
                                 .foregroundColor(.gray)
-                            Picker("Type", selection: $tailCategory) {
-                                ForEach(WorkoutCategory.allCases, id: \.self) { cat in
-                                    Text(cat.rawValue).tag(cat)
+                            Picker("Muscle Group", selection: $tailMuscleGroup) {
+                                ForEach(MuscleGroup.allCases, id: \.self) { mg in
+                                    Text(mg.rawValue).tag(mg)
                                 }
                             }
                             .pickerStyle(MenuPickerStyle())
@@ -814,13 +799,12 @@ struct QuestBoardView: View {
                 
                 // Workouts list
                 let filtered = SuggestedWorkout.allWorkouts.filter { w in
-                    w.category == tailCategory &&
+                    w.muscleGroup == tailMuscleGroup &&
                     w.difficulty.lowercased() == tailDifficulty.lowercased() &&
-                    (w.equipment.lowercased().contains(tailEquipment.lowercased()) || tailEquipment == "Full Gym") &&
-                    (w.space.lowercased().contains(tailSpace.lowercased()) || tailSpace == "Outdoors")
+                    (w.equipment.lowercased().replacingOccurrences(of: "-", with: "").contains(tailEquipment.lowercased().replacingOccurrences(of: "-", with: "")) || tailEquipment == "Full Gym")
                 }
                 
-                let workoutsToShow = filtered.isEmpty ? [generateDynamicSuggestedWorkout(category: tailCategory, difficulty: tailDifficulty, equipment: tailEquipment, space: tailSpace)] : filtered
+                let workoutsToShow = filtered.isEmpty ? [generateDynamicSuggestedWorkout(muscleGroup: tailMuscleGroup, difficulty: tailDifficulty, equipment: tailEquipment)] : filtered
                 
                 ForEach(workoutsToShow) { workout in
                     VStack(alignment: .leading, spacing: 10) {
@@ -900,12 +884,8 @@ struct QuestBoardView: View {
                             }
                             
                             Button(action: {
-                                profileManager.addXP(20)
-                                profileManager.earnCrystals(10)
-                                profileManager.logWorkout(category: workout.category)
-                                finalOutcomeText = "Workout complete! You conquered \(workout.name) and gained +20 XP, +10 Crystals, and forged your character attributes."
-                                wasSuccessful = true
-                                showOutcomeAlert = true
+                                workoutPendingCompletion = workout
+                                showingWorkoutCompleteConfirmation = true
                             }) {
                                 Text("COMPLETE WORKOUT")
                                     .font(.custom("Orbitron-Bold", size: 10).bold())
@@ -916,6 +896,23 @@ struct QuestBoardView: View {
                                         RoundedRectangle(cornerRadius: 6)
                                             .fill(profileManager.currentElement.primaryColor)
                                     )
+                            }
+                            .alert(isPresented: $showingWorkoutCompleteConfirmation) {
+                                Alert(
+                                    title: Text("COMPLETE WORKOUT?"),
+                                    message: Text("Are you sure you have completed '\(workoutPendingCompletion?.name ?? "")'? This will reward you with XP, Crystals, and advance your goals."),
+                                    primaryButton: .default(Text("YES, LOG IT")) {
+                                        if let workout = workoutPendingCompletion {
+                                            profileManager.addXP(20)
+                                            profileManager.earnCrystals(10)
+                                            profileManager.logWorkout(category: workout.category)
+                                            finalOutcomeText = "Workout complete! You conquered \(workout.name) and gained +20 XP, +10 Crystals, and forged your character attributes."
+                                            wasSuccessful = true
+                                            showOutcomeAlert = true
+                                        }
+                                    },
+                                    secondaryButton: .cancel()
+                                )
                             }
                         }
                         .padding()
@@ -968,81 +965,23 @@ struct QuestBoardView: View {
         return (finalSets, finalReps)
     }
     
-    private func generateDynamicSuggestedWorkout(category: WorkoutCategory, difficulty: String, equipment: String, space: String) -> SuggestedWorkout {
-        let name: String
-        let description: String
-        let instructions: [String]
-        let reps: String
-        let sets: Int
-        
-        switch category {
-        case .cardio:
-            name = "\(difficulty) Tailored Cardio Cruise"
-            description = "A dynamic cardio routine using \(equipment) in a \(space)."
-            instructions = [
-                "Warm up with light movements for 3 minutes.",
-                "Execute cardiovascular intervals focusing on steady pacing.",
-                "Utilize \(equipment) to increase intensity.",
-                "Cool down with deep breathing."
-            ]
-            reps = difficulty == "Easy" ? "15 mins" : difficulty == "Medium" ? "30 mins" : "45 mins"
-            sets = difficulty == "Easy" ? 1 : difficulty == "Medium" ? 2 : 3
-            
-        case .strength:
-            name = "\(difficulty) Custom Strength Builder"
-            description = "Target multiple muscle groups using \(equipment)."
-            instructions = [
-                "Perform dynamic warm up.",
-                "Perform compound sets focusing on slow controlled movement.",
-                "Adjust weight or resistance based on \(equipment).",
-                "Rest 90 seconds between sets."
-            ]
-            reps = difficulty == "Easy" ? "8-10 reps" : difficulty == "Medium" ? "10-12 reps" : "12-15 reps"
-            sets = difficulty == "Easy" ? 3 : difficulty == "Medium" ? 4 : 5
-            
-        case .flexibility:
-            name = "\(difficulty) Flow & Mobility"
-            description = "Improve range of motion and joint stability in your \(space)."
-            instructions = [
-                "Adopt deep breathing cadence.",
-                "Hold active stretches for 30 seconds each.",
-                "Focus on hip and shoulder mobility using \(equipment).",
-                "End with full body relaxation."
-            ]
-            reps = "30 secs holds"
-            sets = difficulty == "Easy" ? 2 : difficulty == "Medium" ? 3 : 4
-            
-        case .nutrition:
-            name = "\(difficulty) Clean Fuel Preparation"
-            description = "Tailored nutritional routine to optimize muscle recovery."
-            instructions = [
-                "Prepare a whole-food meal emphasizing lean protein.",
-                "Incorporate green vegetables and complex carbohydrates.",
-                "Limit sugar intake to under 30g daily.",
-                "Hydrate with electrolyte mineral water."
-            ]
-            reps = "1 healthy meal"
-            sets = 1
-            
-        case .meditation:
-            name = "\(difficulty) Oracle Mind Focus"
-            description = "Quiet the mind and sharpen cognitive focus."
-            instructions = [
-                "Sit in a comfortable position in your \(space).",
-                "Focus on the breath, letting thoughts pass without judgment.",
-                "Extend breath count to 5 seconds inhale, 5 seconds exhale.",
-                "Visualize achieving your weekly workout campaign goals."
-            ]
-            reps = difficulty == "Easy" ? "5 mins" : difficulty == "Medium" ? "10 mins" : "20 mins"
-            sets = 1
-        }
+    private func generateDynamicSuggestedWorkout(muscleGroup: MuscleGroup, difficulty: String, equipment: String) -> SuggestedWorkout {
+        let name = "\(difficulty) Custom \(muscleGroup.rawValue) Builder"
+        let description = "Target the \(muscleGroup.rawValue) using \(equipment)."
+        let instructions = [
+            "Perform dynamic warm up.",
+            "Perform compound sets targeting \(muscleGroup.rawValue).",
+            "Adjust weight or resistance based on \(equipment).",
+            "Rest 60-90 seconds between sets."
+        ]
+        let reps = difficulty == "Easy" ? "8-10 reps" : difficulty == "Medium" ? "10-12 reps" : "12-15 reps"
+        let sets = difficulty == "Easy" ? 3 : difficulty == "Medium" ? 4 : 5
         
         return SuggestedWorkout(
             name: name,
-            category: category,
+            muscleGroup: muscleGroup,
             difficulty: difficulty,
             equipment: equipment,
-            space: space,
             description: description,
             instructions: instructions,
             sets: sets,
@@ -1215,7 +1154,8 @@ struct QuestDetailView: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         profileManager.syncQuestsWithHealthData(
                             todaySteps: healthManager.todaySteps,
-                            activeMinutes: healthManager.activeMinutes
+                            activeMinutes: healthManager.activeMinutes,
+                            recentWorkouts: healthManager.recentWorkouts
                         )
                         if let idx = getQuestIndex(id: quest.id, cadence: quest.cadence) {
                             selectedQuest = getQuestAt(index: idx, cadence: quest.cadence)

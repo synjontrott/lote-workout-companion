@@ -25,6 +25,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
   bool _sprintTimerActive = false;
 
   // Body Measurement Logging State
+  String _selectedHistoryType = 'Weight';
   bool _showingMeasurementLog = false;
   late TextEditingController _measureWeightController;
   late TextEditingController _measureChestController;
@@ -129,33 +130,99 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     // Sync values daily on load
     profile.checkNewDayRefresh();
 
+    final themeColor = profile.currentElement.primaryColor;
+    final accentColor = profile.currentElement.accentColor;
+
     // Map retro character custom pixel colors
     final skin = hexToColor(profile.sprite.skinColorHex);
     final hair = hexToColor(profile.sprite.hairColorHex);
     final outfit = hexToColor(profile.sprite.outfitColorHex);
     final eye = profile.currentElement.primaryColor;
-    final aura = profile.currentElement.accentColor;
+    final aura = () {
+      if (profile.equippedAura != "None") {
+        switch (profile.equippedAura) {
+          case "Glitch Aura": return const Color(0xFF00F0FF);
+          case "Phoenix Flare": return Colors.orange;
+          case "Abyssal Mist": return const Color(0xFF880E4F);
+          case "Lightning Spark": return Colors.yellow;
+          default: return profile.currentElement.accentColor;
+        }
+      } else {
+        return profile.currentElement.accentColor;
+      }
+    }();
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        backgroundColor: const Color(0xFF050505),
-      body: Stack(
-        children: [
-          // Background elemental theme glow
-          Positioned(
-            left: 20,
-            top: 40,
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: profile.currentElement.primaryColor.withOpacity(0.08),
+        backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: () {
+            if (profile.equippedBackground == "Neon Cyber Space") {
+              return const LinearGradient(
+                colors: [Color(0xFF050B14), Color(0xFF0A192F)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              );
+            } else if (profile.equippedBackground == "Nebula Starfield") {
+              return const LinearGradient(
+                colors: [Color(0xFF0B071E), Color(0xFF1F1235)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              );
+            } else if (profile.equippedBackground == "Volcanic Core") {
+              return const LinearGradient(
+                colors: [Color(0xFF140505), Color(0xFF2D0A0A)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              );
+            } else {
+              return LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  themeColor.withOpacity(0.15),
+                  const Color(0xFF090D16),
+                  const Color(0xFF020408),
+                ],
+              );
+            }
+          }(),
+        ),
+        child: Stack(
+          children: [
+            // Background elemental theme glow
+            Positioned(
+              right: -50,
+              top: -50,
+              child: Container(
+                width: 350,
+                height: 350,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      accentColor.withOpacity(0.15),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-          SafeArea(
+            Positioned(
+              left: 20,
+              top: 40,
+              child: Container(
+                width: 250,
+                height: 250,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: themeColor.withOpacity(0.08),
+                ),
+              ),
+            ),
+            SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Column(
@@ -174,12 +241,18 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                           width: 1,
                         ),
                         gradient: profile.equippedBackground != "None" ? LinearGradient(
-                          colors: [
-                            profile.equippedBackground == "Neon Cyber Space" ? Colors.blue.withOpacity(0.1) :
-                            profile.equippedBackground == "Nebula Starfield" ? Colors.purple.withOpacity(0.1) :
-                            profile.equippedBackground == "Volcanic Core" ? Colors.red.withOpacity(0.1) : Colors.green.withOpacity(0.1),
-                            Colors.transparent,
-                          ],
+                          colors: (() {
+                            switch (profile.equippedBackground) {
+                              case "Neon Cyber Space":
+                                return [const Color(0xFF0A192F).withOpacity(0.45), const Color(0xFF172A45).withOpacity(0.2)];
+                              case "Nebula Starfield":
+                                return [const Color(0xFF1F1235).withOpacity(0.45), const Color(0xFF362259).withOpacity(0.2)];
+                              case "Volcanic Core":
+                                return [const Color(0xFF2D0A0A).withOpacity(0.45), const Color(0xFF501B1B).withOpacity(0.2)];
+                              default:
+                                return [profile.currentElement.primaryColor.withOpacity(0.35), Colors.transparent];
+                            }
+                          })(),
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ) : null,
@@ -191,8 +264,8 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                             alignment: Alignment.center,
                             children: [
                               Container(
-                                width: 75,
-                                height: 75,
+                                width: 100,
+                                height: 100,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: profile.currentElement.primaryColor.withOpacity(0.12),
@@ -211,8 +284,8 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                       }
                                     }();
                                     return Container(
-                                      width: 85,
-                                      height: 85,
+                                      width: 110,
+                                      height: 110,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: auraColor.withOpacity(0.15),
@@ -232,7 +305,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                       eyeColor: eye,
                                       outfitColor: outfit,
                                       auraColor: aura,
-                                      pixelSize: 1.6,
+                                      pixelSize: 0.3,
                                     ),
                                   );
                                 },
@@ -507,7 +580,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                           target: profile.stepsGoal,
                           unit: "steps",
                           icon: Icons.directions_walk,
-                          themeColor: profile.currentElement.primaryColor,
+                          element: profile.currentElement,
                         ),
                         const SizedBox(height: 12),
                         _buildMetricGauge(
@@ -516,7 +589,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                           target: profile.caloriesGoal,
                           unit: "kcal",
                           icon: Icons.local_fire_department,
-                          themeColor: profile.currentElement.primaryColor,
+                          element: profile.currentElement,
                         ),
                         const SizedBox(height: 12),
                         _buildMetricGauge(
@@ -525,7 +598,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                           target: profile.activeMinutesGoal,
                           unit: "mins",
                           icon: Icons.timer,
-                          themeColor: profile.currentElement.primaryColor,
+                          element: profile.currentElement,
                         ),
                         const SizedBox(height: 12),
                         _buildMetricGauge(
@@ -534,7 +607,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                           target: profile.standHoursGoal,
                           unit: "hours",
                           icon: Icons.accessibility_new,
-                          themeColor: profile.currentElement.primaryColor,
+                          element: profile.currentElement,
                         ),
                       ],
                     ),
@@ -893,23 +966,95 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "Weight History Log",
-                                style: GoogleFonts.exo2(
-                                  fontSize: 12,
-                                  color: Colors.white.withOpacity(0.8),
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Row(
+                                children: [
+                                  Text(
+                                    _selectedHistoryType == "Weight" ? "Weight History Log" : "$_selectedHistoryType PR History",
+                                    style: GoogleFonts.exo2(
+                                      fontSize: 12,
+                                      color: Colors.white.withOpacity(0.8),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  PopupMenuButton<String>(
+                                    onSelected: (String val) {
+                                      setState(() {
+                                        _selectedHistoryType = val;
+                                      });
+                                    },
+                                    color: const Color(0xFF0F0F0F),
+                                    icon: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          _selectedHistoryType == "Weight"
+                                              ? "Weight"
+                                              : (_selectedHistoryType == "Run (Miles)"
+                                                  ? (profile.useImperialUnits ? "Run (Miles)" : "Run (KM)")
+                                                  : (["Bench Press", "Deadlift", "Barbell Squat", "Overhead Press"].contains(_selectedHistoryType)
+                                                      ? (profile.useImperialUnits ? "$_selectedHistoryType (LBS)" : "$_selectedHistoryType (KG)")
+                                                      : _selectedHistoryType)),
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            color: themeColor,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Icon(Icons.arrow_drop_down, color: themeColor, size: 14),
+                                      ],
+                                    ),
+                                    itemBuilder: (BuildContext context) {
+                                      final items = ["Weight", "Pullups", "Pushups", "Squats", "Dips", "Bench Press", "Deadlift", "Barbell Squat", "Overhead Press", "Run (Miles)", "Handstand Hold (Sec)"];
+                                      return items.map((key) {
+                                        final label = key == "Weight"
+                                            ? "Weight"
+                                            : (key == "Run (Miles)"
+                                                ? (profile.useImperialUnits ? "Run PR (Miles)" : "Run PR (KM)")
+                                                : (["Bench Press", "Deadlift", "Barbell Squat", "Overhead Press"].contains(key)
+                                                    ? (profile.useImperialUnits ? "$key PR (LBS)" : "$key PR (KG)")
+                                                    : "$key PR"));
+                                        return PopupMenuItem<String>(
+                                          value: key,
+                                          child: Text(
+                                            label,
+                                            style: const TextStyle(color: Colors.white, fontSize: 11),
+                                          ),
+                                        );
+                                      }).toList();
+                                    },
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 10),
                               SizedBox(
                                 height: 70,
-                                child: _WeightHistoryChart(
-                                  history: profile.weightHistory,
-                                  startWeight: profile.startWeight,
-                                  goalWeight: profile.goalWeight,
-                                  primaryColor: profile.currentElement.primaryColor,
-                                ),
+                                child: _selectedHistoryType == "Weight"
+                                    ? _WeightHistoryChart(
+                                        history: profile.weightHistory,
+                                        startWeight: profile.startWeight,
+                                        goalWeight: profile.goalWeight,
+                                        primaryColor: profile.currentElement.primaryColor,
+                                      )
+                                    : Builder(builder: (context) {
+                                        final historyList = profile.prHistory[_selectedHistoryType] ?? [];
+                                        final convertedPoints = historyList.map((entry) {
+                                          double val = entry.value;
+                                          if (!profile.useImperialUnits) {
+                                            if (["Bench Press", "Deadlift", "Barbell Squat", "Overhead Press"].contains(_selectedHistoryType)) {
+                                              val = val * 0.45359237;
+                                            } else if (_selectedHistoryType == "Run (Miles)") {
+                                              val = val * 1.609344;
+                                            }
+                                          }
+                                          return (date: entry.date, value: val);
+                                        }).toList();
+                                        return _ProgressHistoryChart(
+                                          points: convertedPoints,
+                                          primaryColor: profile.currentElement.primaryColor,
+                                        );
+                                      }),
                               ),
                             ],
                           ),
@@ -1063,7 +1208,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
             _buildMeasurementLogModal(profile),
         ],
       ),
-    ),);
+    ),
+  ),
+);
   }
 
   Widget _buildMeasurementLogModal(UserProfileManager profile) {
@@ -1286,7 +1433,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     required double target,
     required String unit,
     required IconData icon,
-    required Color themeColor,
+    required LotEElement element,
   }) {
     final pct = (current / target).clamp(0.0, 1.0);
     final pctStr = "${(pct * 100).toStringAsFixed(1)}%";
@@ -1294,19 +1441,26 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
+        color: Colors.black.withOpacity(0.45),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.white.withOpacity(0.06),
-          width: 1,
+          color: element.primaryColor.withOpacity(0.35),
+          width: 1.2,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: element.primaryColor.withOpacity(0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: Colors.white, size: 16),
+              Icon(icon, color: element.accentColor, size: 16),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -1317,26 +1471,66 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                 ),
               ),
               const Spacer(),
-              Text(
-                "${current.toInt()} / ${target.toInt()} $unit ($pctStr)",
-                style: TextStyle(
-                  fontSize: 11,
-                  color: themeColor,
-                  fontWeight: FontWeight.bold,
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "${current.toInt()} / ${target.toInt()} $unit ",
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.white70,
+                      ),
+                    ),
+                    TextSpan(
+                      text: "($pctStr)",
+                      style: GoogleFonts.orbitron(
+                        fontSize: 10,
+                        color: element.secondaryColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-              )
+              ),
             ],
           ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: pct,
-              minHeight: 6,
-              backgroundColor: Colors.white.withOpacity(0.1),
-              valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-            ),
-          )
+          const SizedBox(height: 10),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return Stack(
+                children: [
+                  Container(
+                    height: 8,
+                    width: constraints.maxWidth,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  Container(
+                    height: 8,
+                    width: constraints.maxWidth * pct,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          element.primaryColor,
+                          element.accentColor,
+                          element.secondaryColor,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                      boxShadow: [
+                        BoxShadow(
+                          color: element.primaryColor.withOpacity(0.5),
+                          blurRadius: 4,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ],
       ),
     );
@@ -1985,8 +2179,55 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    profile.advanceMonthlyChallenge(
-                      challenge.targetMetric == "reps" ? 50.0 : (challenge.targetMetric == "Liters" ? 3.0 : 1.0),
+                    final double amount = challenge.targetMetric == "reps" ? 50.0 : (challenge.targetMetric == "Liters" ? 3.0 : 1.0);
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          backgroundColor: const Color(0xFF0C0C0C),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: BorderSide(color: themeColor.withOpacity(0.4), width: 1.5),
+                          ),
+                          title: Text(
+                            "LOG PROGRESS?",
+                            style: TextStyle(
+                              fontFamily: "Orbitron",
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: themeColor,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                          content: Text(
+                            "Confirm adding +${amount.toInt()} ${challenge.targetMetric} toward your ${challenge.monthName} monthly challenge: \"${challenge.targetDescription}\"?",
+                            style: const TextStyle(
+                              fontFamily: "Exo2",
+                              fontSize: 13,
+                              color: Colors.white,
+                            ),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text(
+                                "CANCEL",
+                                style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                profile.advanceMonthlyChallenge(amount);
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                "LOG PROGRESS",
+                                style: TextStyle(color: themeColor, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -2071,6 +2312,78 @@ class _WeightHistoryChart extends StatelessWidget {
           children: [
             Text(
               entry.weight.toStringAsFixed(0),
+              style: const TextStyle(fontSize: 8, color: Colors.white),
+            ),
+            const SizedBox(height: 4),
+            Container(
+              width: 16,
+              height: barHeight,
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _formatDate(entry.date),
+              style: const TextStyle(fontSize: 8, color: Colors.grey),
+            ),
+          ],
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _ProgressHistoryChart extends StatelessWidget {
+  final List<({DateTime date, double value})> points;
+  final Color primaryColor;
+
+  const _ProgressHistoryChart({
+    required this.points,
+    required this.primaryColor,
+  });
+
+  String _formatDate(DateTime date) {
+    return "${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (points.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            "No log entries yet.",
+            style: GoogleFonts.exo2(fontSize: 11, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
+    final recentPoints = points.length > 7 ? points.sublist(points.length - 7) : points;
+    final values = points.map((p) => p.value).toList();
+    
+    double minVal = values.isEmpty ? 0.0 : values.reduce((a, b) => a < b ? a : b);
+    double maxVal = values.isEmpty ? 0.0 : values.reduce((a, b) => a > b ? a : b);
+    
+    minVal *= 0.9;
+    maxVal *= 1.1;
+    final diff = maxVal - minVal;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: recentPoints.map((entry) {
+        final heightPercent = diff > 0 ? (entry.value - minVal) / diff : 0.5;
+        final barHeight = (heightPercent * 40).clamp(0.0, 40.0) + 4.0;
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              entry.value.toStringAsFixed(1),
               style: const TextStyle(fontSize: 8, color: Colors.white),
             ),
             const SizedBox(height: 4),

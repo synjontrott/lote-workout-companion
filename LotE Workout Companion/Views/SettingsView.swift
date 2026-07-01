@@ -14,6 +14,7 @@ struct SettingsView: View {
     // Sheet presentation triggers
     @State private var showingElementSelect = false
     @State private var showingSpriteCreate = false
+    @State private var showingResetConfirmation = false
     
     // Simulation state values
     @State private var mockSteps: String = "1000"
@@ -141,27 +142,27 @@ struct SettingsView: View {
                         
                         VStack(spacing: 12) {
                             HStack(spacing: 12) {
-                                metricSettingField(label: "HEIGHT (INCHES)", text: doubleBinding(for: \.height))
-                                metricSettingField(label: "CURRENT WEIGHT (LBS)", text: doubleBinding(for: \.weight))
+                                metricSettingField(label: profileManager.useImperialUnits ? "HEIGHT (IN)" : "HEIGHT (CM)", text: doubleBinding(for: \.height))
+                                metricSettingField(label: profileManager.useImperialUnits ? "CURRENT WEIGHT (LBS)" : "CURRENT WEIGHT (KG)", text: doubleBinding(for: \.weight))
                             }
                             
                             HStack(spacing: 12) {
-                                metricSettingField(label: "START WEIGHT (LBS)", text: doubleBinding(for: \.startWeight))
-                                metricSettingField(label: "GOAL WEIGHT (LBS)", text: doubleBinding(for: \.goalWeight))
+                                metricSettingField(label: profileManager.useImperialUnits ? "START WEIGHT (LBS)" : "START WEIGHT (KG)", text: doubleBinding(for: \.startWeight))
+                                metricSettingField(label: profileManager.useImperialUnits ? "GOAL WEIGHT (LBS)" : "GOAL WEIGHT (KG)", text: doubleBinding(for: \.goalWeight))
                             }
                             
                             HStack(spacing: 12) {
-                                metricSettingField(label: "CHEST (INCHES)", text: doubleBinding(for: \.chest))
-                                metricSettingField(label: "ARMS (INCHES)", text: doubleBinding(for: \.arms))
+                                metricSettingField(label: profileManager.useImperialUnits ? "CHEST (IN)" : "CHEST (CM)", text: doubleBinding(for: \.chest))
+                                metricSettingField(label: profileManager.useImperialUnits ? "ARMS (IN)" : "ARMS (CM)", text: doubleBinding(for: \.arms))
                             }
                             
                             HStack(spacing: 12) {
-                                metricSettingField(label: "WAIST (INCHES)", text: doubleBinding(for: \.waist))
-                                metricSettingField(label: "HIPS (INCHES)", text: doubleBinding(for: \.hips))
+                                metricSettingField(label: profileManager.useImperialUnits ? "WAIST (IN)" : "WAIST (CM)", text: doubleBinding(for: \.waist))
+                                metricSettingField(label: profileManager.useImperialUnits ? "HIPS (IN)" : "HIPS (CM)", text: doubleBinding(for: \.hips))
                             }
                             
                             HStack(spacing: 12) {
-                                metricSettingField(label: "LEGS (INCHES)", text: doubleBinding(for: \.legs))
+                                metricSettingField(label: profileManager.useImperialUnits ? "LEGS (IN)" : "LEGS (CM)", text: doubleBinding(for: \.legs))
                                 Spacer()
                             }
                         }
@@ -192,8 +193,78 @@ struct SettingsView: View {
                                 metricSettingField(label: "STAND TIME GOAL (HOURS)", text: doubleBinding(for: \.standHoursGoal))
                             }
                             HStack(spacing: 12) {
-                                metricSettingField(label: "DAILY CARDIO GOAL (MILES)", text: doubleBinding(for: \.distanceGoal))
+                                metricSettingField(label: profileManager.useImperialUnits ? "DAILY CARDIO GOAL (MILES)" : "DAILY CARDIO GOAL (KM)", text: doubleBinding(for: \.distanceGoal))
                                 Spacer()
+                            }
+                        }
+                    }
+                    .padding(20)
+                    .background(Color.white.opacity(0.02))
+                    .cornerRadius(16)
+                    .overlay(
+                         RoundedRectangle(cornerRadius: 16)
+                             .stroke(profileManager.currentElement.primaryColor.opacity(0.15), lineWidth: 1)
+                    )
+                    .padding(.horizontal)
+                    
+                    // Feast & Bio-Fuel Targets Card
+                    VStack(alignment: .leading, spacing: 15) {
+                        Text("FEAST & BIO-FUEL TELEMETRY GOALS")
+                            .font(.custom("Orbitron-Bold", size: 13).bold())
+                            .foregroundColor(.gray)
+                            .tracking(2)
+                        
+                        VStack(spacing: 12) {
+                            HStack(spacing: 12) {
+                                metricSettingField(label: "CALORIE INTAKE (KCAL)", text: doubleBinding(for: \.targetCalories))
+                                metricSettingField(label: "PROTEIN TARGET (G)", text: doubleBinding(for: \.targetProtein))
+                            }
+                            HStack(spacing: 12) {
+                                metricSettingField(label: "CARBS TARGET (G)", text: doubleBinding(for: \.targetCarbs))
+                                metricSettingField(label: "FATS TARGET (G)", text: doubleBinding(for: \.targetFats))
+                            }
+                            HStack(spacing: 12) {
+                                metricSettingField(label: "SUGAR LIMIT (G)", text: doubleBinding(for: \.targetSugar))
+                                Spacer()
+                            }
+                        }
+                    }
+                    .padding(20)
+                    .background(Color.white.opacity(0.02))
+                    .cornerRadius(16)
+                    .overlay(
+                         RoundedRectangle(cornerRadius: 16)
+                             .stroke(profileManager.currentElement.primaryColor.opacity(0.15), lineWidth: 1)
+                    )
+                    .padding(.horizontal)
+                    
+                    // Personal Records (PRs) Card
+                    VStack(alignment: .leading, spacing: 15) {
+                        Text("WARRIOR PERSONAL RECORDS (PRs)")
+                            .font(.custom("Orbitron-Bold", size: 13).bold())
+                            .foregroundColor(.gray)
+                            .tracking(2)
+                        
+                        VStack(spacing: 12) {
+                            HStack(spacing: 12) {
+                                metricSettingField(label: "PULLUPS PR (REPS)", text: prBinding(forKey: "Pullups"))
+                                metricSettingField(label: "PUSHUPS PR (REPS)", text: prBinding(forKey: "Pushups"))
+                            }
+                            HStack(spacing: 12) {
+                                metricSettingField(label: "SQUATS PR (REPS)", text: prBinding(forKey: "Squats"))
+                                metricSettingField(label: "DIPS PR (REPS)", text: prBinding(forKey: "Dips"))
+                            }
+                            HStack(spacing: 12) {
+                                metricSettingField(label: profileManager.useImperialUnits ? "RUN PR (MILES)" : "RUN PR (KM)", text: prCardioBinding(forKey: "Run (Miles)"))
+                                metricSettingField(label: "HANDSTAND HOLD (SEC)", text: prBinding(forKey: "Handstand Hold (Sec)"))
+                            }
+                            HStack(spacing: 12) {
+                                metricSettingField(label: profileManager.useImperialUnits ? "BENCH PRESS (LBS)" : "BENCH PRESS (KG)", text: prWeightBinding(forKey: "Bench Press"))
+                                metricSettingField(label: profileManager.useImperialUnits ? "DEADLIFT (LBS)" : "DEADLIFT (KG)", text: prWeightBinding(forKey: "Deadlift"))
+                            }
+                            HStack(spacing: 12) {
+                                metricSettingField(label: profileManager.useImperialUnits ? "BARBELL SQUAT (LBS)" : "BARBELL SQUAT (KG)", text: prWeightBinding(forKey: "Barbell Squat"))
+                                metricSettingField(label: profileManager.useImperialUnits ? "OVERHEAD PRESS (LBS)" : "OVERHEAD PRESS (KG)", text: prWeightBinding(forKey: "Overhead Press"))
                             }
                         }
                     }
@@ -236,8 +307,24 @@ struct SettingsView: View {
                             .buttonStyle(PlainButtonStyle())
                             
                             Divider().background(Color.white.opacity(0.1))
-                            
-                            // Cognitive Profile Picker
+                             
+                             // Unit System Selector
+                             VStack(alignment: .leading, spacing: 6) {
+                                 Text("SYSTEM MEASUREMENT UNITS")
+                                     .font(.caption2)
+                                     .foregroundColor(.gray)
+                                 
+                                 Picker("Measurement Units", selection: $profileManager.useImperialUnits) {
+                                     Text("Metric (Liters, KG, CM)").tag(false)
+                                     Text("Imperial (Ounces, LBS, IN)").tag(true)
+                                 }
+                                 .pickerStyle(SegmentedPickerStyle())
+                                 .padding(.vertical, 4)
+                             }
+                             
+                             Divider().background(Color.white.opacity(0.1))
+                             
+                             // Cognitive Profile Picker
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("MOTIVATIONAL MINDSET PROFILE")
                                     .font(.caption2)
@@ -305,7 +392,7 @@ struct SettingsView: View {
                             
                             // Reset All Progress
                             Button(action: {
-                                profileManager.resetProgress()
+                                showingResetConfirmation = true
                             }) {
                                 HStack {
                                     Image(systemName: "trash.fill")
@@ -320,37 +407,125 @@ struct SettingsView: View {
                                 .padding()
                                 .background(Color.white.opacity(0.02))
                                 .cornerRadius(10)
-                            }
-                            .padding(.horizontal)
-                        }
-                        .padding(.bottom, 40)
-                    }
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("Done") {
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                    }
-                }
-            }
-        }
-        .sheet(isPresented: $showingElementSelect) {
-            ElementSelectionView(profileManager: profileManager)
-        }
-        .sheet(isPresented: $showingSpriteCreate) {
-            CharacterCreatorView(profileManager: profileManager)
-        }
+                             }
+                             .padding(.horizontal)
+                         }
+                         .padding(.bottom, 40)
+                     }
+             .toolbar {
+                 ToolbarItemGroup(placement: .keyboard) {
+                     Spacer()
+                     Button("Done") {
+                         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                     }
+                 }
+             }
+         }
+         .sheet(isPresented: $showingElementSelect) {
+             ElementSelectionView(profileManager: profileManager)
+         }
+         .sheet(isPresented: $showingSpriteCreate) {
+             CharacterCreatorView(profileManager: profileManager)
+         }
+         .alert(isPresented: $showingResetConfirmation) {
+             Alert(
+                 title: Text("RESET ALL PROGRESS?"),
+                 message: Text("This will permanently erase all your stats, character customizations, logged workouts, and level progress. This action cannot be undone."),
+                 primaryButton: .destructive(Text("RESET EVERYTHING")) {
+                     profileManager.resetProgress()
+                 },
+                 secondaryButton: .cancel()
+             )
+         }
     }
      
      private func doubleBinding(for keyPath: ReferenceWritableKeyPath<UserProfileManager, Double>) -> Binding<String> {
          Binding<String>(
              get: {
-                 let val = profileManager[keyPath: keyPath]
+                 var val = profileManager[keyPath: keyPath]
+                 if !profileManager.useImperialUnits {
+                     if keyPath == \.weight || keyPath == \.startWeight || keyPath == \.goalWeight {
+                         val = val * 0.45359237
+                     } else if keyPath == \.distanceGoal {
+                         val = val * 1.609344
+                     } else if keyPath == \.height || keyPath == \.chest || keyPath == \.arms || keyPath == \.waist || keyPath == \.hips || keyPath == \.legs {
+                         val = val * 2.54
+                     }
+                 }
                  return val == 0.0 ? "" : String(format: "%.1f", val)
              },
              set: { newValue in
-                 if let doubleVal = Double(newValue) {
+                 if var doubleVal = Double(newValue) {
+                     if !profileManager.useImperialUnits {
+                         if keyPath == \.weight || keyPath == \.startWeight || keyPath == \.goalWeight {
+                             doubleVal = doubleVal / 0.45359237
+                         } else if keyPath == \.distanceGoal {
+                             doubleVal = doubleVal / 1.609344
+                         } else if keyPath == \.height || keyPath == \.chest || keyPath == \.arms || keyPath == \.waist || keyPath == \.hips || keyPath == \.legs {
+                             doubleVal = doubleVal / 2.54
+                         }
+                     }
                      profileManager[keyPath: keyPath] = doubleVal
+                 }
+             }
+         )
+     }
+     
+     private func prBinding(forKey key: String) -> Binding<String> {
+         Binding<String>(
+             get: {
+                 if let val = profileManager.personalRecords[key] {
+                     return String(format: "%.0f", val)
+                 }
+                 return ""
+             },
+             set: { newVal in
+                 if let doubleVal = Double(newVal) {
+                     profileManager.logPR(key: key, value: doubleVal)
+                 }
+             }
+         )
+     }
+     
+     private func prWeightBinding(forKey key: String) -> Binding<String> {
+         Binding<String>(
+             get: {
+                 if var val = profileManager.personalRecords[key] {
+                     if !profileManager.useImperialUnits {
+                         val = val * 0.45359237
+                     }
+                     return String(format: "%.0f", val)
+                 }
+                 return ""
+             },
+             set: { newVal in
+                 if var doubleVal = Double(newVal) {
+                     if !profileManager.useImperialUnits {
+                         doubleVal = doubleVal / 0.45359237
+                     }
+                     profileManager.logPR(key: key, value: doubleVal)
+                 }
+             }
+         )
+     }
+     
+     private func prCardioBinding(forKey key: String) -> Binding<String> {
+         Binding<String>(
+             get: {
+                 if var val = profileManager.personalRecords[key] {
+                     if !profileManager.useImperialUnits {
+                         val = val * 1.609344
+                     }
+                     return String(format: "%.1f", val)
+                 }
+                 return ""
+             },
+             set: { newVal in
+                 if var doubleVal = Double(newVal) {
+                     if !profileManager.useImperialUnits {
+                         doubleVal = doubleVal / 1.609344
+                     }
+                     profileManager.logPR(key: key, value: doubleVal)
                  }
              }
          )

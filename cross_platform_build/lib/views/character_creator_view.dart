@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../managers/user_profile_manager.dart';
 import '../models/lote_models.dart';
+import 'widgets/pixel_sprite_widget.dart';
 
 class CharacterCreatorView extends StatefulWidget {
   const CharacterCreatorView({super.key});
@@ -159,165 +160,36 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
     });
   }
 
+  void _handlePaintGesture(Offset localPosition, double boxSize) {
+    final int gridSize = _pixelGrid.length;
+    if (gridSize == 0) return;
+    final double pixelWidth = boxSize / gridSize;
+    
+    final int col = (localPosition.dx / pixelWidth).floor();
+    final int row = (localPosition.dy / pixelWidth).floor();
+    
+    if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
+      if (_pixelGrid[row][col] != _selectedToolColor) {
+        setState(() {
+          _pixelGrid[row][col] = _selectedToolColor;
+        });
+      }
+    }
+  }
+
   void _clearCanvas() {
     setState(() {
-      _pixelGrid = List.generate(50, (_) => List.generate(50, (_) => 0));
+      _pixelGrid = List.generate(300, (_) => List.generate(300, (_) => 0));
     });
   }
 
   void _generateBaseFromPresets() {
     setState(() {
-      final grid = List.generate(50, (_) => List.generate(50, (_) => 0));
-      
-      // 1. Draw Aura (Value 5) - glowing orbits and particle accents around the margins
-      for (int r = 0; r < 50; r++) {
-        for (int c = 0; c < 50; c++) {
-          final dx = (c - 25).toDouble();
-          final dy = (r - 25).toDouble();
-          final dist = math.sqrt(dx * dx + dy * dy);
-          if (dist >= 21.0 && dist <= 23.5) {
-            if ((r + c) % 3 == 0) {
-              grid[r][c] = 5;
-            }
-          }
-        }
-      }
-      
-      // 2. Draw Legs / Feet (Value 4 or 1)
-      for (int r = 42; r <= 47; r++) {
-        for (int c = 18; c <= 22; c++) { grid[r][c] = 4; }
-        for (int c = 28; c <= 32; c++) { grid[r][c] = 4; }
-      }
-      for (int c = 17; c <= 23; c++) { grid[48][c] = 4; grid[49][c] = 4; }
-      for (int c = 27; c <= 33; c++) { grid[48][c] = 4; grid[49][c] = 4; }
-      
-      // 3. Draw Body & Armor (Value 4 = Armor, Value 1 = Skin)
-      for (int r = 24; r <= 41; r++) {
-        for (int c = 15; c <= 35; c++) {
-          grid[r][c] = 4;
-        }
-      }
-      
-      // Customize Torso by Planet Style
-      if (_planetPreset == "Ninjonia") {
-        for (int r = 24; r <= 25; r++) {
-          for (int c = 23; c <= 27; c++) {
-            grid[r][c] = 1;
-          }
-        }
-        for (int r = 21; r <= 23; r++) {
-          for (int c = 18; c <= 32; c++) {
-            grid[r][c] = 4;
-          }
-        }
-        for (int i = 0; i <= 10; i++) {
-          grid[26 + i][18 + i] = 5;
-          grid[26 + i][19 + i] = 5;
-        }
-      } else if (_planetPreset == "Techno") {
-        for (int r = 28; r <= 32; r++) {
-          for (int c = 22; c <= 28; c++) {
-            grid[r][c] = 5;
-          }
-        }
-        for (int c = 24; c <= 25; c++) { grid[24][c] = 5; grid[25][c] = 5; }
-        for (int c = 31; c <= 35; c++) { grid[24][c] = 5; grid[25][c] = 5; }
-      } else if (_planetPreset == "Warrion") {
-        for (int r = 24; r <= 27; r++) {
-          for (int c = 13; c <= 16; c++) { grid[r][c] = 2; }
-          for (int c = 34; c <= 37; c++) { grid[r][c] = 2; }
-        }
-        for (int r = 26; r <= 35; r++) {
-          for (int c = 13; c <= 14; c++) { grid[r][c] = 1; }
-          for (int c = 36; c <= 37; c++) { grid[r][c] = 1; }
-        }
-      } else {
-        for (int r = 23; r <= 26; r++) {
-          for (int c = 12; c <= 16; c++) { grid[r][c] = 4; }
-          for (int c = 34; c <= 38; c++) { grid[r][c] = 4; }
-        }
-        for (int r = 28; r <= 35; r++) {
-          grid[r][25] = 5;
-        }
-      }
-      
-      // 4. Draw Head / Face (Value 1 = Skin, Value 3 = Eyes)
-      for (int r = 12; r <= 23; r++) {
-        for (int c = 18; c <= 32; c++) {
-          grid[r][c] = 1;
-        }
-      }
-      
-      // Visor/Mask variations on face
-      if (_planetPreset == "Techno") {
-        for (int r = 15; r <= 17; r++) {
-          for (int c = 19; c <= 31; c++) {
-            grid[r][c] = 3;
-          }
-        }
-      } else if (_planetPreset == "Battacaria") {
-        for (int r = 11; r <= 23; r++) {
-          for (int c = 18; c <= 32; c++) {
-            grid[r][c] = 4;
-          }
-        }
-        for (int r = 14; r <= 16; r++) {
-          for (int c = 21; c <= 29; c++) {
-            grid[r][c] = 3;
-          }
-        }
-      } else {
-        grid[15][21] = 3; grid[15][22] = 3;
-        grid[16][21] = 3; grid[16][22] = 3;
-        grid[15][28] = 3; grid[15][29] = 3;
-        grid[16][28] = 3; grid[16][29] = 3;
-      }
-      
-      // 5. Draw Hair (Value 2)
-      switch (_hairStylePreset) {
-        case "Spiky":
-          for (int c = 17; c <= 33; c++) { grid[11][c] = 2; }
-          for (int c = 16; c <= 34; c++) { grid[10][c] = 2; }
-          for (final col in [17, 20, 23, 27, 30, 33]) {
-            grid[9][col] = 2; grid[8][col] = 2;
-          }
-          for (int r = 12; r <= 17; r++) {
-            grid[r][17] = 2;
-            grid[r][33] = 2;
-          }
-          break;
-          
-        case "Long":
-          for (int r = 7; r <= 11; r++) {
-            for (int c = 16; c <= 34; c++) { grid[r][c] = 2; }
-          }
-          for (int r = 12; r <= 28; r++) {
-            for (int c = 15; c <= 17; c++) { grid[r][c] = 2; }
-            for (int c = 33; c <= 35; c++) { grid[r][c] = 2; }
-          }
-          break;
-          
-        case "Short":
-          for (int r = 9; r <= 11; r++) {
-            for (int c = 18; c <= 32; c++) { grid[r][c] = 2; }
-          }
-          for (int r = 12; r <= 15; r++) {
-            grid[r][17] = 2;
-            grid[r][33] = 2;
-          }
-          break;
-          
-        case "Mohawk":
-          for (int r = 5; r <= 11; r++) {
-            for (int c = 24; c <= 26; c++) { grid[r][c] = 2; }
-          }
-          break;
-          
-        default:
-          for (int c = 18; c <= 32; c++) { grid[11][c] = 2; }
-      }
-      
-      _pixelGrid = grid;
+      _pixelGrid = CharacterSprite.generateGrid(
+        planet: _planetPreset,
+        hairStyle: _hairStylePreset,
+        sex: _sexPreset,
+      );
     });
   }
 
@@ -336,6 +208,11 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<UserProfileManager>(context);
+    final activeSkinColor = hexToColor(_skinHex(_skinPreset));
+    final activeHairColor = hexToColor(_hairHex(_hairColorPreset));
+    final activeOutfitColor = hexToColor(_outfitColorHex(_outfitColorPreset));
+    final activeAuraColor = profile.currentElement.accentColor;
+    final activeEyeColor = profile.currentElement.primaryColor;
 
     return Scaffold(
       backgroundColor: const Color(0xFF050505),
@@ -375,42 +252,31 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
               // Canvas drawing grid
               Center(
                 child: Container(
-                  padding: const EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.04),
+                    color: Colors.black.withOpacity(0.6),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: profile.currentElement.primaryColor.withOpacity(0.4),
                       width: 1.5,
                     ),
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(_pixelGrid.length, (r) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: List.generate(_pixelGrid[r].length, (c) {
-                          final cellVal = _pixelGrid[r][c];
-                          final pixelSize = _pixelGrid.length > 16 ? 5.5 : 16.0;
-                          return GestureDetector(
-                            onTap: () => _paintPixel(r, c),
-                            onPanUpdate: (details) => _paintPixel(r, c),
-                            child: Container(
-                              width: pixelSize,
-                              height: pixelSize,
-                              margin: const EdgeInsets.all(0.2),
-                              decoration: BoxDecoration(
-                                color: _colorForPixelValue(cellVal, profile),
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.04),
-                                  width: 0.5,
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      );
-                    }),
+                  child: GestureDetector(
+                    onPanDown: (details) {
+                      _handlePaintGesture(details.localPosition, 300.0);
+                    },
+                    onPanUpdate: (details) {
+                      _handlePaintGesture(details.localPosition, 300.0);
+                    },
+                    child: PixelSpriteWidget(
+                      grid: _pixelGrid,
+                      skinColor: activeSkinColor,
+                      hairColor: activeHairColor,
+                      eyeColor: activeEyeColor,
+                      outfitColor: activeOutfitColor,
+                      auraColor: activeAuraColor,
+                      pixelSize: 1.0,
+                    ),
                   ),
                 ),
               ),

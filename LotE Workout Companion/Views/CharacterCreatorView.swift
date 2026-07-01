@@ -51,34 +51,51 @@ struct CharacterCreatorView: View {
                     
                     // Sprite Preview & Pixel Grid
                     VStack(spacing: 15) {
-                        // Drawing grid canvas
-                        VStack(spacing: 1) {
-                            ForEach(pixelGrid.indices, id: \.self) { r in
-                                HStack(spacing: 1) {
-                                    ForEach(pixelGrid[r].indices, id: \.self) { c in
-                                        let pixelVal = pixelGrid[r][c]
-                                        Rectangle()
-                                            .fill(colorForPixelValue(pixelVal))
-                                            .frame(width: pixelGrid.count > 16 ? 6 : 15, height: pixelGrid.count > 16 ? 6 : 15)
-                                            .overlay(
-                                                Rectangle()
-                                                    .stroke(Color.white.opacity(0.05), lineWidth: 0.5)
-                                            )
-                                            .onTapGesture {
-                                                paintPixel(row: r, col: c)
+                        // High performance character canvas
+                        let pixelSize: CGFloat = 0.8
+                        let size: CGFloat = 300.0 * pixelSize
+                        Canvas { context, sz in
+                            for r in 0..<300 {
+                                for c in 0..<300 {
+                                    let val = pixelGrid[r][c]
+                                    if val != 0 {
+                                        let color: Color = {
+                                            switch val {
+                                            case 1: return activeSkinColor
+                                            case 2: return activeHairColor
+                                            case 3: return activeEyeColor
+                                            case 4: return activeOutfitColor
+                                            case 5: return activeAuraColor
+                                            default: return .clear
                                             }
-                                            .gesture(
-                                                DragGesture(minimumDistance: 0.1)
-                                                    .onChanged { _ in
-                                                        paintPixel(row: r, col: c)
-                                                    }
-                                            )
+                                        }()
+                                        let rect = CGRect(
+                                            x: CGFloat(c) * pixelSize,
+                                            y: CGFloat(r) * pixelSize,
+                                            width: pixelSize,
+                                            height: pixelSize
+                                        )
+                                        context.fill(Path(rect), with: .color(color))
                                     }
                                 }
                             }
                         }
-                        .padding(6)
-                        .background(Color.white.opacity(0.04))
+                        .frame(width: size, height: size)
+                        .gesture(
+                            DragGesture(minimumDistance: 0)
+                                .onChanged { value in
+                                    let location = value.location
+                                    let col = Int(location.x / pixelSize)
+                                    let row = Int(location.y / pixelSize)
+                                    if row >= 0 && row < 300 && col >= 0 && col < 300 {
+                                        if pixelGrid[row][col] != selectedToolColor {
+                                            pixelGrid[row][col] = selectedToolColor
+                                        }
+                                    }
+                                }
+                        )
+                        .padding(10)
+                        .background(Color.black.opacity(0.6))
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
@@ -266,158 +283,12 @@ struct CharacterCreatorView: View {
     }
     
     private func clearCanvas() {
-        pixelGrid = Array(repeating: Array(repeating: 0, count: 50), count: 50)
+        pixelGrid = Array(repeating: Array(repeating: 0, count: 300), count: 300)
     }
     
     // MARK: - Preset Compositor
     private func generateBaseFromPresets() {
-        var grid = Array(repeating: Array(repeating: 0, count: 50), count: 50)
-        
-        // 1. Draw Aura (Value 5) - glowing orbits and particle accents around the margins
-        for r in 0..<50 {
-            for c in 0..<50 {
-                let dx = Double(c - 25)
-                let dy = Double(r - 25)
-                let dist = sqrt(dx*dx + dy*dy)
-                if dist >= 21.0 && dist <= 23.5 {
-                    if (r + c) % 3 == 0 {
-                        grid[r][c] = 5
-                    }
-                }
-            }
-        }
-        
-        // 2. Draw Legs / Feet (Value 4 or 1)
-        for r in 42...47 {
-            for c in 18...22 { grid[r][c] = 4 }
-            for c in 28...32 { grid[r][c] = 4 }
-        }
-        for c in 17...23 { grid[48][c] = 4; grid[49][c] = 4 }
-        for c in 27...33 { grid[48][c] = 4; grid[49][c] = 4 }
-        
-        // 3. Draw Body & Armor (Value 4 = Armor, Value 1 = Skin)
-        for r in 24...41 {
-            for c in 15...35 {
-                grid[r][c] = 4
-            }
-        }
-        
-        // Customize Torso by Planet Style
-        if planetPreset == "Ninjonia" {
-            for r in 24...25 {
-                for c in 23...27 {
-                    grid[r][c] = 1
-                }
-            }
-            for r in 21...23 {
-                for c in 18...32 {
-                    grid[r][c] = 4
-                }
-            }
-            for i in 0...10 {
-                grid[26 + i][18 + i] = 5
-                grid[26 + i][19 + i] = 5
-            }
-        } else if planetPreset == "Techno" {
-            for r in 28...32 {
-                for c in 22...28 {
-                    grid[r][c] = 5
-                }
-            }
-            for c in 15...19 { grid[24][c] = 5; grid[25][c] = 5 }
-            for c in 31...35 { grid[24][c] = 5; grid[25][c] = 5 }
-        } else if planetPreset == "Warrion" {
-            for r in 24...27 {
-                for c in 13...16 { grid[r][c] = 2 }
-                for c in 34...37 { grid[r][c] = 2 }
-            }
-            for r in 26...35 {
-                for c in 13...14 { grid[r][c] = 1 }
-                for c in 36...37 { grid[r][c] = 1 }
-            }
-        } else {
-            for r in 23...26 {
-                for c in 12...16 { grid[r][c] = 4 }
-                for c in 34...38 { grid[r][c] = 4 }
-            }
-            for r in 28...35 {
-                grid[r][25] = 5
-            }
-        }
-        
-        // 4. Draw Head / Face (Value 1 = Skin, Value 3 = Eyes)
-        for r in 12...23 {
-            for c in 18...32 {
-                grid[r][c] = 1
-            }
-        }
-        
-        // Visor/Mask variations on face
-        if planetPreset == "Techno" {
-            for r in 15...17 {
-                for c in 19...31 {
-                    grid[r][c] = 3
-                }
-            }
-        } else if planetPreset == "Battacaria" {
-            for r in 11...23 {
-                for c in 18...32 {
-                    grid[r][c] = 4
-                }
-            }
-            for r in 14...16 {
-                for c in 21...29 {
-                    grid[r][c] = 3
-                }
-            }
-        } else {
-            grid[15][21] = 3; grid[15][22] = 3
-            grid[16][21] = 3; grid[16][22] = 3
-            grid[15][28] = 3; grid[15][29] = 3
-            grid[16][28] = 3; grid[16][29] = 3
-        }
-        
-        // 5. Draw Hair (Value 2)
-        switch hairStylePreset {
-        case "Spiky":
-            for c in 17...33 { grid[11][c] = 2 }
-            for c in 16...34 { grid[10][c] = 2 }
-            for col in [17, 20, 23, 27, 30, 33] {
-                grid[9][col] = 2; grid[8][col] = 2
-            }
-            for r in 12...17 {
-                grid[r][17] = 2
-                grid[r][33] = 2
-            }
-            
-        case "Long":
-            for r in 7...11 {
-                for c in 16...34 { grid[r][c] = 2 }
-            }
-            for r in 12...28 {
-                for c in 15...17 { grid[r][c] = 2 }
-                for c in 33...35 { grid[r][c] = 2 }
-            }
-            
-        case "Short":
-            for r in 9...11 {
-                for c in 18...32 { grid[r][c] = 2 }
-            }
-            for r in 12...15 {
-                grid[r][17] = 2
-                grid[r][33] = 2
-            }
-            
-        case "Mohawk":
-            for r in 5...11 {
-                for c in 24...26 { grid[r][c] = 2 }
-            }
-            
-        default:
-            for c in 18...32 { grid[11][c] = 2 }
-        }
-        
-        pixelGrid = grid
+        pixelGrid = CharacterSprite.generateGrid(planet: planetPreset, hairStyle: hairStylePreset, sex: sexPreset)
     }
     
     // Hex mappings for presets

@@ -344,7 +344,112 @@ class _ShopViewState extends State<ShopView> {
                               ElevatedButton(
                                 onPressed: profile.crystals >= item.cost
                                     ? () {
-                                        profile.buyShopItem(item);
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              backgroundColor: const Color(0xFF0C0C0C),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(16),
+                                                side: BorderSide(color: themeColor.withOpacity(0.4), width: 1.5),
+                                              ),
+                                              title: const Text(
+                                                "CONFIRM ACQUISITION",
+                                                style: TextStyle(
+                                                  fontFamily: "Orbitron",
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  letterSpacing: 2,
+                                                ),
+                                              ),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    item.name.toUpperCase(),
+                                                    style: const TextStyle(
+                                                      fontFamily: "Orbitron",
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                    decoration: BoxDecoration(
+                                                      color: themeColor.withOpacity(0.12),
+                                                      borderRadius: BorderRadius.circular(4),
+                                                    ),
+                                                    child: Text(
+                                                      item.type.toUpperCase(),
+                                                      style: TextStyle(
+                                                        fontFamily: "Orbitron",
+                                                        fontSize: 8,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: themeColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 12),
+                                                  const Text(
+                                                    "EXPANDED DESCRIPTION:",
+                                                    style: TextStyle(
+                                                      fontFamily: "Orbitron",
+                                                      fontSize: 9,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    item.description,
+                                                    style: const TextStyle(
+                                                      fontFamily: "Exo2",
+                                                      fontSize: 12,
+                                                      color: Colors.white70,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                  Row(
+                                                    children: [
+                                                      const Text(
+                                                        "Cost: ",
+                                                        style: TextStyle(fontFamily: "Exo2", fontSize: 13, color: Colors.grey),
+                                                      ),
+                                                      Text(
+                                                        "${item.cost}",
+                                                        style: const TextStyle(fontFamily: "Orbitron", fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                                                      ),
+                                                      const SizedBox(width: 4),
+                                                      const Text("💎"),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.of(context).pop(),
+                                                  child: const Text(
+                                                    "CANCEL",
+                                                    style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    profile.buyShopItem(item);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text(
+                                                    "CONFIRM PURCHASE",
+                                                    style: TextStyle(color: themeColor, fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
                                       }
                                     : null,
                                 style: ElevatedButton.styleFrom(

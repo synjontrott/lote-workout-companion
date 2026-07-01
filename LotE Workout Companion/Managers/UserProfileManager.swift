@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import HealthKit
 
 public class UserProfileManager: ObservableObject {
     // MARK: - Persisted Fields
@@ -66,6 +67,26 @@ public class UserProfileManager: ObservableObject {
     }
     
     @Published public var standHoursGoal: Double {
+        didSet { save() }
+    }
+    
+    @Published public var targetCalories: Double {
+        didSet { save() }
+    }
+    
+    @Published public var targetProtein: Double {
+        didSet { save() }
+    }
+    
+    @Published public var targetCarbs: Double {
+        didSet { save() }
+    }
+    
+    @Published public var targetFats: Double {
+        didSet { save() }
+    }
+    
+    @Published public var targetSugar: Double {
         didSet { save() }
     }
     
@@ -230,6 +251,45 @@ public class UserProfileManager: ObservableObject {
         didSet { save() }
     }
     
+    @Published public var todayWaterIntake: Double {
+        didSet { save() }
+    }
+    
+    @Published public var waterIntakeGoal: Double {
+        didSet { save() }
+    }
+    
+    @Published public var useImperialUnits: Bool {
+        didSet { save() }
+    }
+    
+    public var waterIntakeGoalOz: Double {
+        get { (waterIntakeGoal * 33.814).rounded() }
+        set { waterIntakeGoal = newValue / 33.814 }
+    }
+    
+    public var todayWaterIntakeOz: Double {
+        get { (todayWaterIntake * 33.814).rounded() }
+        set { todayWaterIntake = max(0, newValue / 33.814) }
+    }
+    
+    @Published public var personalRecords: [String: Double] {
+        didSet {
+            save()
+            regenerateDailyQuests()
+        }
+    }
+    
+    @Published public var prHistory: [String: [PREntry]] {
+        didSet {
+            save()
+        }
+    }
+    
+    @Published public var loggedWorkoutSessions: [WorkoutSession] {
+        didSet { save() }
+    }
+    
     // MARK: - Elements Lore Database
     public static let availableElements: [LotEElement] = [
         LotEElement(
@@ -242,6 +302,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Allows for both precise crafting flames and sudden bursts of dark energy.",
             primaryColorHex: "#FF1616",
             accentColorHex: "#FF5E00",
+            secondaryColorHex: "#FFC400",
+            detailColorHex: "#FFF8E1",
             planetOfOrigin: "Ninjonia",
             inherentDark: false
         ),
@@ -255,6 +317,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Mastery of fluid water flows combined with corrosive outbursts.",
             primaryColorHex: "#00A3FF",
             accentColorHex: "#00E5FF",
+            secondaryColorHex: "#00BFA5",
+            detailColorHex: "#E0F7FA",
             planetOfOrigin: "Techno",
             inherentDark: false
         ),
@@ -268,6 +332,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "A perfect blend of solid structural defenses and aggressive, shattering spikes.",
             primaryColorHex: "#4CAF50",
             accentColorHex: "#795548",
+            secondaryColorHex: "#9E9E9E",
+            detailColorHex: "#8D6E63",
             planetOfOrigin: "Warrion",
             inherentDark: false
         ),
@@ -281,6 +347,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Combines high mobility streams with heavy, suffocating pressure fields.",
             primaryColorHex: "#A5D6FF",
             accentColorHex: "#F6F7FC",
+            secondaryColorHex: "#CFD8DC",
+            detailColorHex: "#FFFFFF",
             planetOfOrigin: "Ninjonia",
             inherentDark: false
         ),
@@ -294,6 +362,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Unifying mechanical conduction with wild electromagnetic discharge.",
             primaryColorHex: "#00F0FF",
             accentColorHex: "#FFEA00",
+            secondaryColorHex: "#7C4DFF",
+            detailColorHex: "#FFFFFF",
             planetOfOrigin: "Techno",
             inherentDark: false
         ),
@@ -307,6 +377,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Forging pristine defenses that decay into toxic rusted fragments on impact.",
             primaryColorHex: "#B0BEC5",
             accentColorHex: "#FFD700",
+            secondaryColorHex: "#546E7A",
+            detailColorHex: "#ECEFF1",
             planetOfOrigin: "Warrion",
             inherentDark: false
         ),
@@ -320,6 +392,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Immobilizing enemies in clear ice, then detonating it with dark frost energy.",
             primaryColorHex: "#26C6DA",
             accentColorHex: "#FFFFFF",
+            secondaryColorHex: "#B2EBF2",
+            detailColorHex: "#E0F7FA",
             planetOfOrigin: "Ninjonia",
             inherentDark: false
         ),
@@ -333,6 +407,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Unbreakable bone shields that latch onto attackers and drain life force.",
             primaryColorHex: "#EEEEEE",
             accentColorHex: "#D7CCC8",
+            secondaryColorHex: "#9E9E9E",
+            detailColorHex: "#3E2723",
             planetOfOrigin: "Warrion",
             inherentDark: false
         ),
@@ -346,6 +422,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Controlling vapor density to suffocating points, shifting between mist and poison.",
             primaryColorHex: "#80CBC4",
             accentColorHex: "#E1BEE7",
+            secondaryColorHex: "#B2DFDB",
+            detailColorHex: "#FFF9C4",
             planetOfOrigin: "Techno",
             inherentDark: false
         ),
@@ -357,8 +435,10 @@ public class UserProfileManager: ObservableObject {
             standardDetails: "High-concentration light beams for drilling, welding, and focused attacks.",
             corruptDetails: "Erratic radioactive pulses that spread decay and chaotic light energy.",
             balancedDetails: "Precise surgical targeting overlay with highly destructive explosive pulses.",
-            primaryColorHex: "#FF007F",
-            accentColorHex: "#7B1FA2",
+            primaryColorHex: "#FF0055",
+            accentColorHex: "#FF80DF",
+            secondaryColorHex: "#FFFFFF",
+            detailColorHex: "#FF00FF",
             planetOfOrigin: "Techno",
             inherentDark: false
         ),
@@ -372,6 +452,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Maintaining portal nodes while tearing localized space with void micro-rifts.",
             primaryColorHex: "#3F51B5",
             accentColorHex: "#E040FB",
+            secondaryColorHex: "#1A237E",
+            detailColorHex: "#FFEB3B",
             planetOfOrigin: "Nidosis",
             inherentDark: false
         ),
@@ -386,6 +468,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Balanced output of raw negative energy and sovereign control.",
             primaryColorHex: "#880E4F",
             accentColorHex: "#FFB300",
+            secondaryColorHex: "#3E2723",
+            detailColorHex: "#E040FB",
             planetOfOrigin: "Battacaria",
             inherentDark: true
         ),
@@ -399,6 +483,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Controlling the boundary of life and rot to siphon endurance.",
             primaryColorHex: "#4A148C",
             accentColorHex: "#212121",
+            secondaryColorHex: "#263238",
+            detailColorHex: "#FFFFFF",
             planetOfOrigin: "Battacaria",
             inherentDark: true
         ),
@@ -412,6 +498,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Wielding double-sided blades of surgical energy and raw plasma fire.",
             primaryColorHex: "#00E5FF",
             accentColorHex: "#37474F",
+            secondaryColorHex: "#78909C",
+            detailColorHex: "#FFFFFF",
             planetOfOrigin: "Battacaria",
             inherentDark: true
         ),
@@ -425,6 +513,8 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Synthesizing customized antidotes and complex combat serums.",
             primaryColorHex: "#00E676",
             accentColorHex: "#AA00FF",
+            secondaryColorHex: "#8E24AA",
+            detailColorHex: "#CCFF90",
             planetOfOrigin: "Battacaria",
             inherentDark: true
         ),
@@ -438,13 +528,19 @@ public class UserProfileManager: ObservableObject {
             balancedDetails: "Stealth infiltration coupled with blind darkness fields for quick assassination.",
             primaryColorHex: "#263238",
             accentColorHex: "#311B92",
+            secondaryColorHex: "#212121",
+            detailColorHex: "#000000",
             planetOfOrigin: "Battacaria",
             inherentDark: false
         )
     ]
     
     public var currentElement: LotEElement {
-        UserProfileManager.availableElements[Self.normalizedElementIndex(selectedElementIndex)]
+        let base = UserProfileManager.availableElements[Self.normalizedElementIndex(selectedElementIndex)]
+        if expressionStyle == .corrupt {
+            return base.corruptedVersion()
+        }
+        return base
     }
 
     private static func normalizedElementIndex(_ index: Int) -> Int {
@@ -503,6 +599,21 @@ public class UserProfileManager: ObservableObject {
         let loadedCalGoal = UserDefaults.standard.double(forKey: "lote_cal_goal")
         self.caloriesGoal = loadedCalGoal == 0.0 ? 400.0 : loadedCalGoal
         
+        let loadedTargetCal = UserDefaults.standard.double(forKey: "lote_target_calories")
+        self.targetCalories = loadedTargetCal == 0.0 ? 2500.0 : loadedTargetCal
+        
+        let loadedTargetProt = UserDefaults.standard.double(forKey: "lote_target_protein")
+        self.targetProtein = loadedTargetProt == 0.0 ? 150.0 : loadedTargetProt
+        
+        let loadedTargetCarbs = UserDefaults.standard.double(forKey: "lote_target_carbs")
+        self.targetCarbs = loadedTargetCarbs == 0.0 ? 250.0 : loadedTargetCarbs
+        
+        let loadedTargetFats = UserDefaults.standard.double(forKey: "lote_target_fats")
+        self.targetFats = loadedTargetFats == 0.0 ? 80.0 : loadedTargetFats
+        
+        let loadedTargetSugar = UserDefaults.standard.double(forKey: "lote_target_sugar")
+        self.targetSugar = loadedTargetSugar == 0.0 ? 50.0 : loadedTargetSugar
+        
         let loadedMinGoal = UserDefaults.standard.double(forKey: "lote_min_goal")
         self.activeMinutesGoal = loadedMinGoal == 0.0 ? 30.0 : loadedMinGoal
         
@@ -511,6 +622,7 @@ public class UserProfileManager: ObservableObject {
         
         self.hasClaimedWeightGoalReward = UserDefaults.standard.bool(forKey: "lote_claimed_weight_reward")
         self.hasClaimedDistanceGoalReward = UserDefaults.standard.bool(forKey: "lote_claimed_distance_reward")
+        self.useImperialUnits = UserDefaults.standard.bool(forKey: "lote_use_imperial_units")
         
         if let weightHistoryData = UserDefaults.standard.data(forKey: "lote_weight_history"),
            let decodedWeightHistory = try? JSONDecoder().decode([WeightEntry].self, from: weightHistoryData) {
@@ -636,6 +748,59 @@ public class UserProfileManager: ObservableObject {
             self.loggedMeals = []
         }
         
+        self.todayWaterIntake = UserDefaults.standard.double(forKey: "lote_today_water_intake")
+        let loadedWaterGoal = UserDefaults.standard.double(forKey: "lote_water_intake_goal")
+        self.waterIntakeGoal = loadedWaterGoal == 0.0 ? 3.0 : loadedWaterGoal
+        
+        if let prsData = UserDefaults.standard.data(forKey: "lote_personal_records"),
+           var decodedPRs = try? JSONDecoder().decode([String: Double].self, from: prsData) {
+            if decodedPRs["Bench Press"] == nil { decodedPRs["Bench Press"] = 135.0 }
+            if decodedPRs["Deadlift"] == nil { decodedPRs["Deadlift"] = 185.0 }
+            if decodedPRs["Barbell Squat"] == nil { decodedPRs["Barbell Squat"] = 155.0 }
+            if decodedPRs["Overhead Press"] == nil { decodedPRs["Overhead Press"] = 95.0 }
+            self.personalRecords = decodedPRs
+        } else {
+            self.personalRecords = [
+                "Pullups": 5.0,
+                "Pushups": 20.0,
+                "Squats": 30.0,
+                "Run (Miles)": 1.0,
+                "Handstand Hold (Sec)": 10.0,
+                "Dips": 8.0,
+                "Bench Press": 135.0,
+                "Deadlift": 185.0,
+                "Barbell Squat": 155.0,
+                "Overhead Press": 95.0
+            ]
+        }
+        
+        if let prHistoryData = UserDefaults.standard.data(forKey: "lote_pr_history"),
+           let decodedPRHistory = try? JSONDecoder().decode([String: [PREntry]].self, from: prHistoryData) {
+            self.prHistory = decodedPRHistory
+        } else {
+            var initialHistory: [String: [PREntry]] = [:]
+            let now = Date()
+            let daysAgo = Calendar.current.date(byAdding: .day, value: -3, to: now) ?? now
+            initialHistory["Pullups"] = [PREntry(date: daysAgo, value: 5.0)]
+            initialHistory["Pushups"] = [PREntry(date: daysAgo, value: 20.0)]
+            initialHistory["Squats"] = [PREntry(date: daysAgo, value: 30.0)]
+            initialHistory["Run (Miles)"] = [PREntry(date: daysAgo, value: 1.0)]
+            initialHistory["Handstand Hold (Sec)"] = [PREntry(date: daysAgo, value: 10.0)]
+            initialHistory["Dips"] = [PREntry(date: daysAgo, value: 8.0)]
+            initialHistory["Bench Press"] = [PREntry(date: daysAgo, value: 135.0)]
+            initialHistory["Deadlift"] = [PREntry(date: daysAgo, value: 185.0)]
+            initialHistory["Barbell Squat"] = [PREntry(date: daysAgo, value: 155.0)]
+            initialHistory["Overhead Press"] = [PREntry(date: daysAgo, value: 95.0)]
+            self.prHistory = initialHistory
+        }
+        
+        if let sessionsData = UserDefaults.standard.data(forKey: "lote_logged_workout_sessions"),
+           let decodedSessions = try? JSONDecoder().decode([WorkoutSession].self, from: sessionsData) {
+            self.loggedWorkoutSessions = decodedSessions
+        } else {
+            self.loggedWorkoutSessions = []
+        }
+        
         // Refresh Quests if it's a new day
         checkNewDayRefresh()
     }
@@ -660,11 +825,27 @@ public class UserProfileManager: ObservableObject {
         UserDefaults.standard.set(monthlyChallengeProgress, forKey: "lote_monthly_challenge_progress")
         UserDefaults.standard.set(previousStreak, forKey: "lote_previous_streak")
         
+        UserDefaults.standard.set(todayWaterIntake, forKey: "lote_today_water_intake")
+        UserDefaults.standard.set(waterIntakeGoal, forKey: "lote_water_intake_goal")
+        UserDefaults.standard.set(useImperialUnits, forKey: "lote_use_imperial_units")
+        
+        if let prsData = try? JSONEncoder().encode(personalRecords) {
+            UserDefaults.standard.set(prsData, forKey: "lote_personal_records")
+        }
+        if let sessionsData = try? JSONEncoder().encode(loggedWorkoutSessions) {
+            UserDefaults.standard.set(sessionsData, forKey: "lote_logged_workout_sessions")
+        }
+        
         if let mealsData = try? JSONEncoder().encode(loggedMeals) {
             UserDefaults.standard.set(mealsData, forKey: "lote_logged_meals")
         }
         
         UserDefaults.standard.set(height, forKey: "lote_body_height")
+        UserDefaults.standard.set(targetCalories, forKey: "lote_target_calories")
+        UserDefaults.standard.set(targetProtein, forKey: "lote_target_protein")
+        UserDefaults.standard.set(targetCarbs, forKey: "lote_target_carbs")
+        UserDefaults.standard.set(targetFats, forKey: "lote_target_fats")
+        UserDefaults.standard.set(targetSugar, forKey: "lote_target_sugar")
         UserDefaults.standard.set(weight, forKey: "lote_body_weight")
         UserDefaults.standard.set(startWeight, forKey: "lote_start_weight")
         UserDefaults.standard.set(goalWeight, forKey: "lote_goal_weight")
@@ -724,6 +905,21 @@ public class UserProfileManager: ObservableObject {
         if let measurementHistoryData = try? JSONEncoder().encode(measurementHistory) {
             UserDefaults.standard.set(measurementHistoryData, forKey: "lote_measurement_history")
         }
+        
+        if let prHistoryData = try? JSONEncoder().encode(prHistory) {
+            UserDefaults.standard.set(prHistoryData, forKey: "lote_pr_history")
+        }
+    }
+    
+    public func logPR(key: String, value: Double) {
+        personalRecords[key] = value
+        
+        var history = prHistory[key] ?? []
+        history.append(PREntry(date: Date(), value: value))
+        prHistory[key] = history
+        
+        save()
+        regenerateDailyQuests()
     }
     
     // MARK: - XP & Rewards Engine
@@ -900,6 +1096,19 @@ public class UserProfileManager: ObservableObject {
         save()
     }
     
+    public var activeMonthlyChallengeCategory: WorkoutCategory? {
+        let calendar = Calendar.current
+        let month = calendar.component(.month, from: Date())
+        switch month {
+        case 1, 6, 10: return .strength
+        case 2, 5, 9: return .cardio
+        case 3, 11: return .flexibility
+        case 4, 8: return .nutrition
+        case 7: return .meditation
+        default: return nil
+        }
+    }
+    
     // MARK: - Quest Actions
     public func completeQuest(_ quest: LotEQuest) -> Bool {
         var isDaily = false
@@ -927,6 +1136,21 @@ public class UserProfileManager: ObservableObject {
         if isDaily {
             dailyQuests[foundIndex].isCompleted = true
             incrementMonthlyAndYearlyProgress(for: questToComplete.workoutType)
+            
+            if let activeCat = activeMonthlyChallengeCategory, questToComplete.workoutType == activeCat {
+                let challenge = activeMonthlyChallenge
+                let amount: Double
+                if challenge.targetMetric == "reps" {
+                    amount = 50.0
+                } else if challenge.targetMetric == "Liters" {
+                    amount = 3.0
+                } else if challenge.targetMetric == "miles" {
+                    amount = 2.0
+                } else {
+                    amount = questToComplete.requiredMinutes > 0 ? questToComplete.requiredMinutes : 15.0
+                }
+                advanceMonthlyChallenge(amount: amount)
+            }
         } else if isMonthly {
             monthlyQuests[foundIndex].isCompleted = true
         } else if isYearly {
@@ -963,13 +1187,22 @@ public class UserProfileManager: ObservableObject {
         }
     }
     
-    public func logWorkout(category: WorkoutCategory) {
-        // Increment progress on matching daily quests
-        for i in 0..<dailyQuests.count {
-            if dailyQuests[i].workoutType == category && !dailyQuests[i].isCompleted {
-                dailyQuests[i].progressCount = min(dailyQuests[i].progressCount + 1, dailyQuests[i].targetCount)
-            }
+    public func logWorkout(category: WorkoutCategory, durationMinutes: Double = 15.0) {
+        let type: String
+        switch category {
+        case .strength: type = "Strength"
+        case .cardio: type = "Cardio"
+        case .flexibility: type = "Yoga"
+        case .nutrition: type = "Nutrition"
+        case .meditation: type = "Meditation"
         }
+        
+        let session = WorkoutSession(type: type, durationMinutes: durationMinutes, date: Date())
+        loggedWorkoutSessions.append(session)
+        
+        // Evaluate daily quest completion
+        evaluateQuestsCompletion()
+        
         // Increment progress on matching monthly quests
         for i in 0..<monthlyQuests.count {
             if monthlyQuests[i].workoutType == category && !monthlyQuests[i].isCompleted {
@@ -985,11 +1218,50 @@ public class UserProfileManager: ObservableObject {
         save()
     }
     
+    public func evaluateQuestsCompletion() {
+        let calendar = Calendar.current
+        let todaySessions = loggedWorkoutSessions.filter { calendar.isDateInToday($0.date) }
+        
+        // Sum durations by type
+        let strengthDuration = todaySessions.filter { $0.type == "Strength" }.reduce(0.0) { $0 + $1.durationMinutes }
+        let cardioDuration = todaySessions.filter { $0.type == "Cardio" || $0.type == "Running" }.reduce(0.0) { $0 + $1.durationMinutes }
+        let yogaDuration = todaySessions.filter { $0.type == "Yoga" }.reduce(0.0) { $0 + $1.durationMinutes }
+        
+        // Evaluate daily quests
+        for i in 0..<dailyQuests.count {
+            let q = dailyQuests[i]
+            if q.isCompleted { continue }
+            
+            switch q.workoutType {
+            case .strength:
+                if strengthDuration >= q.requiredMinutes {
+                    dailyQuests[i].progressCount = q.targetCount
+                }
+            case .cardio:
+                if cardioDuration >= q.requiredMinutes {
+                    dailyQuests[i].progressCount = q.targetCount
+                }
+            case .flexibility:
+                if yogaDuration >= q.requiredMinutes {
+                    dailyQuests[i].progressCount = q.targetCount
+                }
+            case .nutrition:
+                if (q.title.localizedCaseInsensitiveContains("water") || q.title.localizedCaseInsensitiveContains("Hydration") || q.questDescription.localizedCaseInsensitiveContains("water") || q.questDescription.localizedCaseInsensitiveContains("Hydration")) {
+                    if todayWaterIntake >= waterIntakeGoal {
+                        dailyQuests[i].progressCount = q.targetCount
+                    }
+                }
+            case .meditation:
+                break
+            }
+        }
+    }
+    
     public func logDetailedMeal(name: String, calories: Double, protein: Double, carbs: Double, fats: Double, sugar: Double) {
         let entry = MealEntry(name: name, calories: calories, protein: protein, carbs: carbs, fats: fats, sugar: sugar)
         loggedMeals.append(entry)
         healthyMealsLoggedToday += 1
-        logWorkout(category: .nutrition)
+        logWorkout(category: .nutrition, durationMinutes: 0.0)
         save()
     }
     
@@ -1024,23 +1296,43 @@ public class UserProfileManager: ObservableObject {
             .reduce(0.0) { $0 + $1.sugar }
     }
     
-    public func syncQuestsWithHealthData(todaySteps: Double, activeMinutes: Double) {
-        if activeMinutes >= 15.0 {
-            for i in 0..<dailyQuests.count {
-                let q = dailyQuests[i]
-                if q.workoutType == .strength || q.workoutType == .flexibility || q.workoutType == .cardio {
-                    if dailyQuests[i].progressCount < dailyQuests[i].targetCount {
-                        dailyQuests[i].progressCount = dailyQuests[i].targetCount
-                    }
+    public func syncQuestsWithHealthData(todaySteps: Double, activeMinutes: Double, recentWorkouts: [HKWorkout]) {
+        let calendar = Calendar.current
+        for hw in recentWorkouts {
+            if calendar.isDateInToday(hw.startDate) {
+                // Determine mapped type. A walking workout is mapped to "Walking", which is excluded from Strength/Yoga sync.
+                let type: String
+                switch hw.workoutActivityType {
+                case .functionalStrengthTraining, .traditionalStrengthTraining, .coreTraining:
+                    type = "Strength"
+                case .walking:
+                    type = "Walking"
+                case .running:
+                    type = "Running"
+                case .cycling, .rowing, .stairClimbing:
+                    type = "Cardio"
+                case .yoga, .flexibility:
+                    type = "Yoga"
+                default:
+                    type = "Cardio"
+                }
+                
+                let durationMins = hw.duration / 60.0
+                
+                // Add if not already present
+                if !loggedWorkoutSessions.contains(where: { calendar.isDate($0.date, inSameDayAs: hw.startDate) && $0.type == type && abs($0.durationMinutes - durationMins) < 0.1 }) {
+                    loggedWorkoutSessions.append(WorkoutSession(type: type, durationMinutes: durationMins, date: hw.startDate))
                 }
             }
         }
+        
+        evaluateQuestsCompletion()
+        
+        // Dynamic fallback steps logic
         if todaySteps >= 5000.0 {
             for i in 0..<dailyQuests.count {
                 if dailyQuests[i].workoutType == .cardio {
-                    if dailyQuests[i].progressCount < dailyQuests[i].targetCount {
-                        dailyQuests[i].progressCount = dailyQuests[i].targetCount
-                    }
+                    dailyQuests[i].progressCount = dailyQuests[i].targetCount
                 }
             }
         }
@@ -1066,6 +1358,35 @@ public class UserProfileManager: ObservableObject {
         self.healthyMealsLoggedToday = 0
         self.hasClaimedWeightGoalReward = false
         self.hasClaimedDistanceGoalReward = false
+        
+        self.personalRecords = [
+            "Pullups": 5.0,
+            "Pushups": 20.0,
+            "Squats": 30.0,
+            "Run (Miles)": 1.0,
+            "Handstand Hold (Sec)": 10.0,
+            "Dips": 8.0,
+            "Bench Press": 135.0,
+            "Deadlift": 185.0,
+            "Barbell Squat": 155.0,
+            "Overhead Press": 95.0
+        ]
+        
+        var initialHistory: [String: [PREntry]] = [:]
+        let now = Date()
+        let daysAgo = Calendar.current.date(byAdding: .day, value: -3, to: now) ?? now
+        initialHistory["Pullups"] = [PREntry(date: daysAgo, value: 5.0)]
+        initialHistory["Pushups"] = [PREntry(date: daysAgo, value: 20.0)]
+        initialHistory["Squats"] = [PREntry(date: daysAgo, value: 30.0)]
+        initialHistory["Run (Miles)"] = [PREntry(date: daysAgo, value: 1.0)]
+        initialHistory["Handstand Hold (Sec)"] = [PREntry(date: daysAgo, value: 10.0)]
+        initialHistory["Dips"] = [PREntry(date: daysAgo, value: 8.0)]
+        initialHistory["Bench Press"] = [PREntry(date: daysAgo, value: 135.0)]
+        initialHistory["Deadlift"] = [PREntry(date: daysAgo, value: 185.0)]
+        initialHistory["Barbell Squat"] = [PREntry(date: daysAgo, value: 155.0)]
+        initialHistory["Overhead Press"] = [PREntry(date: daysAgo, value: 95.0)]
+        self.prHistory = initialHistory
+        
         self.regenerateDailyQuests()
         save()
     }
@@ -1083,7 +1404,6 @@ public class UserProfileManager: ObservableObject {
         return (baseVal - 10) / 2 // Standard D&D modifier calculation
     }
     
-    // MARK: - Day Refresh & Streak Engine
     private func checkNewDayRefresh() {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
@@ -1095,22 +1415,23 @@ public class UserProfileManager: ObservableObject {
             if diff > 0 {
                 // It's a new day!
                 healthyMealsLoggedToday = 0
+                todayWaterIntake = 0.0
                 hasClaimedDistanceGoalReward = false
                 let elementName = currentElement.name
-                self.dailyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .daily)
+                self.dailyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .daily, prs: personalRecords, waterGoal: waterIntakeGoal)
                 
                 // If it's a new month, refresh monthly quests
                 let lastMonth = calendar.component(.month, from: lastDate)
                 let currentMonth = calendar.component(.month, from: Date())
                 if lastMonth != currentMonth {
-                    self.monthlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .monthly)
+                    self.monthlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .monthly, prs: personalRecords, waterGoal: waterIntakeGoal)
                 }
                 
                 // If it's a new year, refresh yearly quests
                 let lastYear = calendar.component(.year, from: lastDate)
                 let currentYear = calendar.component(.year, from: Date())
                 if lastYear != currentYear {
-                    self.yearlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .yearly)
+                    self.yearlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .yearly, prs: personalRecords, waterGoal: waterIntakeGoal)
                 }
                 
                 if diff > 1 {
@@ -1159,9 +1480,9 @@ public class UserProfileManager: ObservableObject {
     
     public func regenerateDailyQuests() {
         let elementName = currentElement.name
-        self.dailyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .daily)
-        self.monthlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .monthly)
-        self.yearlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .yearly)
+        self.dailyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .daily, prs: personalRecords, waterGoal: waterIntakeGoal)
+        self.monthlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .monthly, prs: personalRecords, waterGoal: waterIntakeGoal)
+        self.yearlyQuests = generateQuests(forElementName: elementName, focuses: selectedFocuses, cadence: .yearly, prs: personalRecords, waterGoal: waterIntakeGoal)
     }
     
     // MARK: - Streak Recovery

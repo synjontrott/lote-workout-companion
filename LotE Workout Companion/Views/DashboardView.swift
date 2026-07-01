@@ -18,6 +18,7 @@ struct DashboardView: View {
     @State private var sprintTimerActive = false
     
     // Body Measurement logging modal states
+    @State private var selectedHistoryType: String = "Weight"
     @State private var showingMeasurementLog = false
     @State private var measureWeight = ""
     @State private var measureChest = ""
@@ -25,6 +26,7 @@ struct DashboardView: View {
     @State private var measureWaist = ""
     @State private var measureHips = ""
     @State private var measureLegs = ""
+    @State private var showingChallengeConfirmation = false
     
     // Colors mapped from profile sprite
     var skinColor: Color { Color(hex: profileManager.sprite.skinColorHex) ?? .orange }
@@ -42,8 +44,48 @@ struct DashboardView: View {
     
     var body: some View {
         ZStack {
-            Color(hex: "#050505")
-                .ignoresSafeArea()
+            // Futuristic cosmic background with neon gradient and orbiting elements glow
+            Group {
+                if profileManager.equippedBackground == "Neon Cyber Space" {
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color(hex: "#050B14") ?? .black, Color(hex: "#0A192F") ?? .black]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                } else if profileManager.equippedBackground == "Nebula Starfield" {
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color(hex: "#0B071E") ?? .black, Color(hex: "#1F1235") ?? .black]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                } else if profileManager.equippedBackground == "Volcanic Core" {
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color(hex: "#140505") ?? .black, Color(hex: "#2D0A0A") ?? .black]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                } else {
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            profileManager.currentElement.primaryColor.opacity(0.15),
+                            Color(hex: "#090d16") ?? .black,
+                            Color(hex: "#020408") ?? .black
+                        ]),
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                }
+            }
+            .ignoresSafeArea()
+            
+            // Neon glow orbs
+            RadialGradient(
+                colors: [profileManager.currentElement.accentColor.opacity(0.1), .clear],
+                center: .topTrailing,
+                startRadius: 5,
+                endRadius: 350
+            )
+            .ignoresSafeArea()
             
             ScrollView {
                 VStack(spacing: 20) {
@@ -74,6 +116,18 @@ struct DashboardView: View {
             }
             healthManager.fetchTodayData()
         }
+        .alert("Log Progress?", isPresented: $showingChallengeConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Log Progress") {
+                let challenge = profileManager.activeMonthlyChallenge
+                let amount = challenge.targetMetric == "reps" ? 50.0 : (challenge.targetMetric == "Liters" ? 3.0 : 1.0)
+                profileManager.advanceMonthlyChallenge(amount: amount)
+            }
+        } message: {
+            let challenge = profileManager.activeMonthlyChallenge
+            let amount = challenge.targetMetric == "reps" ? 50.0 : (challenge.targetMetric == "Liters" ? 3.0 : 1.0)
+            Text("Confirm adding +\(Int(amount)) \(challenge.targetMetric) toward your \(challenge.monthName) monthly challenge: \"\(challenge.targetDescription)\"?")
+        }
     }
     
     // MARK: - Subcomponents to simplify type checking
@@ -86,12 +140,12 @@ struct DashboardView: View {
                 // Element aura glow
                 Circle()
                     .fill(profileManager.currentElement.primaryColor.opacity(0.15))
-                    .frame(width: 85, height: 85)
+                    .frame(width: 100, height: 100)
                     .blur(radius: 12)
                 
                 // Custom Equipped Aura
-                if profileManager.equippedAura != "None" {
-                    let auraColor: Color = {
+                let activeAuraColor: Color = {
+                    if profileManager.equippedAura != "None" {
                         switch profileManager.equippedAura {
                         case "Glitch Aura": return Color(hex: "#00F0FF") ?? .cyan
                         case "Phoenix Flare": return .orange
@@ -99,10 +153,15 @@ struct DashboardView: View {
                         case "Lightning Spark": return .yellow
                         default: return profileManager.currentElement.accentColor
                         }
-                    }()
+                    } else {
+                        return profileManager.currentElement.accentColor
+                    }
+                }()
+                
+                if profileManager.equippedAura != "None" {
                     Circle()
-                        .fill(auraColor.opacity(0.2))
-                        .frame(width: 95, height: 95)
+                        .fill(activeAuraColor.opacity(0.25))
+                        .frame(width: 110, height: 110)
                         .blur(radius: 6)
                 }
                 
@@ -112,8 +171,8 @@ struct DashboardView: View {
                     hair: hairColor,
                     eye: eyeColor,
                     outfit: outfitColor,
-                    aura: auraColor,
-                    pixelSize: 1.6
+                    aura: activeAuraColor,
+                    pixelSize: 0.3
                 )
                 .offset(y: spriteBobbingOffset)
                 
@@ -230,13 +289,20 @@ struct DashboardView: View {
             ZStack {
                 Color.white.opacity(0.02)
                 if profileManager.equippedBackground != "None" {
+                    let colors: [Color] = {
+                        switch profileManager.equippedBackground {
+                        case "Neon Cyber Space":
+                            return [Color(hex: "#0A192F")?.opacity(0.45) ?? .blue, Color(hex: "#172A45")?.opacity(0.2) ?? .cyan]
+                        case "Nebula Starfield":
+                            return [Color(hex: "#1F1235")?.opacity(0.45) ?? .purple, Color(hex: "#362259")?.opacity(0.2) ?? .indigo]
+                        case "Volcanic Core":
+                            return [Color(hex: "#2D0A0A")?.opacity(0.45) ?? .red, Color(hex: "#501B1B")?.opacity(0.2) ?? .orange]
+                        default:
+                            return [profileManager.currentElement.primaryColor.opacity(0.35), Color.clear]
+                        }
+                    }()
                     LinearGradient(
-                        gradient: Gradient(colors: [
-                            profileManager.equippedBackground == "Neon Cyber Space" ? Color.blue.opacity(0.1) :
-                            profileManager.equippedBackground == "Nebula Starfield" ? Color.purple.opacity(0.1) :
-                            profileManager.equippedBackground == "Volcanic Core" ? Color.red.opacity(0.1) : Color.green.opacity(0.1),
-                            Color.clear
-                        ]),
+                        gradient: Gradient(colors: colors),
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -515,7 +581,7 @@ struct DashboardView: View {
                     .foregroundColor(.gray)
                 Spacer()
                 Button(action: {
-                    profileManager.advanceMonthlyChallenge(amount: challenge.targetMetric == "reps" ? 50 : (challenge.targetMetric == "Liters" ? 3 : 1))
+                    showingChallengeConfirmation = true
                 }) {
                     Text("+ Log Progress")
                         .font(.system(size: 9).bold())
@@ -662,16 +728,74 @@ struct DashboardView: View {
     @ViewBuilder
     private var weightHistoryCardView: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Weight History Log")
-                .font(.custom("Exo2-Bold", size: 12))
-                .foregroundColor(.white.opacity(0.8))
+            HStack {
+                Text(selectedHistoryType == "Weight" ? "Weight History Log" : "\(selectedHistoryType) PR History")
+                    .font(.custom("Exo2-Bold", size: 12))
+                    .foregroundColor(.white.opacity(0.8))
+                
+                Spacer()
+                
+                Menu {
+                    Button("Weight") { selectedHistoryType = "Weight" }
+                    ForEach(["Pullups", "Pushups", "Squats", "Dips", "Bench Press", "Deadlift", "Barbell Squat", "Overhead Press", "Run (Miles)", "Handstand Hold (Sec)"], id: \.self) { prKey in
+                        let label: String = {
+                            if prKey == "Run (Miles)" {
+                                return profileManager.useImperialUnits ? "Run (Miles)" : "Run (KM)"
+                            } else if ["Bench Press", "Deadlift", "Barbell Squat", "Overhead Press"].contains(prKey) {
+                                return profileManager.useImperialUnits ? "\(prKey) (LBS)" : "\(prKey) (KG)"
+                            } else {
+                                return prKey
+                            }
+                        }()
+                        Button(label) { selectedHistoryType = prKey }
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        let displayLabel: String = {
+                            if selectedHistoryType == "Weight" { return "Weight" }
+                            if selectedHistoryType == "Run (Miles)" { return profileManager.useImperialUnits ? "Run (Miles)" : "Run (KM)" }
+                            if ["Bench Press", "Deadlift", "Barbell Squat", "Overhead Press"].contains(selectedHistoryType) {
+                                return profileManager.useImperialUnits ? "\(selectedHistoryType) (LBS)" : "\(selectedHistoryType) (KG)"
+                            }
+                            return selectedHistoryType
+                        }()
+                        Text(displayLabel)
+                            .font(.system(size: 10).bold())
+                        Image(systemName: "chevron.down")
+                            .font(.system(size: 8))
+                    }
+                    .foregroundColor(profileManager.currentElement.primaryColor)
+                }
+            }
             
-            WeightHistoryChart(
-                history: profileManager.weightHistory,
-                startWeight: profileManager.startWeight,
-                goalWeight: profileManager.goalWeight,
-                primaryColor: profileManager.currentElement.primaryColor
-            )
+            if selectedHistoryType == "Weight" {
+                WeightHistoryChart(
+                    history: profileManager.weightHistory,
+                    startWeight: profileManager.startWeight,
+                    goalWeight: profileManager.goalWeight,
+                    primaryColor: profileManager.currentElement.primaryColor
+                )
+            } else {
+                let points: [(date: Date, value: Double)] = {
+                    let historyList = profileManager.prHistory[selectedHistoryType] ?? []
+                    return historyList.map { entry in
+                        var val = entry.value
+                        if !profileManager.useImperialUnits {
+                            if ["Bench Press", "Deadlift", "Barbell Squat", "Overhead Press"].contains(selectedHistoryType) {
+                                val = val * 0.45359237
+                            } else if selectedHistoryType == "Run (Miles)" {
+                                val = val * 1.609344
+                            }
+                        }
+                        return (date: entry.date, value: val)
+                    }
+                }()
+                
+                ProgressHistoryChart(
+                    points: points,
+                    primaryColor: profileManager.currentElement.primaryColor
+                )
+            }
         }
         .padding(.top, 5)
     }
@@ -778,29 +902,74 @@ struct DashboardView: View {
     
     // MARK: - Gauges Helper
     private func metricGauge(title: String, current: Double, target: Double, unit: String, icon: String) -> some View {
-        let percentage = min(current / target, 1.0)
+        let percentage = max(min(current / target, 1.0), 0.0)
         let percentStr = String(format: "%.1f%%", percentage * 100)
+        let element = profileManager.currentElement
         
-        return VStack(alignment: .leading, spacing: 4) {
+        return VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Label(title, systemImage: icon)
-                    .font(.custom("Exo2-Bold", size: 13))
-                    .foregroundColor(.white)
+                Label {
+                    Text(title)
+                        .font(.custom("Exo2-Bold", size: 13))
+                        .foregroundColor(.white)
+                } icon: {
+                    Image(systemName: icon)
+                        .foregroundColor(element.accentColor)
+                }
                 Spacer()
-                Text("\(Int(current)) / \(Int(target)) \(unit) (\(percentStr))")
-                    .font(.system(size: 11))
-                    .foregroundColor(profileManager.currentElement.primaryColor)
+                HStack(spacing: 4) {
+                    Text("\(Int(current))/\(Int(target)) \(unit)")
+                        .font(.system(size: 11))
+                        .foregroundColor(.white.opacity(0.8))
+                    Text("(\(percentStr))")
+                        .font(.custom("Orbitron-Bold", size: 10))
+                        .foregroundColor(element.secondaryColor)
+                }
             }
             
-            ProgressView(value: percentage, total: 1.0)
-                .progressViewStyle(LinearProgressViewStyle(tint: profileManager.currentElement.primaryColor))
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color.white.opacity(0.08))
+                        .frame(height: 8)
+                    
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    element.primaryColor,
+                                    element.accentColor,
+                                    element.secondaryColor
+                                ]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: geo.size.width * CGFloat(percentage), height: 8)
+                        .shadow(color: element.primaryColor.opacity(0.6), radius: 4, x: 0, y: 0)
+                }
+            }
+            .frame(height: 8)
         }
-        .padding()
-        .background(Color.white.opacity(0.02))
-        .cornerRadius(12)
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.black.opacity(0.45))
+        )
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.06), lineWidth: 1)
+                .stroke(
+                    LinearGradient(
+                        colors: [
+                            element.primaryColor.opacity(0.4),
+                            element.secondaryColor.opacity(0.12),
+                            element.detailColor.opacity(0.03)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
+                )
         )
     }
     
@@ -1215,18 +1384,25 @@ struct PixelSpriteView: View {
     let pixelSize: CGFloat
     
     var body: some View {
-        VStack(spacing: 0) {
-            ForEach(grid.indices, id: \.self) { r in
-                HStack(spacing: 0) {
-                    ForEach(grid[r].indices, id: \.self) { c in
-                        let val = grid[r][c]
-                        Rectangle()
-                            .fill(colorForValue(val))
-                            .frame(width: pixelSize, height: pixelSize)
+        let size = CGFloat(grid.count) * pixelSize
+        Canvas { context, sz in
+            for r in 0..<grid.count {
+                for c in 0..<grid[r].count {
+                    let val = grid[r][c]
+                    if val != 0 {
+                        let color = colorForValue(val)
+                        let rect = CGRect(
+                            x: CGFloat(c) * pixelSize,
+                            y: CGFloat(r) * pixelSize,
+                            width: pixelSize,
+                            height: pixelSize
+                        )
+                        context.fill(Path(rect), with: .color(color))
                     }
                 }
             }
         }
+        .frame(width: size, height: size)
     }
     
     private func colorForValue(_ val: Int) -> Color {
@@ -1275,6 +1451,53 @@ struct WeightHistoryChart: View {
                                 .frame(width: 16, height: CGFloat(heightPercent * 40) + 4)
                             
                             // Date label
+                            Text(formatDate(entry.date))
+                                .font(.system(size: 8))
+                                .foregroundColor(.gray)
+                        }
+                    }
+                }
+                .frame(height: 70)
+            }
+        }
+    }
+    
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM/dd"
+        return formatter.string(from: date)
+    }
+}
+
+struct ProgressHistoryChart: View {
+    let points: [(date: Date, value: Double)]
+    let primaryColor: Color
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            if points.isEmpty {
+                Text("No log entries yet.")
+                    .font(.custom("Exo2-Regular", size: 10))
+                    .foregroundColor(.gray)
+                    .frame(height: 70)
+            } else {
+                HStack(alignment: .bottom, spacing: 8) {
+                    let values = points.map { $0.value }
+                    let minVal = (values.min() ?? 0.0) * 0.9
+                    let maxVal = (values.max() ?? 0.0) * 1.1
+                    let diff = maxVal - minVal
+                    
+                    ForEach(points.suffix(7), id: \.date) { entry in
+                        VStack(spacing: 4) {
+                            Text(String(format: "%.1f", entry.value))
+                                .font(.system(size: 8))
+                                .foregroundColor(.white)
+                            
+                            let heightPercent = diff > 0 ? (entry.value - minVal) / diff : 0.5
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(primaryColor)
+                                .frame(width: 16, height: CGFloat(heightPercent * 40) + 4)
+                            
                             Text(formatDate(entry.date))
                                 .font(.system(size: 8))
                                 .foregroundColor(.gray)

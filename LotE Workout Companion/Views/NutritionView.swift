@@ -4,12 +4,12 @@ struct NutritionView: View {
     @ObservedObject var profileManager: UserProfileManager
     @State private var showingMealLog = false
     
-    // Static targets
-    let calorieTarget: Double = 2500
-    let proteinTarget: Double = 150
-    let carbsTarget: Double = 250
-    let fatsTarget: Double = 80
-    let sugarLimit: Double = 50
+    // Dynamic targets
+    var calorieTarget: Double { profileManager.targetCalories }
+    var proteinTarget: Double { profileManager.targetProtein }
+    var carbsTarget: Double { profileManager.targetCarbs }
+    var fatsTarget: Double { profileManager.targetFats }
+    var sugarLimit: Double { profileManager.targetSugar }
     
     // Helper colors
     var bgColor1: Color { Color(hex: "#090d16") ?? .black }
@@ -49,6 +49,8 @@ struct NutritionView: View {
                     
                     fuelSplitCard
                     
+                    hydrationCard
+                    
                     logRationButton
                     
                     rationsLogList
@@ -72,6 +74,185 @@ struct NutritionView: View {
                 }
             }
         }
+    }
+    
+    // Hydration Panel component
+    private var hydrationCard: some View {
+        VStack(alignment: .leading, spacing: 15) {
+            HStack {
+                Image(systemName: "drop.fill")
+                    .foregroundColor(Color(hex: "#00E5FF") ?? .blue)
+                    .font(.title2)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("HYDRATION TELEMETRY")
+                        .font(.custom("Orbitron-Bold", size: 13).bold())
+                        .foregroundColor(.white)
+                        .tracking(1)
+                    Text("Electrolyte & cellular fluid levels")
+                        .font(.custom("Exo2-Regular", size: 10))
+                        .foregroundColor(.gray)
+                }
+                Spacer()
+                
+                HStack(spacing: 8) {
+                    Text("Goal:")
+                        .font(.custom("Exo2-Bold", size: 11))
+                        .foregroundColor(.gray)
+                    if profileManager.useImperialUnits {
+                        Text(String(format: "%.0f oz", profileManager.waterIntakeGoalOz))
+                            .font(.custom("Orbitron-Bold", size: 12))
+                            .foregroundColor(.white)
+                        
+                        Stepper("", value: $profileManager.waterIntakeGoalOz, in: 32.0...320.0, step: 8.0)
+                            .labelsHidden()
+                            .scaleEffect(0.8)
+                    } else {
+                        Text(String(format: "%.1f L", profileManager.waterIntakeGoal))
+                            .font(.custom("Orbitron-Bold", size: 12))
+                            .foregroundColor(.white)
+                        
+                        Stepper("", value: $profileManager.waterIntakeGoal, in: 1.0...10.0, step: 0.5)
+                            .labelsHidden()
+                            .scaleEffect(0.8)
+                    }
+                }
+            }
+            
+            let progress = min(max(profileManager.todayWaterIntake / profileManager.waterIntakeGoal, 0.0), 1.0)
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    if profileManager.useImperialUnits {
+                        Text(String(format: "%.0f oz Logged", profileManager.todayWaterIntakeOz))
+                            .font(.custom("Exo2-Bold", size: 12))
+                            .foregroundColor(.white)
+                    } else {
+                        Text(String(format: "%.2f Liters Logged", profileManager.todayWaterIntake))
+                            .font(.custom("Exo2-Bold", size: 12))
+                            .foregroundColor(.white)
+                    }
+                    Spacer()
+                    Text(String(format: "%.0f%%", progress * 100))
+                        .font(.custom("Orbitron-Bold", size: 12))
+                        .foregroundColor(Color(hex: "#00E5FF") ?? .cyan)
+                }
+                
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.white.opacity(0.08))
+                            .frame(height: 8)
+                        
+                        Capsule()
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color(hex: "#00A3FF") ?? .blue, Color(hex: "#00E5FF") ?? .cyan],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: geo.size.width * CGFloat(progress), height: 8)
+                    }
+                }
+                .frame(height: 8)
+            }
+            
+            HStack(spacing: 12) {
+                if profileManager.useImperialUnits {
+                    Button(action: {
+                        if profileManager.todayWaterIntakeOz >= 8.0 {
+                            profileManager.todayWaterIntakeOz -= 8.0
+                            profileManager.evaluateQuestsCompletion()
+                        }
+                    }) {
+                        Text("-8 oz")
+                            .font(.custom("Orbitron-Bold", size: 10).bold())
+                            .foregroundColor(.gray)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .background(RoundedRectangle(cornerRadius: 6).fill(Color.white.opacity(0.05)))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Button(action: {
+                        profileManager.todayWaterIntakeOz += 8.0
+                        profileManager.evaluateQuestsCompletion()
+                    }) {
+                        Text("+8 oz")
+                            .font(.custom("Orbitron-Bold", size: 10).bold())
+                            .foregroundColor(.white)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .background(RoundedRectangle(cornerRadius: 6).fill(Color(hex: "#00A3FF")?.opacity(0.2) ?? Color.blue.opacity(0.2)))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Button(action: {
+                        profileManager.todayWaterIntakeOz += 16.0
+                        profileManager.evaluateQuestsCompletion()
+                    }) {
+                        Text("+16 oz")
+                            .font(.custom("Orbitron-Bold", size: 10).bold())
+                            .foregroundColor(.white)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .background(RoundedRectangle(cornerRadius: 6).fill(Color(hex: "#00E5FF")?.opacity(0.3) ?? Color.cyan.opacity(0.3)))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                } else {
+                    Button(action: {
+                        if profileManager.todayWaterIntake >= 0.25 {
+                            profileManager.todayWaterIntake -= 0.25
+                            profileManager.evaluateQuestsCompletion()
+                        }
+                    }) {
+                        Text("-0.25 L")
+                            .font(.custom("Orbitron-Bold", size: 10).bold())
+                            .foregroundColor(.gray)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .background(RoundedRectangle(cornerRadius: 6).fill(Color.white.opacity(0.05)))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Button(action: {
+                        profileManager.todayWaterIntake += 0.25
+                        profileManager.evaluateQuestsCompletion()
+                    }) {
+                        Text("+0.25 L")
+                            .font(.custom("Orbitron-Bold", size: 10).bold())
+                            .foregroundColor(.white)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .background(RoundedRectangle(cornerRadius: 6).fill(Color(hex: "#00A3FF")?.opacity(0.2) ?? Color.blue.opacity(0.2)))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    Button(action: {
+                        profileManager.todayWaterIntake += 0.5
+                        profileManager.evaluateQuestsCompletion()
+                    }) {
+                        Text("+0.5 L")
+                            .font(.custom("Orbitron-Bold", size: 10).bold())
+                            .foregroundColor(.white)
+                            .padding(.vertical, 8)
+                            .frame(maxWidth: .infinity)
+                            .background(RoundedRectangle(cornerRadius: 6).fill(Color(hex: "#00E5FF")?.opacity(0.3) ?? Color.cyan.opacity(0.3)))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.white.opacity(0.02))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color(hex: "#00E5FF")?.opacity(0.15) ?? Color.blue.opacity(0.15), lineWidth: 1)
+                )
+        )
+        .padding(.horizontal, 16)
     }
     
     // Header component

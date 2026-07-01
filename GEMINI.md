@@ -84,3 +84,6 @@ Every character sprite in the dashboard is flanked by a floating power indicator
    - *Stand Hours*
    - *Sugar Intake*
 5. **No Double Quests**: Ensure daily quest generation does not spawn two identical quests (e.g. one calisthenics workout category should map to exactly one quest in a day).
+6. **300x300 High-Fidelity Character Sprites**: Character sprites are built on a detailed 300x300 pixel grid with dynamic proportions, natural facial features (slanted eyes placed on columns 134-166, lip lines), distinct hairstyles (spiky, long, mohawk, short crop), and custom physical planet armor structures (aerodynamic wraps for Ninjonia, chest vents/cables for Techno, heavy scale tassets/high neck shroud for Warrion).
+7. **Suggested Workouts Muscle Group System**: Workouts are categorized directly by target `MuscleGroup` (Chest, Back, Shoulders, Arms, Core & Abs, Legs & Glutes, Full Body, Cardio & Conditioning) rather than high-level categories, and the `space` restriction has been removed.
+8. **160-Workout Complete Matrix**: The static `SuggestedWorkout.allWorkouts` database contains a full 160-workout combination list (8 muscle groups * 5 difficulties * 4 equipment types) of real, detailed exercises, eliminating the need for generic "Custom X Builder" placeholders.
