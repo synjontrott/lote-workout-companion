@@ -43,6 +43,8 @@ flutter analyze
 flutter test
 ```
 
-<!-- Trigger Xcode Cloud Webhook: 2026-07-02T10:10:00-05:00 -->
+### Active Issue Backlog
+- A comprehensive evaluation report has been compiled in `lote-eval-report.html`. This document and the user's newly reported requirements in `GEMINI.md` serve as the source of truth for upcoming fixes and features.
 
+<!-- Trigger Xcode Cloud Webhook: 2026-07-02T14:07:07-05:00 -->
 

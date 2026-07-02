@@ -98,4 +98,10 @@ Every character sprite in the dashboard is flanked by a floating power indicator
 11. **Custom Workout Logging**: Users can log custom workouts specifying Sets, Reps/Details, Category (Strength, Cardio, Yoga/Flexibility), Duration, and Difficulty. It maps substring names and types to complete active quests and rewards difficulty-scaled XP and Crystals.
 12. **Workout Search**: Suggested Workouts has a keyword search bar that searches the entire 160-workout database, reverting to tailored parameters when empty.
 13. **Hydration Stepper & Unit Scaling**: Hydration goals increment/decrement by exactly `0.5 Liters` (metric) and `8.0 oz` (imperial) with safe rounding to avoid conversion drift.
-14. **Top RPG Stats HUD**: All screens include a top-locked stats bar featuring the custom animated bobbing character avatar, level indicator, XP progress bar, current element alignment, and crystal counter.
+14. **Top RPG Stats HUD**: All screens include a top-locked stats bar featuring the custom animated bobbing character avatar, level indicator, XP progress bar, current element alignment, and crystal counter. Touching the level or profile at the top must show the user's activity history.
+15. **Custom Workout Inputs**: Allow decimals and seconds in custom workouts (e.g., a 20.5 second plank). Rep-based workouts should not have a time factor.
+16. **Weight Tracking**: Pull the current weight from Apple Health and update it automatically in all locations rather than requiring manual entry in multiple places. Save data on update.
+17. **Quest Integrations**: Logging a session manually must work on daily quests. Meal quests should automatically update with feast log entries.
+18. **Stand Metric**: Track and display 'Stand Hours' rather than 'Stand Minutes'.
+19. **Unit Selection**: Ask for Imperial or Metric preference at the very beginning of the onboarding flow.
+20. **Dynamic Quests**: Suggested large daily quests should disappear or change once completed.
