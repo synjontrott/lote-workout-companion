@@ -231,10 +231,12 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                   // MARK: - Character Cockpit
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.02),
+                    child: GestureDetector(
+                      onTap: () => _showActivityHistory(context, profile),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.02),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: profile.currentElement.primaryColor.withOpacity(0.2),
@@ -2250,6 +2252,74 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
           ],
         ),
       ),
+    );
+  }
+
+  void _showActivityHistory(BuildContext context, UserProfileManager profile) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final sessions = profile.loggedWorkoutSessions.reversed.toList();
+        final meals = profile.loggedMeals.reversed.toList();
+        
+        final List<dynamic> combined = [...sessions, ...meals];
+        combined.sort((a, b) => (b.date as DateTime).compareTo(a.date as DateTime));
+
+        return Dialog(
+          backgroundColor: const Color(0xFF0C0C0C),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: profile.currentElement.primaryColor.withOpacity(0.3)),
+          ),
+          child: Container(
+            width: double.maxFinite,
+            height: 400,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Text(
+                  "ACTIVITY LOG",
+                  style: GoogleFonts.orbitron(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 2,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: combined.isEmpty
+                      ? const Center(child: Text("No activity logged yet.", style: TextStyle(color: Colors.grey)))
+                      : ListView.builder(
+                          itemCount: combined.length,
+                          itemBuilder: (ctx, idx) {
+                            final item = combined[idx];
+                            if (item.runtimeType.toString() == 'WorkoutSession') {
+                              return ListTile(
+                                leading: Icon(Icons.fitness_center, color: profile.currentElement.primaryColor),
+                                title: Text("${item.type} Workout", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                subtitle: Text("${item.durationMinutes.toStringAsFixed(1)} min • ${item.date.month}/${item.date.day}", style: const TextStyle(color: Colors.grey)),
+                              );
+                            } else {
+                              return ListTile(
+                                leading: const Icon(Icons.restaurant, color: Colors.green),
+                                title: Text(item.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                subtitle: Text("${item.calories.toStringAsFixed(0)} kcal • ${item.date.month}/${item.date.day}", style: const TextStyle(color: Colors.grey)),
+                              );
+                            }
+                          },
+                        ),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text("CLOSE", style: TextStyle(color: profile.currentElement.primaryColor)),
+                )
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

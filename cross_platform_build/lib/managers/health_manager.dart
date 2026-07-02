@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HealthManager extends ChangeNotifier {
   bool _isAuthorized = false;
@@ -7,15 +10,26 @@ class HealthManager extends ChangeNotifier {
   double _todayCalories = 0.0;
   double _activeMinutes = 0.0;
   double _todayStandHours = 0.0;
+  double? _latestWeight;
 
   bool get isAuthorized => _isAuthorized;
   double get todaySteps => _todaySteps;
   double get todayCalories => _todayCalories;
   double get activeMinutes => _activeMinutes;
   double get todayStandHours => _todayStandHours;
+  double? get latestWeight => _latestWeight;
 
   HealthManager() {
-    // Check if health data is available and request initial check
+    _load();
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    _isAuthorized = prefs.getBool('lote_health_authorized') ?? false;
+    if (_isAuthorized) {
+      await fetchTodayData();
+    }
+    notifyListeners();
   }
 
   Future<void> requestAuthorization() async {
@@ -26,13 +40,19 @@ class HealthManager extends ChangeNotifier {
       HealthDataType.STEPS,
       HealthDataType.ACTIVE_ENERGY_BURNED,
       HealthDataType.WORKOUT,
-      HealthDataType.APPLE_STAND_TIME,
+      HealthDataType.WEIGHT,
     ];
+
+    if (!kIsWeb && Platform.isIOS) {
+      types.add(HealthDataType.APPLE_STAND_TIME);
+    }
 
     try {
       // Check permissions
       bool requested = await health.requestAuthorization(types);
       _isAuthorized = requested;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('lote_health_authorized', requested);
       if (_isAuthorized) {
         await fetchTodayData();
       }
@@ -85,7 +105,7 @@ class HealthManager extends ChangeNotifier {
         final duration = w.dateTo.difference(w.dateFrom);
         workoutMins += duration.inMinutes.toDouble();
       }
-      _activeMinutes = workoutMins > 0 ? workoutMins : (_todaySteps / 100).clamp(0, 100);
+      _activeMinutes = workoutMins;
 
       // Fetch/Estimate stand hours
       try {
@@ -102,10 +122,31 @@ class HealthManager extends ChangeNotifier {
             totalStand += val.numericValue.toDouble();
           }
         }
-        _todayStandHours = totalStand > 0 ? totalStand : (_todaySteps / 1000).clamp(0.0, 24.0);
+        _todayStandHours = totalStand / 60.0;
       } catch (_) {
-        _todayStandHours = (_todaySteps / 1000).clamp(0.0, 24.0);
+        _todayStandHours = 0.0;
       }
+
+      // Fetch Latest Weight
+      try {
+        final List<HealthDataType> weightTypes = [HealthDataType.WEIGHT];
+        List<HealthDataPoint> weightData = await health.getHealthDataFromTypes(
+          types: weightTypes,
+          startTime: now.subtract(const Duration(days: 30)),
+          endTime: now,
+        );
+        if (weightData.isNotEmpty) {
+          // Sort by latest
+          weightData.sort((a, b) => b.dateTo.compareTo(a.dateTo));
+          final val = weightData.first.value;
+          if (val is NumericHealthValue) {
+            // Health plugin usually returns kg. If user wants lb, we convert it later or assume kg.
+            // Wait, Health returns it in kg. We'll store the kg value or whatever it is, but Health plugin normalizes to kg.
+            // Let's store the raw value and let the profile manager handle it if needed.
+            _latestWeight = val.numericValue.toDouble();
+          }
+        }
+      } catch (_) {}
 
     } catch (e) {
       debugPrint("Error fetching health data: $e");

@@ -31,6 +31,7 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
 
   // Custom workout log states
   bool _showingCustomWorkoutLog = false;
+  bool _customWorkoutIsTimeBased = true;
   final TextEditingController _customWorkoutNameController = TextEditingController();
   final TextEditingController _customWorkoutRepsController = TextEditingController();
   final TextEditingController _customWorkoutSetsController = TextEditingController();
@@ -388,9 +389,33 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                           : (_selectedCadence == QuestCadence.monthly
                               ? profile.monthlyQuests
                               : profile.yearlyQuests);
+                      final activeQuests = currentQuests.where((q) => !q.isCompleted).toList();
+
+                      if (activeQuests.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(32.0),
+                            child: Column(
+                              children: [
+                                const Icon(Icons.check_circle_outline, color: Colors.green, size: 48),
+                                const SizedBox(height: 12),
+                                Text(
+                                  "ALL QUESTS COMPLETED",
+                                  style: GoogleFonts.orbitron(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 14),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  "Return later for new quests.",
+                                  style: GoogleFonts.exo2(color: Colors.grey, fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
 
                       return Column(
-                        children: currentQuests.map((quest) {
+                        children: activeQuests.map((quest) {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 12),
                             child: InkWell(
@@ -2389,31 +2414,52 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                   ),
                   const SizedBox(height: 12),
 
-                  Text(
-                    "DURATION (MINUTES)",
-                    style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  TextField(
-                    controller: _customWorkoutDurationController,
-                    keyboardType: TextInputType.number,
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
-                    decoration: InputDecoration(
-                      hintText: "e.g. 15.0",
-                      hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.04),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "TIME BASED WORKOUT?",
+                        style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: themeColor),
+                      Switch(
+                        value: _customWorkoutIsTimeBased,
+                        activeColor: themeColor,
+                        onChanged: (val) {
+                          setState(() {
+                            _customWorkoutIsTimeBased = val;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  if (_customWorkoutIsTimeBased) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      "DURATION (MINUTES)",
+                      style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    TextField(
+                      controller: _customWorkoutDurationController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      decoration: InputDecoration(
+                        hintText: "e.g. 15.0 or 0.33 for 20s",
+                        hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.04),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(color: themeColor),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                   const SizedBox(height: 20),
 
                   Row(
@@ -2448,7 +2494,7 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                             final reps = _customWorkoutRepsController.text.isEmpty
                                 ? "10 reps"
                                 : _customWorkoutRepsController.text;
-                            final dur = double.tryParse(_customWorkoutDurationController.text) ?? 15.0;
+                            final dur = _customWorkoutIsTimeBased ? (double.tryParse(_customWorkoutDurationController.text) ?? 15.0) : 0.0;
 
                             profile.logCustomWorkout(
                               name: name,

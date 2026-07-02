@@ -1458,6 +1458,7 @@ List<LotEQuest> generateQuests(
         cadence: QuestCadence.daily,
         progressCount: 0,
         targetCount: 1,
+        requiredMinutes: 15.0,
       ));
     }
   } else if (cadence == QuestCadence.monthly) {

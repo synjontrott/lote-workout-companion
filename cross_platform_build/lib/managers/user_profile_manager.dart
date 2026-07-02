@@ -20,6 +20,7 @@ class UserProfileManager extends ChangeNotifier {
   List<LotEQuest> _yearlyQuests = [];
   int _streak = 0;
   DateTime? _lastActiveDate;
+  DateTime? _lastRefreshDate;
   String _shortTermGoal = 'Complete at least one Cardio Patrol this week.';
   String _longTermGoal = 'Reach Krenpowen Apprentice tier rank.';
   bool _hasCompletedInitialQuiz = false;
@@ -191,7 +192,6 @@ class UserProfileManager extends ChangeNotifier {
   set goalWeight(double val) {
     _goalWeight = val;
     _startWeight = _weight;
-    _hasClaimedWeightGoalReward = false;
     _save();
     notifyListeners();
   }
@@ -796,6 +796,12 @@ class UserProfileManager extends ChangeNotifier {
       } else {
         _lastActiveDate = null;
       }
+      final refreshMs = prefs.getInt('lote_last_refresh_ms');
+      if (refreshMs != null) {
+        _lastRefreshDate = DateTime.fromMillisecondsSinceEpoch(refreshMs);
+      } else {
+        _lastRefreshDate = null;
+      }
 
       _shortTermGoal = prefs.getString('lote_short_goal') ?? 'Complete at least one Cardio Patrol this week.';
       _longTermGoal = prefs.getString('lote_long_goal') ?? 'Reach Krenpowen Apprentice tier rank.';
@@ -836,6 +842,9 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setInt('lote_streak', _streak);
       if (_lastActiveDate != null) {
         await prefs.setInt('lote_last_active_ms', _lastActiveDate!.millisecondsSinceEpoch);
+      }
+      if (_lastRefreshDate != null) {
+        await prefs.setInt('lote_last_refresh_ms', _lastRefreshDate!.millisecondsSinceEpoch);
       }
       await prefs.setString('lote_short_goal', _shortTermGoal);
       await prefs.setString('lote_long_goal', _longTermGoal);
@@ -972,6 +981,13 @@ class UserProfileManager extends ChangeNotifier {
   }
 
   void checkBadges(HealthManager healthManager) {
+    if (healthManager.latestWeight != null && healthManager.latestWeight! > 0) {
+      final weightLbs = healthManager.latestWeight! * 2.20462;
+      if ((_weight - weightLbs).abs() > 0.5) {
+        weight = double.parse(weightLbs.toStringAsFixed(1));
+      }
+    }
+
     if (healthManager.todaySteps >= 10000.0) {
       unlockBadge("First Step");
     }
@@ -1205,6 +1221,10 @@ class UserProfileManager extends ChangeNotifier {
           if (q.title.toLowerCase().contains("water") || q.title.toLowerCase().contains("hydration") ||
               q.questDescription.toLowerCase().contains("water") || q.questDescription.toLowerCase().contains("hydration")) {
             if (_todayWaterIntake >= _waterIntakeGoal) {
+              _dailyQuests[i].progressCount = q.targetCount;
+            }
+          } else {
+            if (_healthyMealsLoggedToday >= 1) {
               _dailyQuests[i].progressCount = q.targetCount;
             }
           }
@@ -1529,33 +1549,37 @@ class UserProfileManager extends ChangeNotifier {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
-    if (_lastActiveDate != null) {
-      final lastDay = DateTime(_lastActiveDate!.year, _lastActiveDate!.month, _lastActiveDate!.day);
-      final diff = today.difference(lastDay).inDays;
-
-      if (diff > 0) {
+    if (_lastRefreshDate != null) {
+      final lastRefreshDay = DateTime(_lastRefreshDate!.year, _lastRefreshDate!.month, _lastRefreshDate!.day);
+      
+      if (today.difference(lastRefreshDay).inDays > 0) {
         _healthyMealsLoggedToday = 0;
         _todayWaterIntake = 0.0;
         _hasClaimedDistanceGoalReward = false;
         final elementName = currentElement.name;
         _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily, prs: _personalRecords, waterGoal: _waterIntakeGoal);
         
-        if (_lastActiveDate!.month != now.month) {
+        if (_lastRefreshDate!.month != now.month) {
+          _monthlyChallengeProgress = 0.0;
           _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
         }
-        if (_lastActiveDate!.year != now.year) {
+        if (_lastRefreshDate!.year != now.year) {
           _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
         }
 
-        if (diff > 1) {
-          _previousStreak = _streak;
-          _streak = 0;
+        if (_lastActiveDate != null) {
+          final lastActiveDay = DateTime(_lastActiveDate!.year, _lastActiveDate!.month, _lastActiveDate!.day);
+          if (today.difference(lastActiveDay).inDays > 1) {
+            _previousStreak = _streak;
+            _streak = 0;
+          }
         }
-        _lastActiveDate = now;
+        
+        _lastRefreshDate = now;
         _save();
       }
     } else {
-      _lastActiveDate = now;
+      _lastRefreshDate = now;
       _save();
     }
   }
