@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSHealthShareUsageDescription</key>
+	<string>This app requires access to read your step count, active energy, and active minutes to advance your character level and stats.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>This app requires write access to log completed workout session metadata to your Health app.</string>
 </dict>
 </plist>
