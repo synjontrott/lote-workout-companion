@@ -64,7 +64,7 @@ class _NutritionViewState extends State<NutritionView> {
                     Text(
                       "BIO-FUEL TELEMETRY",
                       style: GoogleFonts.orbitron(
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         letterSpacing: 2,
@@ -75,7 +75,7 @@ class _NutritionViewState extends State<NutritionView> {
                       "Monitor caloric input and metabolic fuel ratios",
                       style: TextStyle(
                         fontFamily: "Exo2",
-                        fontSize: 12,
+                        fontSize: 14,
                         color: Colors.grey,
                       ),
                     ),
@@ -116,7 +116,7 @@ class _NutritionViewState extends State<NutritionView> {
                         Text(
                           totalCalories.toInt().toString(),
                           style: GoogleFonts.orbitron(
-                            fontSize: 30,
+                            fontSize: 32,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -124,7 +124,7 @@ class _NutritionViewState extends State<NutritionView> {
                         Text(
                           "/ ${calorieTarget.toInt()} KCAL",
                           style: GoogleFonts.orbitron(
-                            fontSize: 9,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: Colors.grey,
                             letterSpacing: 1,
@@ -134,7 +134,7 @@ class _NutritionViewState extends State<NutritionView> {
                         Text(
                           "${(progressPct * 100).toInt()}% FUELED",
                           style: GoogleFonts.exo2(
-                            fontSize: 9,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: themeColor,
                           ),
@@ -161,7 +161,7 @@ class _NutritionViewState extends State<NutritionView> {
                     Text(
                       "ELEMENTAL FUEL SPLIT",
                       style: GoogleFonts.orbitron(
-                        fontSize: 11,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,
                         letterSpacing: 1.5,
@@ -230,7 +230,7 @@ class _NutritionViewState extends State<NutritionView> {
                         Text(
                           "HYDRATION TELEMETRY",
                           style: GoogleFonts.orbitron(
-                            fontSize: 11,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.grey,
                             letterSpacing: 1.5,
@@ -239,7 +239,7 @@ class _NutritionViewState extends State<NutritionView> {
                         Text(
                           "💧 ACTIVE",
                           style: GoogleFonts.orbitron(
-                            fontSize: 9,
+                            fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: Colors.blueAccent,
                           ),
@@ -258,7 +258,7 @@ class _NutritionViewState extends State<NutritionView> {
                                   ? "${profile.todayWaterIntakeOz.toStringAsFixed(0)} / ${profile.waterIntakeGoalOz.toStringAsFixed(0)} oz"
                                   : "${profile.todayWaterIntake.toStringAsFixed(2)} / ${profile.waterIntakeGoal.toStringAsFixed(2)} L",
                               style: GoogleFonts.orbitron(
-                                fontSize: 18,
+                                fontSize: 21,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -267,7 +267,7 @@ class _NutritionViewState extends State<NutritionView> {
                               "Daily Intake Target",
                               style: TextStyle(
                                 fontFamily: "Exo2",
-                                fontSize: 10,
+                                fontSize: 13,
                                 color: Colors.grey,
                               ),
                             ),
@@ -286,7 +286,7 @@ class _NutritionViewState extends State<NutritionView> {
                                 } else {
                                   final currentGoal = profile.waterIntakeGoal;
                                   if (currentGoal > 0.5) {
-                                    profile.waterIntakeGoal = currentGoal - 0.25;
+                                    profile.waterIntakeGoal = currentGoal - 0.5;
                                   }
                                 }
                               },
@@ -297,7 +297,7 @@ class _NutritionViewState extends State<NutritionView> {
                             const SizedBox(width: 8),
                             Text(
                               "Goal",
-                              style: GoogleFonts.orbitron(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.orbitron(fontSize: 13, color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(width: 8),
                             IconButton(
@@ -305,7 +305,7 @@ class _NutritionViewState extends State<NutritionView> {
                                 if (profile.useImperialUnits) {
                                   profile.waterIntakeGoalOz = profile.waterIntakeGoalOz + 8.0;
                                 } else {
-                                  profile.waterIntakeGoal = profile.waterIntakeGoal + 0.25;
+                                  profile.waterIntakeGoal = profile.waterIntakeGoal + 0.5;
                                 }
                               },
                               icon: const Icon(Icons.add_circle_outline, color: Colors.grey, size: 18),
@@ -585,12 +585,12 @@ class _NutritionViewState extends State<NutritionView> {
       children: [
         Row(
           children: [
-            Icon(icon, size: 10, color: color),
+            Icon(icon, size: 13, color: color),
             const SizedBox(width: 4),
             Text(
               label,
               style: GoogleFonts.orbitron(
-                fontSize: 9,
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -599,7 +599,7 @@ class _NutritionViewState extends State<NutritionView> {
             Text(
               "${current.toInt()} / ${target.toInt()} $unit",
               style: TextStyle(
-                fontSize: 10,
+                fontSize: 13,
                 fontWeight: FontWeight.bold,
                 color: color,
               ),

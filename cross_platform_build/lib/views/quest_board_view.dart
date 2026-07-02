@@ -29,6 +29,19 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
   final TextEditingController _mealFatsController = TextEditingController();
   final TextEditingController _mealSugarController = TextEditingController();
 
+  // Custom workout log states
+  bool _showingCustomWorkoutLog = false;
+  final TextEditingController _customWorkoutNameController = TextEditingController();
+  final TextEditingController _customWorkoutRepsController = TextEditingController();
+  final TextEditingController _customWorkoutSetsController = TextEditingController();
+  final TextEditingController _customWorkoutDurationController = TextEditingController();
+  String _customWorkoutDifficulty = "Medium";
+  WorkoutCategory _customWorkoutCategory = WorkoutCategory.strength;
+
+  // Suggested Workout Search states
+  final TextEditingController _workoutSearchController = TextEditingController();
+  String _workoutSearchQuery = "";
+
   // Suggested Workout Tailoring states
   String _tailGender = "Male";
   String _tailAge = "30";
@@ -58,6 +71,11 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
     _mealCarbsController.dispose();
     _mealFatsController.dispose();
     _mealSugarController.dispose();
+    _customWorkoutNameController.dispose();
+    _customWorkoutRepsController.dispose();
+    _customWorkoutSetsController.dispose();
+    _customWorkoutDurationController.dispose();
+    _workoutSearchController.dispose();
     super.dispose();
   }
 
@@ -565,6 +583,84 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                   ),
                 ),
                 const SizedBox(height: 25),
+                const SizedBox(height: 25),
+
+                // Custom Workout Logger Section
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    "CUSTOM TRAINING TELEMETRY",
+                    style: GoogleFonts.orbitron(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.02),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.white.withOpacity(0.08)),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Log a custom workout",
+                                style: GoogleFonts.exo2(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Record custom sets, reps, and difficulty for XP/Gems.",
+                                style: GoogleFonts.exo2(
+                                  fontSize: 11,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _showingCustomWorkoutLog = true;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: profile.currentElement.primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            "LOG WORKOUT",
+                            style: GoogleFonts.orbitron(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 25),
+
                 _buildSuggestedWorkoutsSection(profile),
               ],
             ),
@@ -581,10 +677,15 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
           // Meal Log Overlay
           if (_showingMealLog)
             _buildMealLogOverlay(profile),
+
+          // Custom Workout Log Overlay
+          if (_showingCustomWorkoutLog)
+            _buildCustomWorkoutLogOverlay(profile),
         ],
       ),
-    ),);
-  }
+    ),
+  );
+}
 
   Widget _buildDopamineQuickMenu(UserProfileManager profile) {
     final menuItems = _tailoredDopamineMenu(profile);
@@ -1480,13 +1581,21 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
   }
 
   Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {
-    final filtered = SuggestedWorkout.allWorkouts.where((w) {
-      final isMuscleGroupMatch = w.muscleGroup == _tailMuscleGroup;
-      final isDifficultyMatch = w.difficulty.toLowerCase() == _tailDifficulty.toLowerCase();
-      final isEquipmentMatch = _tailEquipment == "Full Gym" || 
-          w.equipment.toLowerCase().replaceAll('-', '').contains(_tailEquipment.toLowerCase().replaceAll('-', ''));
-      return isMuscleGroupMatch && isDifficultyMatch && isEquipmentMatch;
-    }).toList();
+    final filtered = _workoutSearchQuery.isNotEmpty
+        ? SuggestedWorkout.allWorkouts.where((w) {
+            final q = _workoutSearchQuery.toLowerCase();
+            return w.name.toLowerCase().contains(q) ||
+                w.description.toLowerCase().contains(q) ||
+                w.muscleGroup.displayName.toLowerCase().contains(q) ||
+                w.equipment.toLowerCase().contains(q);
+          }).toList()
+        : SuggestedWorkout.allWorkouts.where((w) {
+            final isMuscleGroupMatch = w.muscleGroup == _tailMuscleGroup;
+            final isDifficultyMatch = w.difficulty.toLowerCase() == _tailDifficulty.toLowerCase();
+            final isEquipmentMatch = _tailEquipment == "Full Gym" || 
+                w.equipment.toLowerCase().replaceAll('-', '').contains(_tailEquipment.toLowerCase().replaceAll('-', ''));
+            return isMuscleGroupMatch && isDifficultyMatch && isEquipmentMatch;
+          }).toList();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24),
@@ -1503,6 +1612,46 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                 color: Colors.grey,
                 letterSpacing: 2,
               ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: TextField(
+              controller: _workoutSearchController,
+              style: const TextStyle(color: Colors.white, fontSize: 13),
+              decoration: InputDecoration(
+                hintText: "Search workout library by name, keyword...",
+                hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 18),
+                suffixIcon: _workoutSearchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear, color: Colors.grey, size: 16),
+                        onPressed: () {
+                          setState(() {
+                            _workoutSearchController.clear();
+                            _workoutSearchQuery = "";
+                          });
+                        },
+                      )
+                    : null,
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.04),
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: profile.currentElement.primaryColor.withOpacity(0.5)),
+                ),
+              ),
+              onChanged: (val) {
+                setState(() {
+                  _workoutSearchQuery = val;
+                });
+              },
             ),
           ),
           const SizedBox(height: 14),
@@ -2008,6 +2157,353 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
       instructions: instructions,
       sets: sets,
       reps: reps,
+    );
+  }
+
+  Widget _buildCustomWorkoutLogOverlay(UserProfileManager profile) {
+    final themeColor = profile.currentElement.primaryColor;
+
+    return Positioned.fill(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _showingCustomWorkoutLog = false;
+              });
+            },
+            child: Container(
+              color: Colors.black.withOpacity(0.8),
+            ),
+          ),
+          Container(
+            width: 320,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0C0C0C),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: themeColor.withOpacity(0.4),
+                width: 1.5,
+              ),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Text(
+                      "LOG CUSTOM WORKOUT",
+                      style: GoogleFonts.orbitron(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+
+                  Text(
+                    "WORKOUT NAME",
+                    style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: _customWorkoutNameController,
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: "e.g. Custom Pushups & Pullups",
+                      hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.04),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: themeColor),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "SETS",
+                              style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            TextField(
+                              controller: _customWorkoutSetsController,
+                              keyboardType: TextInputType.number,
+                              style: const TextStyle(color: Colors.white, fontSize: 13),
+                              decoration: InputDecoration(
+                                hintText: "e.g. 3",
+                                hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                                filled: true,
+                                fillColor: Colors.white.withOpacity(0.04),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: themeColor),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "REPS / DETAILS",
+                              style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            TextField(
+                              controller: _customWorkoutRepsController,
+                              style: const TextStyle(color: Colors.white, fontSize: 13),
+                              decoration: InputDecoration(
+                                hintText: "e.g. 10 reps / 30s",
+                                hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                                filled: true,
+                                fillColor: Colors.white.withOpacity(0.04),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  borderSide: BorderSide(color: themeColor),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "CATEGORY",
+                              style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Theme(
+                              data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
+                              child: DropdownButtonFormField<WorkoutCategory>(
+                                value: _customWorkoutCategory,
+                                isDense: true,
+                                style: const TextStyle(color: Colors.white, fontSize: 13),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.04),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                                ),
+                                items: [WorkoutCategory.strength, WorkoutCategory.cardio, WorkoutCategory.flexibility]
+                                    .map((cat) => DropdownMenuItem(
+                                          value: cat,
+                                          child: Text(cat == WorkoutCategory.strength
+                                              ? "Strength"
+                                              : (cat == WorkoutCategory.cardio ? "Cardio" : "Yoga/Flex")),
+                                        ))
+                                    .toList(),
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    setState(() {
+                                      _customWorkoutCategory = val;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "DIFFICULTY",
+                              style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Theme(
+                              data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
+                              child: DropdownButtonFormField<String>(
+                                value: _customWorkoutDifficulty,
+                                isDense: true,
+                                style: const TextStyle(color: Colors.white, fontSize: 13),
+                                decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Colors.white.withOpacity(0.04),
+                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                                ),
+                                items: ["Easy", "Medium", "Hard", "Legend", "Master"]
+                                    .map((diff) => DropdownMenuItem(
+                                          value: diff,
+                                          child: Text(diff),
+                                        ))
+                                    .toList(),
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    setState(() {
+                                      _customWorkoutDifficulty = val;
+                                    });
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  Text(
+                    "DURATION (MINUTES)",
+                    style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: _customWorkoutDurationController,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: "e.g. 15.0",
+                      hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.04),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: themeColor),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {
+                            setState(() {
+                              _showingCustomWorkoutLog = false;
+                            });
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.grey),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            "Cancel",
+                            style: GoogleFonts.orbitron(color: Colors.grey, fontSize: 11),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final name = _customWorkoutNameController.text.isEmpty
+                                ? "Custom Workout"
+                                : _customWorkoutNameController.text;
+                            final sets = int.tryParse(_customWorkoutSetsController.text) ?? 1;
+                            final reps = _customWorkoutRepsController.text.isEmpty
+                                ? "10 reps"
+                                : _customWorkoutRepsController.text;
+                            final dur = double.tryParse(_customWorkoutDurationController.text) ?? 15.0;
+
+                            profile.logCustomWorkout(
+                              name: name,
+                              category: _customWorkoutCategory,
+                              sets: sets,
+                              reps: reps,
+                              difficulty: _customWorkoutDifficulty,
+                              durationMinutes: dur,
+                            );
+
+                            setState(() {
+                              _showingCustomWorkoutLog = false;
+                            });
+
+                            _customWorkoutNameController.clear();
+                            _customWorkoutSetsController.clear();
+                            _customWorkoutRepsController.clear();
+                            _customWorkoutDurationController.clear();
+
+                            int xp = 25;
+                            int crystals = 10;
+                            switch (_customWorkoutDifficulty.toLowerCase()) {
+                              case 'easy': xp = 15; crystals = 5; break;
+                              case 'medium': xp = 25; crystals = 10; break;
+                              case 'hard': xp = 40; crystals = 15; break;
+                              case 'legend': xp = 60; crystals = 25; break;
+                              case 'master': xp = 80; crystals = 35; break;
+                            }
+
+                            _showOutcomeDialog(
+                              title: "WORKOUT RECORDED! 💪",
+                              message: "Custom workout '$name' logged! You earned +$xp XP, +$crystals Crystals, and advanced your elemental goals.",
+                              themeColor: themeColor,
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: themeColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            "RECORD",
+                            style: GoogleFonts.orbitron(color: Colors.white, fontSize: 11),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

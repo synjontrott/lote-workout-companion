@@ -20,8 +20,13 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
 
   // Identity states
   late final TextEditingController _nameController;
-  late final TextEditingController _planetController;
+  String _selectedPlanet = "Warrion";
   int _tempElementIdx = 0;
+
+  // Element Quiz states
+  bool _showingQuiz = false;
+  int _currentQuizQuestionIdx = 0;
+  final List<int> _quizAnswers = [];
 
   // Mindset states
   CognitiveProfile _selectedProfile = CognitiveProfile.neurotypical;
@@ -44,7 +49,6 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: "Warrior");
-    _planetController = TextEditingController(text: "Warrion");
     
     _heightController = TextEditingController(text: "70.0");
     _weightController = TextEditingController(text: "160.0");
@@ -58,7 +62,6 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   @override
   void dispose() {
     _nameController.dispose();
-    _planetController.dispose();
     _heightController.dispose();
     _weightController.dispose();
     _chestController.dispose();
@@ -71,7 +74,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
 
   void _confirmProfile(UserProfileManager profile) {
     profile.characterName = _nameController.text;
-    profile.homePlanet = _planetController.text;
+    profile.homePlanet = _selectedPlanet;
     profile.selectedElementIndex = _tempElementIdx;
     profile.cognitiveProfile = _selectedProfile;
     profile.selectedFocuses = _tempSelectedFocuses.toList();
@@ -87,6 +90,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     profile.hasCompletedInitialQuiz = true;
   }
 
+
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<UserProfileManager>(context);
@@ -97,35 +101,43 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
       child: Scaffold(
         backgroundColor: const Color(0xFF020617),
         body: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
-              // Wizard Progress Header
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(3, (index) {
-                    final active = index <= _onboardingStep;
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: active ? themeColor : Colors.white10,
-                      ),
-                    );
-                  }),
-                ),
-              ),
+              Column(
+                children: [
+                  // Wizard Progress Header
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(3, (index) {
+                        final active = index <= _onboardingStep;
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: active ? themeColor : Colors.white10,
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
 
-              // Scrollable Screen Content
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: _buildStepContent(themeColor, profile),
-                ),
+                  // Scrollable Screen Content
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: _buildStepContent(themeColor, profile),
+                    ),
+                  ),
+                ],
               ),
+              if (_showingQuiz)
+                Positioned.fill(
+                  child: _buildQuizOverlay(themeColor),
+                ),
             ],
           ),
         ),
@@ -173,7 +185,75 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         // Textfields
         _buildTextField("CHARACTER NAME", _nameController, TextInputType.name),
         const SizedBox(height: 16),
-        _buildTextField("HOME PLANET", _planetController, TextInputType.name),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "HOME PLANET",
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Theme(
+              data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
+              child: DropdownButtonFormField<String>(
+                value: _selectedPlanet,
+                style: GoogleFonts.orbitron(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  isDense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.03),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Colors.white30),
+                  ),
+                ),
+                items: ["Ninjonia", "Techno", "Warrion", "Battacaria"]
+                    .map((planet) => DropdownMenuItem(
+                          value: planet,
+                          child: Text(planet.toUpperCase()),
+                        ))
+                    .toList(),
+                onChanged: (val) {
+                  if (val != null) {
+                    setState(() {
+                      _selectedPlanet = val;
+                    });
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 25),
+
+        ElevatedButton.icon(
+          onPressed: () {
+            setState(() {
+              _showingQuiz = true;
+              _currentQuizQuestionIdx = 0;
+              _quizAnswers.clear();
+            });
+          },
+          icon: const Icon(Icons.psychology, color: Colors.black, size: 18),
+          label: Text(
+            "TAKE ELEMENTAL INITIATION QUIZ",
+            style: GoogleFonts.orbitron(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: themeColor,
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
         const SizedBox(height: 25),
 
         Text(
@@ -615,4 +695,213 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
       ],
     );
   }
+
+  Widget _buildQuizOverlay(Color themeColor) {
+    final q = _quizQuestions[_currentQuizQuestionIdx];
+    return Container(
+      color: const Color(0xFF090D16),
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            "ELEMENTAL INITIATION QUIZ",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.orbitron(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: themeColor,
+              letterSpacing: 2,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            "Question ${_currentQuizQuestionIdx + 1} of ${_quizQuestions.length}",
+            textAlign: TextAlign.center,
+            style: GoogleFonts.exo2(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 30),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.02),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withOpacity(0.08)),
+            ),
+            child: Text(
+              q.questionText,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.exo2(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          ...List.generate(q.options.length, (idx) {
+            final opt = q.options[idx];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _quizAnswers.add(opt.elementIndex);
+                    if (_currentQuizQuestionIdx < _quizQuestions.length - 1) {
+                      _currentQuizQuestionIdx++;
+                    } else {
+                      _calculateQuizResult();
+                      _showQuizCompleteDialog();
+                    }
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withOpacity(0.04),
+                  foregroundColor: Colors.white,
+                  side: BorderSide(color: Colors.white.withOpacity(0.08)),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                child: Text(
+                  opt.text,
+                  style: GoogleFonts.exo2(fontSize: 13, fontWeight: FontWeight.w500),
+                ),
+              ),
+            );
+          }),
+          const SizedBox(height: 20),
+          OutlinedButton(
+            onPressed: () {
+              setState(() {
+                _showingQuiz = false;
+              });
+            },
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: Colors.redAccent),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: Text(
+              "CANCEL QUIZ",
+              style: GoogleFonts.orbitron(fontSize: 11, color: Colors.redAccent),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _calculateQuizResult() {
+    final Map<int, int> counts = {0: 0, 1: 0, 2: 0, 3: 0};
+    for (final index in _quizAnswers) {
+      counts[index] = (counts[index] ?? 0) + 1;
+    }
+    int bestIndex = 0;
+    int maxCount = -1;
+    counts.forEach((key, val) {
+      if (val > maxCount) {
+        maxCount = val;
+        bestIndex = key;
+      }
+    });
+    setState(() {
+      _tempElementIdx = bestIndex;
+      _showingQuiz = false;
+    });
+  }
+
+  void _showQuizCompleteDialog() {
+    final elName = UserProfileManager.availableElements[_tempElementIdx].name;
+    final emoji = elName == "Fire" ? "🔥" : elName == "Water" ? "💧" : elName == "Earth" ? "🪨" : "💨";
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF0F172A),
+        title: Text("QUIZ COMPLETE", style: GoogleFonts.orbitron(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: Text(
+          "The Elsaither energy in your responses aligns with the element of $elName $emoji!\n\nThis element has been automatically selected for you.",
+          style: GoogleFonts.exo2(color: Colors.grey),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("COMMENCE", style: GoogleFonts.orbitron(color: Colors.greenAccent)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static final List<QuizQuestion> _quizQuestions = [
+    QuizQuestion(
+      questionText: "What color spectrum calls to your inner energy?",
+      options: [
+        QuizOption(text: "Crimson Red & Flame Orange (Fire)", elementIndex: 0),
+        QuizOption(text: "Deep Blue & Aquamarine (Water)", elementIndex: 1),
+        QuizOption(text: "Earthy Brown & Emerald Green (Earth)", elementIndex: 2),
+        QuizOption(text: "Sky Blue & Cloud White (Air)", elementIndex: 3),
+      ],
+    ),
+    QuizQuestion(
+      questionText: "How do you naturally respond to direct adversity?",
+      options: [
+        QuizOption(text: "Confront it with intense, direct passion.", elementIndex: 0),
+        QuizOption(text: "Adapt and flow around the obstacle.", elementIndex: 1),
+        QuizOption(text: "Stand firm and absorb the impact with resilience.", elementIndex: 2),
+        QuizOption(text: "Rise above it to find a clever alternative route.", elementIndex: 3),
+      ],
+    ),
+    QuizQuestion(
+      questionText: "Where do you feel most at peace and energized?",
+      options: [
+        QuizOption(text: "Near a roaring bonfire or under the baking sun.", elementIndex: 0),
+        QuizOption(text: "Beside a rushing river, lake, or in a rainstorm.", elementIndex: 1),
+        QuizOption(text: "Walking in a dense forest or on solid mountain soil.", elementIndex: 2),
+        QuizOption(text: "Standing on a breezy cliff looking at open skies.", elementIndex: 3),
+      ],
+    ),
+    QuizQuestion(
+      questionText: "What is your primary training style or preference?",
+      options: [
+        QuizOption(text: "High-intensity bursts that test speed and determination.", elementIndex: 0),
+        QuizOption(text: "Smooth, flowing workouts like swimming or cycling.", elementIndex: 1),
+        QuizOption(text: "Heavy strength training and solid ground lifts.", elementIndex: 2),
+        QuizOption(text: "Calisthenics, mobility drills, and agile movement.", elementIndex: 3),
+      ],
+    ),
+    QuizQuestion(
+      questionText: "Which character trait is your greatest asset?",
+      options: [
+        QuizOption(text: "Burning passion and drive.", elementIndex: 0),
+        QuizOption(text: "Calm, intuitive adaptability.", elementIndex: 1),
+        QuizOption(text: "Steadfast patience and strength.", elementIndex: 2),
+        QuizOption(text: "Quick-witted curiosity and agility.", elementIndex: 3),
+      ],
+    ),
+    QuizQuestion(
+      questionText: "In a team battle, what role do you naturally choose?",
+      options: [
+        QuizOption(text: "Vanguard - leading the charge with power.", elementIndex: 0),
+        QuizOption(text: "Tactical support - healing and maintaining flow.", elementIndex: 1),
+        QuizOption(text: "Defender - protecting allies from attacks.", elementIndex: 2),
+        QuizOption(text: "Scout - moving swiftly to disrupt the enemy.", elementIndex: 3),
+      ],
+    ),
+  ];
 }
+
+class QuizQuestion {
+  final String questionText;
+  final List<QuizOption> options;
+  QuizQuestion({required this.questionText, required this.options});
+}
+
+class QuizOption {
+  final String text;
+  final int elementIndex;
+  QuizOption({required this.text, required this.elementIndex});
+}
+

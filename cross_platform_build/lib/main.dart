@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'managers/user_profile_manager.dart';
 import 'managers/health_manager.dart';
+import 'models/lote_models.dart';
 import 'views/psych_evaluation_view.dart';
 import 'views/dashboard_view.dart';
 import 'views/quest_board_view.dart';
@@ -9,6 +10,7 @@ import 'views/nutrition_view.dart';
 import 'views/character_stats_view.dart';
 import 'views/settings_view.dart';
 import 'views/shop_view.dart';
+import 'views/widgets/pixel_sprite_widget.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,12 +67,172 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
       return const PsychEvaluationView();
     }
 
-    final accentColor = profile.currentElement.primaryColor;
+    final themeColor = profile.currentElement.primaryColor;
+    final skin = hexToColor(profile.sprite.skinColorHex);
+    final hair = hexToColor(profile.sprite.hairColorHex);
+    final outfit = hexToColor(profile.sprite.outfitColorHex);
+    final eye = profile.currentElement.primaryColor;
+    final aura = () {
+      if (profile.equippedAura != "None") {
+        switch (profile.equippedAura) {
+          case "Glitch Aura": return const Color(0xFF00F0FF);
+          case "Phoenix Flare": return Colors.orange;
+          case "Abyssal Mist": return const Color(0xFF880E4F);
+          case "Lightning Spark": return Colors.yellow;
+          default: return profile.currentElement.accentColor;
+        }
+      } else {
+        return profile.currentElement.accentColor;
+      }
+    }();
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _views,
+      backgroundColor: const Color(0xFF020617),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Persistent RPG HUD Header
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0F0F0F),
+                border: Border(
+                  bottom: BorderSide(
+                    color: themeColor.withOpacity(0.2),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: themeColor.withOpacity(0.1),
+                      border: Border.all(color: themeColor.withOpacity(0.3), width: 1),
+                    ),
+                    child: ClipOval(
+                      child: Transform.scale(
+                        scale: 1.7,
+                        child: PixelSpriteWidget(
+                          grid: profile.sprite.pixelGrid,
+                          skinColor: skin,
+                          hairColor: hair,
+                          eyeColor: eye,
+                          outfitColor: outfit,
+                          auraColor: aura,
+                          pixelSize: 0.15,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              profile.characterName.toUpperCase(),
+                              style: const TextStyle(
+                                fontFamily: "Orbitron",
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                            Text(
+                              "LV. ${profile.currentLevel}",
+                              style: const TextStyle(
+                                fontFamily: "Orbitron",
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Builder(
+                          builder: (context) {
+                            final nextLevelXP = profile.requiredXPForLevel(profile.currentLevel);
+                            final progress = (profile.currentXP / nextLevelXP).clamp(0.0, 1.0);
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(3),
+                                  child: LinearProgressIndicator(
+                                    value: progress,
+                                    backgroundColor: Colors.white.withOpacity(0.05),
+                                    valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                                    minHeight: 5,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      profile.currentTier.dynamicDisplayName(profile.currentElement.name).toUpperCase(),
+                                      style: TextStyle(fontSize: 7, color: themeColor, fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "${profile.currentXP} / ${nextLevelXP} XP",
+                                      style: const TextStyle(fontSize: 7, color: Colors.grey),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.04),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: Colors.white.withOpacity(0.08)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text("💎", style: TextStyle(fontSize: 11)),
+                        const SizedBox(width: 4),
+                        Text(
+                          "${profile.crystals}",
+                          style: const TextStyle(
+                            fontFamily: "Orbitron",
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Selected page view
+            Expanded(
+              child: IndexedStack(
+                index: _currentIndex,
+                children: _views,
+              ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -81,7 +243,7 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
         },
         backgroundColor: const Color(0xFF0F0F0F),
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: accentColor,
+        selectedItemColor: themeColor,
         unselectedItemColor: Colors.grey,
         selectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(fontSize: 9),

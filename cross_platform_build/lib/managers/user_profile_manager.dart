@@ -211,24 +211,50 @@ class UserProfileManager extends ChangeNotifier {
   set todayWaterIntake(double val) { _todayWaterIntake = val; _save(); notifyListeners(); }
 
   double get waterIntakeGoal => _waterIntakeGoal;
-  set waterIntakeGoal(double val) { _waterIntakeGoal = val; _save(); notifyListeners(); }
+  set waterIntakeGoal(double val) {
+    final double rounded = ((val * 2.0).round() / 2.0).clamp(0.5, double.infinity);
+    _waterIntakeGoal = rounded;
+    _save();
+    notifyListeners();
+  }
 
   bool get useImperialUnits => _useImperialUnits;
-  set useImperialUnits(bool val) { _useImperialUnits = val; _save(); notifyListeners(); }
+  set useImperialUnits(bool val) {
+    if (_useImperialUnits != val) {
+      if (val) {
+        final double rawOzGoal = _waterIntakeGoal * 33.814;
+        final double roundedOzGoal = ((rawOzGoal / 8.0).round() * 8.0).clamp(8.0, double.infinity);
+        _waterIntakeGoal = roundedOzGoal / 33.814;
+
+        final double rawOzIntake = _todayWaterIntake * 33.814;
+        final double roundedOzIntake = (rawOzIntake / 8.0).round() * 8.0;
+        _todayWaterIntake = roundedOzIntake / 33.814;
+      } else {
+        _waterIntakeGoal = ((_waterIntakeGoal * 2.0).round() / 2.0).clamp(0.5, double.infinity);
+        _todayWaterIntake = (_todayWaterIntake * 2.0).round() / 2.0;
+      }
+      _useImperialUnits = val;
+      _save();
+      notifyListeners();
+    }
+  }
 
   double get waterIntakeGoalOz => (_waterIntakeGoal * 33.814).roundToDouble();
   set waterIntakeGoalOz(double val) {
-    _waterIntakeGoal = val / 33.814;
+    final double rounded = ((val / 8.0).round() * 8.0).clamp(8.0, double.infinity);
+    _waterIntakeGoal = rounded / 33.814;
     _save();
     notifyListeners();
   }
 
   double get todayWaterIntakeOz => (_todayWaterIntake * 33.814).roundToDouble();
   set todayWaterIntakeOz(double val) {
-    _todayWaterIntake = (val / 33.814).clamp(0.0, double.infinity);
+    final double rounded = ((val / 8.0).round() * 8.0).clamp(0.0, double.infinity);
+    _todayWaterIntake = rounded / 33.814;
     _save();
     notifyListeners();
   }
+
 
   Map<String, double> get personalRecords => _personalRecords;
   set personalRecords(Map<String, double> val) {
@@ -1151,9 +1177,9 @@ class UserProfileManager extends ChangeNotifier {
     final todaySessions = _loggedWorkoutSessions.where((s) =>
         s.date.year == now.year && s.date.month == now.month && s.date.day == now.day).toList();
     
-    final strengthDuration = todaySessions.where((s) => s.type == "Strength").fold(0.0, (sum, s) => sum + s.durationMinutes);
-    final cardioDuration = todaySessions.where((s) => s.type == "Cardio" || s.type == "Running").fold(0.0, (sum, s) => sum + s.durationMinutes);
-    final yogaDuration = todaySessions.where((s) => s.type == "Yoga").fold(0.0, (sum, s) => sum + s.durationMinutes);
+    final strengthDuration = todaySessions.where((s) => s.type.contains("Strength")).fold(0.0, (sum, s) => sum + s.durationMinutes);
+    final cardioDuration = todaySessions.where((s) => s.type.contains("Cardio") || s.type.contains("Running")).fold(0.0, (sum, s) => sum + s.durationMinutes);
+    final yogaDuration = todaySessions.where((s) => s.type.contains("Yoga")).fold(0.0, (sum, s) => sum + s.durationMinutes);
 
     for (int i = 0; i < _dailyQuests.length; i++) {
       final q = _dailyQuests[i];
@@ -1222,6 +1248,76 @@ class UserProfileManager extends ChangeNotifier {
     _save();
     notifyListeners();
   }
+
+  void logCustomWorkout({
+    required String name,
+    required WorkoutCategory category,
+    required int sets,
+    required String reps,
+    required String difficulty,
+    double durationMinutes = 15.0,
+  }) {
+    final String baseType;
+    switch (category) {
+      case WorkoutCategory.strength: baseType = "Strength"; break;
+      case WorkoutCategory.cardio: baseType = "Cardio"; break;
+      case WorkoutCategory.flexibility: baseType = "Yoga"; break;
+      case WorkoutCategory.nutrition: baseType = "Nutrition"; break;
+      default: baseType = "Strength"; break;
+    }
+
+    final session = WorkoutSession(
+      id: UniqueKey().toString(),
+      type: "$baseType (Custom: $name - $sets sets x $reps)",
+      durationMinutes: durationMinutes,
+      date: DateTime.now(),
+    );
+    _loggedWorkoutSessions.add(session);
+
+    int xp = 25;
+    int crys = 10;
+    switch (difficulty.toLowerCase()) {
+      case 'easy':
+        xp = 15;
+        crys = 5;
+        break;
+      case 'medium':
+        xp = 25;
+        crys = 10;
+        break;
+      case 'hard':
+        xp = 40;
+        crys = 15;
+        break;
+      case 'legend':
+        xp = 60;
+        crys = 25;
+        break;
+      case 'master':
+        xp = 80;
+        crys = 35;
+        break;
+    }
+
+    addXP(xp);
+    earnCrystals(crys);
+
+    evaluateQuestsCompletion();
+
+    for (int i = 0; i < _monthlyQuests.length; i++) {
+      if (_monthlyQuests[i].workoutType == category && !_monthlyQuests[i].isCompleted) {
+        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1).clamp(0, _monthlyQuests[i].targetCount);
+      }
+    }
+    for (int i = 0; i < _yearlyQuests.length; i++) {
+      if (_yearlyQuests[i].workoutType == category && !_yearlyQuests[i].isCompleted) {
+        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1).clamp(0, _yearlyQuests[i].targetCount);
+      }
+    }
+    _save();
+    notifyListeners();
+  }
+
 
   void logDetailedMeal({
     required String name,

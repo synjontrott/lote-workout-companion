@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'dart:math' as math;
+import 'dart:math' show min, max, Random;
 
 Color hexToColor(String hex) {
   final buffer = StringBuffer();
@@ -22,6 +23,8 @@ class LotEElement {
   final String balancedDetails;
   final String primaryColorHex;
   final String accentColorHex;
+  final String secondaryColorHex;
+  final String detailColorHex;
   final String planetOfOrigin;
   final bool inherentDark;
 
@@ -35,12 +38,34 @@ class LotEElement {
     required this.balancedDetails,
     required this.primaryColorHex,
     required this.accentColorHex,
+    required this.secondaryColorHex,
+    required this.detailColorHex,
     required this.planetOfOrigin,
     required this.inherentDark,
   });
 
   Color get primaryColor => hexToColor(primaryColorHex);
   Color get accentColor => hexToColor(accentColorHex);
+  Color get secondaryColor => hexToColor(secondaryColorHex);
+  Color get detailColor => hexToColor(detailColorHex);
+
+  LotEElement corruptedVersion() {
+    return LotEElement(
+      name: corruptName,
+      corruptName: corruptName,
+      description: corruptDescription,
+      corruptDescription: corruptDescription,
+      standardDetails: corruptDetails,
+      corruptDetails: corruptDetails,
+      balancedDetails: corruptDetails,
+      primaryColorHex: primaryColorHex,
+      accentColorHex: accentColorHex,
+      secondaryColorHex: secondaryColorHex,
+      detailColorHex: detailColorHex,
+      planetOfOrigin: planetOfOrigin,
+      inherentDark: true,
+    );
+  }
 
   String displayName(ExpressionStyle expression) {
     if (inherentDark) return name;
@@ -1132,6 +1157,7 @@ class LotEQuest {
   QuestCadence cadence;
   int progressCount;
   int targetCount;
+  final double requiredMinutes;
 
   LotEQuest({
     required this.id,
@@ -1148,6 +1174,7 @@ class LotEQuest {
     this.cadence = QuestCadence.daily,
     this.progressCount = 0,
     this.targetCount = 1,
+    this.requiredMinutes = 0.0,
   }) : dateCreated = date ?? DateTime.now();
 
   Map<String, dynamic> toJson() => {
@@ -1165,6 +1192,7 @@ class LotEQuest {
         'cadence': cadence.name,
         'progressCount': progressCount,
         'targetCount': targetCount,
+        'requiredMinutes': requiredMinutes,
       };
 
   factory LotEQuest.fromJson(Map<String, dynamic> json) {
@@ -1192,6 +1220,7 @@ class LotEQuest {
       ),
       progressCount: json['progressCount'] ?? 0,
       targetCount: json['targetCount'] ?? 1,
+      requiredMinutes: (json['requiredMinutes'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -1257,7 +1286,13 @@ enum TrainingFocus {
   const TrainingFocus(this.displayName);
 }
 
-List<LotEQuest> generateQuests(String element, List<TrainingFocus> focuses, QuestCadence cadence) {
+List<LotEQuest> generateQuests(
+  String element,
+  List<TrainingFocus> focuses,
+  QuestCadence cadence, {
+  Map<String, double> prs = const {},
+  double waterGoal = 3.0,
+}) {
   List<LotEQuest> quests = [];
 
   // Fallback if no focuses are selected
