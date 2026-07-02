@@ -1130,27 +1130,37 @@ class _SettingsViewState extends State<SettingsView> {
           ),
         ),
         const SizedBox(height: 4),
-        TextFormField(
-          controller: controller,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          style: const TextStyle(color: Colors.black, fontSize: 14),
-          decoration: InputDecoration(
-            fillColor: Colors.white,
-            filled: true,
-            isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(6),
-              borderSide: BorderSide.none,
+        Focus(
+          onFocusChange: (hasFocus) {
+            if (!hasFocus) {
+              onChanged(controller.text);
+            }
+          },
+          child: TextFormField(
+            controller: controller,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            style: const TextStyle(color: Colors.black, fontSize: 14),
+            decoration: InputDecoration(
+              fillColor: Colors.white,
+              filled: true,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(6),
+                borderSide: BorderSide.none,
+              ),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
+                onPressed: () {
+                  onChanged(controller.text);
+                  FocusManager.instance.primaryFocus?.unfocus();
+                },
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
             ),
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
-              onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
+            onFieldSubmitted: onChanged,
           ),
-          onChanged: onChanged,
         )
       ],
     );

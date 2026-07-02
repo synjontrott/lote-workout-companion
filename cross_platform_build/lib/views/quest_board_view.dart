@@ -1606,8 +1606,17 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
   }
 
   Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {
+    final today = DateTime.now();
+    final todaySessions = profile.loggedWorkoutSessions.where((s) => 
+        s.date.year == today.year && s.date.month == today.month && s.date.day == today.day);
+    
+    bool isWorkoutCompletedToday(SuggestedWorkout w) {
+      return todaySessions.any((s) => s.type.contains(w.name));
+    }
+
     final filtered = _workoutSearchQuery.isNotEmpty
         ? SuggestedWorkout.allWorkouts.where((w) {
+            if (isWorkoutCompletedToday(w)) return false;
             final q = _workoutSearchQuery.toLowerCase();
             return w.name.toLowerCase().contains(q) ||
                 w.description.toLowerCase().contains(q) ||
@@ -1615,6 +1624,7 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                 w.equipment.toLowerCase().contains(q);
           }).toList()
         : SuggestedWorkout.allWorkouts.where((w) {
+            if (isWorkoutCompletedToday(w)) return false;
             final isMuscleGroupMatch = w.muscleGroup == _tailMuscleGroup;
             final isDifficultyMatch = w.difficulty.toLowerCase() == _tailDifficulty.toLowerCase();
             final isEquipmentMatch = _tailEquipment == "Full Gym" || 
@@ -2053,7 +2063,7 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                                         ),
                                       ),
                                       content: Text(
-                                        "Are you sure you have completed '${workout.name}'? This will reward you with +20 XP, +10 Crystals, and advance your goals.",
+                                        "Are you sure you have completed '${workout.name}'? You will earn XP and Crystals based on difficulty.",
                                         style: const TextStyle(
                                           color: Colors.white70,
                                           fontFamily: "Exo2",
@@ -2068,12 +2078,17 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                                         TextButton(
                                           onPressed: () {
                                             Navigator.of(context).pop();
-                                            profile.addXP(20);
-                                            profile.earnCrystals(10);
-                                            profile.logWorkout(workout.category);
+                                            profile.logCustomWorkout(
+                                              name: workout.name,
+                                              category: workout.category,
+                                              sets: workout.sets,
+                                              reps: workout.reps,
+                                              difficulty: workout.difficulty,
+                                              durationMinutes: 15.0,
+                                            );
                                             _showOutcomeDialog(
                                               title: "WORKOUT CONQUERED! 💪",
-                                              message: "Workout complete! You conquered ${workout.name} and gained +20 XP, +10 Crystals, and forged your character attributes.",
+                                              message: "Workout complete! You conquered ${workout.name} and gained XP, Crystals, and forged your character attributes.",
                                               themeColor: profile.currentElement.primaryColor,
                                             );
                                           },

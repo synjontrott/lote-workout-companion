@@ -109,20 +109,24 @@ class HealthManager extends ChangeNotifier {
 
       // Fetch/Estimate stand hours
       try {
-        final List<HealthDataType> standTypes = [HealthDataType.APPLE_STAND_TIME];
-        List<HealthDataPoint> standData = await health.getHealthDataFromTypes(
-          types: standTypes,
-          startTime: startOfDay,
-          endTime: now,
-        );
-        double totalStand = 0.0;
-        for (var p in standData) {
-          final val = p.value;
-          if (val is NumericHealthValue) {
-            totalStand += val.numericValue.toDouble();
+        if (!kIsWeb && Platform.isIOS) {
+          final List<HealthDataType> standTypes = [HealthDataType.APPLE_STAND_TIME];
+          List<HealthDataPoint> standData = await health.getHealthDataFromTypes(
+            types: standTypes,
+            startTime: startOfDay,
+            endTime: now,
+          );
+          double totalStand = 0.0;
+          for (var p in standData) {
+            final val = p.value;
+            if (val is NumericHealthValue) {
+              totalStand += val.numericValue.toDouble();
+            }
           }
+          _todayStandHours = totalStand / 60.0;
+        } else {
+          _todayStandHours = 0.0;
         }
-        _todayStandHours = totalStand / 60.0;
       } catch (_) {
         _todayStandHours = 0.0;
       }

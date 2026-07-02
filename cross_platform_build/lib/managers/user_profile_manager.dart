@@ -168,7 +168,15 @@ class UserProfileManager extends ChangeNotifier {
   set homePlanet(String val) { _homePlanet = val; _save(); notifyListeners(); }
   set selectedFocuses(List<TrainingFocus> val) { _selectedFocuses = val; _save(); regenerateDailyQuests(); notifyListeners(); }
   set height(double val) { _height = val; _save(); notifyListeners(); }
-  set weight(double val) { _weight = val; _save(); checkWeightGoalProgress(); notifyListeners(); }
+  set weight(double val) { 
+    if (_weight != val) {
+      _weight = val; 
+      _weightHistory.add(WeightEntry(date: DateTime.now(), weight: val));
+      _save(); 
+      checkWeightGoalProgress(); 
+      notifyListeners(); 
+    }
+  }
   set startWeight(double val) { _startWeight = val; _save(); notifyListeners(); }
   
   set stepsGoal(double val) { _stepsGoal = val; _save(); notifyListeners(); }
@@ -1138,8 +1146,10 @@ class UserProfileManager extends ChangeNotifier {
       _incrementMonthlyAndYearlyProgress(questToComplete.workoutType);
 
       final activeCat = activeMonthlyChallengeCategory;
-      if (activeCat != null && questToComplete.workoutType == activeCat) {
-        final challenge = activeMonthlyChallenge;
+      final challenge = activeMonthlyChallenge;
+      if (challenge.targetMetric == "quests") {
+        advanceMonthlyChallenge(1.0);
+      } else if (activeCat != null && questToComplete.workoutType == activeCat) {
         double amount;
         if (challenge.targetMetric == "reps") {
           amount = 50.0;
@@ -1147,6 +1157,10 @@ class UserProfileManager extends ChangeNotifier {
           amount = 3.0;
         } else if (challenge.targetMetric == "miles") {
           amount = 2.0;
+        } else if (challenge.targetMetric == "workouts" || challenge.targetMetric == "sessions") {
+          amount = 1.0;
+        } else if (challenge.targetMetric == "steps") {
+          amount = 5000.0;
         } else {
           amount = questToComplete.requiredMinutes > 0 ? questToComplete.requiredMinutes.toDouble() : 15.0;
         }
@@ -1193,9 +1207,13 @@ class UserProfileManager extends ChangeNotifier {
     final todaySessions = _loggedWorkoutSessions.where((s) =>
         s.date.year == now.year && s.date.month == now.month && s.date.day == now.day).toList();
     
-    final strengthDuration = todaySessions.where((s) => s.type.contains("Strength")).fold(0.0, (sum, s) => sum + s.durationMinutes);
-    final cardioDuration = todaySessions.where((s) => s.type.contains("Cardio") || s.type.contains("Running")).fold(0.0, (sum, s) => sum + s.durationMinutes);
-    final yogaDuration = todaySessions.where((s) => s.type.contains("Yoga")).fold(0.0, (sum, s) => sum + s.durationMinutes);
+    final strengthSessions = todaySessions.where((s) => s.type.contains("Strength"));
+    final cardioSessions = todaySessions.where((s) => s.type.contains("Cardio") || s.type.contains("Running"));
+    final yogaSessions = todaySessions.where((s) => s.type.contains("Yoga"));
+
+    final strengthDuration = strengthSessions.fold(0.0, (sum, s) => sum + s.durationMinutes);
+    final cardioDuration = cardioSessions.fold(0.0, (sum, s) => sum + s.durationMinutes);
+    final yogaDuration = yogaSessions.fold(0.0, (sum, s) => sum + s.durationMinutes);
 
     for (int i = 0; i < _dailyQuests.length; i++) {
       final q = _dailyQuests[i];
@@ -1203,17 +1221,17 @@ class UserProfileManager extends ChangeNotifier {
 
       switch (q.workoutType) {
         case WorkoutCategory.strength:
-          if (strengthDuration >= q.requiredMinutes) {
+          if (strengthDuration >= q.requiredMinutes || strengthSessions.isNotEmpty) {
             _dailyQuests[i].progressCount = q.targetCount;
           }
           break;
         case WorkoutCategory.cardio:
-          if (cardioDuration >= q.requiredMinutes) {
+          if (cardioDuration >= q.requiredMinutes || cardioSessions.isNotEmpty) {
             _dailyQuests[i].progressCount = q.targetCount;
           }
           break;
         case WorkoutCategory.flexibility:
-          if (yogaDuration >= q.requiredMinutes) {
+          if (yogaDuration >= q.requiredMinutes || yogaSessions.isNotEmpty) {
             _dailyQuests[i].progressCount = q.targetCount;
           }
           break;
@@ -1365,7 +1383,23 @@ class UserProfileManager extends ChangeNotifier {
   }
 
   void deleteDetailedMeal(String id) {
-    _loggedMeals.removeWhere((m) => m.id == id);
+    final mealIndex = _loggedMeals.indexWhere((m) => m.id == id);
+    if (mealIndex == -1) return;
+    
+    final meal = _loggedMeals[mealIndex];
+    final now = DateTime.now();
+    if (meal.date.year == now.year && meal.date.month == now.month && meal.date.day == now.day) {
+      if (_healthyMealsLoggedToday > 0) _healthyMealsLoggedToday -= 1;
+      
+      final sessionIndex = _loggedWorkoutSessions.lastIndexWhere((s) => 
+        s.type == "Nutrition" && 
+        s.date.year == now.year && s.date.month == now.month && s.date.day == now.day);
+      if (sessionIndex != -1) {
+        _loggedWorkoutSessions.removeAt(sessionIndex);
+      }
+    }
+    
+    _loggedMeals.removeAt(mealIndex);
     _save();
     notifyListeners();
   }

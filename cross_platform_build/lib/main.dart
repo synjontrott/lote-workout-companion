@@ -92,18 +92,22 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
         child: Column(
           children: [
             // Persistent RPG HUD Header
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0F0F0F),
-                border: Border(
-                  bottom: BorderSide(
-                    color: themeColor.withOpacity(0.2),
-                    width: 1,
+            GestureDetector(
+              onTap: () {
+                showActivityHistory(context, profile);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F0F0F),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: themeColor.withOpacity(0.2),
+                      width: 1,
+                    ),
                   ),
                 ),
-              ),
-              child: Row(
+                child: Row(
                 children: [
                   Container(
                     width: 44,

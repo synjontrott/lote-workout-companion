@@ -37,6 +37,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   };
 
   // Metric controllers
+  bool _useImperial = true;
   late final TextEditingController _heightController;
   late final TextEditingController _weightController;
   late final TextEditingController _chestController;
@@ -97,6 +98,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   }
 
   void _confirmProfile(UserProfileManager profile) {
+    profile.useImperialUnits = _useImperial;
     profile.characterName = _nameController.text;
     profile.homePlanet = _selectedPlanet;
     profile.selectedElementIndex = _tempElementIdx;
@@ -220,6 +222,25 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
           ),
         ),
         const SizedBox(height: 25),
+
+        // Imperial / Metric Toggle
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("METRIC", style: TextStyle(color: _useImperial ? Colors.grey : themeColor, fontWeight: FontWeight.bold, fontSize: 12)),
+            Switch(
+              value: _useImperial,
+              activeColor: themeColor,
+              onChanged: (val) {
+                setState(() {
+                  _useImperial = val;
+                });
+              },
+            ),
+            Text("IMPERIAL", style: TextStyle(color: _useImperial ? themeColor : Colors.grey, fontWeight: FontWeight.bold, fontSize: 12)),
+          ],
+        ),
+        const SizedBox(height: 16),
 
         // Textfields
         _buildTextField("CHARACTER NAME", _nameController, TextInputType.name),
@@ -623,30 +644,48 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         const SizedBox(height: 25),
 
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(child: _buildTextField("HEIGHT (INCHES)", _heightController, TextInputType.number)),
+            Text("METRIC", style: TextStyle(color: _useImperial ? Colors.grey : themeColor, fontWeight: FontWeight.bold, fontSize: 12)),
+            Switch(
+              value: _useImperial,
+              activeColor: themeColor,
+              onChanged: (val) {
+                setState(() {
+                  _useImperial = val;
+                });
+              },
+            ),
+            Text("IMPERIAL", style: TextStyle(color: _useImperial ? themeColor : Colors.grey, fontWeight: FontWeight.bold, fontSize: 12)),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        Row(
+          children: [
+            Expanded(child: _buildTextField(_useImperial ? "HEIGHT (INCHES)" : "HEIGHT (CM)", _heightController, TextInputType.number)),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField("WEIGHT (LBS)", _weightController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "WEIGHT (LBS)" : "WEIGHT (KG)", _weightController, TextInputType.number)),
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildTextField("CHEST (INCHES)", _chestController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "CHEST (INCHES)" : "CHEST (CM)", _chestController, TextInputType.number)),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField("ARMS (INCHES)", _armsController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "ARMS (INCHES)" : "ARMS (CM)", _armsController, TextInputType.number)),
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildTextField("WAIST (INCHES)", _waistController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "WAIST (INCHES)" : "WAIST (CM)", _waistController, TextInputType.number)),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField("HIPS (INCHES)", _hipsController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "HIPS (INCHES)" : "HIPS (CM)", _hipsController, TextInputType.number)),
           ],
         ),
         const SizedBox(height: 16),
-        _buildTextField("LEGS (INCHES)", _legsController, TextInputType.number),
+        _buildTextField(_useImperial ? "LEGS (INCHES)" : "LEGS (CM)", _legsController, TextInputType.number),
 
         const SizedBox(height: 30),
         Row(
@@ -902,6 +941,21 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         ),
         const SizedBox(height: 25),
 
+        // Unit Toggle
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("METRIC", style: GoogleFonts.orbitron(fontSize: 10, color: !_useImperial ? themeColor : Colors.grey)),
+            Switch(
+              value: _useImperial,
+              activeColor: themeColor,
+              onChanged: (val) => setState(() => _useImperial = val),
+            ),
+            Text("IMPERIAL", style: GoogleFonts.orbitron(fontSize: 10, color: _useImperial ? themeColor : Colors.grey)),
+          ],
+        ),
+        const SizedBox(height: 15),
+
         // Goals section header
         Text(
           "FITNESS GOALS",
@@ -910,13 +964,13 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         const SizedBox(height: 12),
         Row(
           children: [
-            Expanded(child: _buildTextField("WEIGHT GOAL (LBS)", _weightGoalController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "WEIGHT GOAL (LBS)" : "WEIGHT GOAL (KG)", _weightGoalController, TextInputType.number)),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField("DISTANCE GOAL (MILES)", _distanceGoalController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "CARDIO GOAL (MILES)" : "CARDIO GOAL (KM)", _distanceGoalController, TextInputType.number)),
           ],
         ),
         const SizedBox(height: 16),
-        _buildTextField("DAILY WATER INTAKE GOAL (LITERS)", _waterGoalController, TextInputType.number),
+        _buildTextField(_useImperial ? "WATER GOAL (LITERS/GALLONS)" : "WATER GOAL (L)", _waterGoalController, TextInputType.number),
         const SizedBox(height: 24),
 
         // PRs section header
@@ -927,17 +981,17 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         const SizedBox(height: 12),
         Row(
           children: [
-            Expanded(child: _buildTextField("BENCH PRESS (LBS)", _benchPRController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "BENCH PRESS (LBS)" : "BENCH PRESS (KG)", _benchPRController, TextInputType.number)),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField("BARBELL SQUAT (LBS)", _squatPRController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "SQUAT (LBS)" : "SQUAT (KG)", _squatPRController, TextInputType.number)),
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildTextField("DEADLIFT (LBS)", _deadliftPRController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "DEADLIFT (LBS)" : "DEADLIFT (KG)", _deadliftPRController, TextInputType.number)),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField("OVERHEAD PRESS (LBS)", _ohpPRController, TextInputType.number)),
+            Expanded(child: _buildTextField(_useImperial ? "OVERHEAD PRESS (LBS)" : "OVERHEAD PRESS (KG)", _ohpPRController, TextInputType.number)),
           ],
         ),
         const SizedBox(height: 30),

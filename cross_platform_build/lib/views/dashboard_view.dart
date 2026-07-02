@@ -129,6 +129,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
 
     // Sync values daily on load
     profile.checkNewDayRefresh();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      profile.checkBadges(health);
+    });
 
     final themeColor = profile.currentElement.primaryColor;
     final accentColor = profile.currentElement.accentColor;
@@ -232,7 +235,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: GestureDetector(
-                      onTap: () => _showActivityHistory(context, profile),
+                      onTap: () => showActivityHistory(context, profile),
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -635,8 +638,8 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                     child: Builder(
                       builder: (context) {
                         final loggedSugar = profile.todaySugar;
-                        final sugarPercent = (loggedSugar / 30.0).clamp(0.0, 1.0);
-                        final exceeded = loggedSugar > 30.0;
+                        final sugarPercent = (loggedSugar / profile.targetSugar).clamp(0.0, 1.0);
+                        final exceeded = loggedSugar > profile.targetSugar;
 
                         return Container(
                           padding: const EdgeInsets.all(16),
@@ -665,7 +668,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                   ),
                                   const Spacer(),
                                   Text(
-                                    "${loggedSugar.toStringAsFixed(1)} / 30.0 g",
+                                    "${loggedSugar.toStringAsFixed(1)} / ${profile.targetSugar.toStringAsFixed(1)} g",
                                     style: TextStyle(
                                       fontSize: 11,
                                       color: exceeded ? Colors.red : profile.currentElement.primaryColor,
@@ -1683,7 +1686,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     final calDone = health.todayCalories >= profile.caloriesGoal;
     final minsDone = health.activeMinutes >= profile.activeMinutesGoal;
     final standDone = health.todayStandHours >= profile.standHoursGoal;
-    final sugarDone = profile.todaySugar <= 30.0;
+    final sugarDone = profile.todaySugar <= profile.targetSugar;
 
     double completionPct = 0.0;
     double totalProgress = 0.0;
@@ -1691,7 +1694,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     totalProgress += profile.caloriesGoal > 0 ? (health.todayCalories / profile.caloriesGoal).clamp(0.0, 1.0) : 1.0;
     totalProgress += profile.activeMinutesGoal > 0 ? (health.activeMinutes / profile.activeMinutesGoal).clamp(0.0, 1.0) : 1.0;
     totalProgress += profile.standHoursGoal > 0 ? (health.todayStandHours / profile.standHoursGoal).clamp(0.0, 1.0) : 1.0;
-    totalProgress += profile.todaySugar <= 30.0 ? 1.0 : 0.0;
+    totalProgress += profile.todaySugar <= profile.targetSugar ? 1.0 : 0.0;
     completionPct = (totalProgress / 5.0) * 100;
 
     return Padding(
@@ -1727,7 +1730,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                 const SizedBox(height: 8),
                 _buildChecklistRow("Stand Hours (${health.todayStandHours.toInt()}/${profile.standHoursGoal.toInt()} hours)", standDone),
                 const SizedBox(height: 8),
-                _buildChecklistRow("Sugar Intake (${profile.todaySugar.toStringAsFixed(1)}g/30.0g max)", sugarDone),
+                _buildChecklistRow("Sugar Intake (${profile.todaySugar.toStringAsFixed(1)}g/${profile.targetSugar.toStringAsFixed(1)}g max)", sugarDone),
               ],
             ),
           ),
@@ -2255,73 +2258,74 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     );
   }
 
-  void _showActivityHistory(BuildContext context, UserProfileManager profile) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        final sessions = profile.loggedWorkoutSessions.reversed.toList();
-        final meals = profile.loggedMeals.reversed.toList();
-        
-        final List<dynamic> combined = [...sessions, ...meals];
-        combined.sort((a, b) => (b.date as DateTime).compareTo(a.date as DateTime));
+}
 
-        return Dialog(
-          backgroundColor: const Color(0xFF0C0C0C),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: profile.currentElement.primaryColor.withOpacity(0.3)),
-          ),
-          child: Container(
-            width: double.maxFinite,
-            height: 400,
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Text(
-                  "ACTIVITY LOG",
-                  style: GoogleFonts.orbitron(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 2,
-                  ),
+void showActivityHistory(BuildContext context, UserProfileManager profile) {
+  showDialog(
+    context: context,
+    builder: (ctx) {
+      final sessions = profile.loggedWorkoutSessions.reversed.toList();
+      final meals = profile.loggedMeals.reversed.toList();
+      
+      final List<dynamic> combined = [...sessions, ...meals];
+      combined.sort((a, b) => (b.date as DateTime).compareTo(a.date as DateTime));
+
+      return Dialog(
+        backgroundColor: const Color(0xFF0C0C0C),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: profile.currentElement.primaryColor.withOpacity(0.3)),
+        ),
+        child: Container(
+          width: double.maxFinite,
+          height: 400,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Text(
+                "ACTIVITY LOG",
+                style: GoogleFonts.orbitron(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  letterSpacing: 2,
                 ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: combined.isEmpty
-                      ? const Center(child: Text("No activity logged yet.", style: TextStyle(color: Colors.grey)))
-                      : ListView.builder(
-                          itemCount: combined.length,
-                          itemBuilder: (ctx, idx) {
-                            final item = combined[idx];
-                            if (item.runtimeType.toString() == 'WorkoutSession') {
-                              return ListTile(
-                                leading: Icon(Icons.fitness_center, color: profile.currentElement.primaryColor),
-                                title: Text("${item.type} Workout", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                subtitle: Text("${item.durationMinutes.toStringAsFixed(1)} min • ${item.date.month}/${item.date.day}", style: const TextStyle(color: Colors.grey)),
-                              );
-                            } else {
-                              return ListTile(
-                                leading: const Icon(Icons.restaurant, color: Colors.green),
-                                title: Text(item.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                subtitle: Text("${item.calories.toStringAsFixed(0)} kcal • ${item.date.month}/${item.date.day}", style: const TextStyle(color: Colors.grey)),
-                              );
-                            }
-                          },
-                        ),
-                ),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  child: Text("CLOSE", style: TextStyle(color: profile.currentElement.primaryColor)),
-                )
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: combined.isEmpty
+                    ? const Center(child: Text("No activity logged yet.", style: TextStyle(color: Colors.grey)))
+                    : ListView.builder(
+                        itemCount: combined.length,
+                        itemBuilder: (ctx, idx) {
+                          final item = combined[idx];
+                          if (item.runtimeType.toString() == 'WorkoutSession') {
+                            return ListTile(
+                              leading: Icon(Icons.fitness_center, color: profile.currentElement.primaryColor),
+                              title: Text("${item.type} Workout", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              subtitle: Text("${item.durationMinutes.toStringAsFixed(1)} min • ${item.date.month}/${item.date.day}", style: const TextStyle(color: Colors.grey)),
+                            );
+                          } else {
+                            return ListTile(
+                              leading: const Icon(Icons.restaurant, color: Colors.green),
+                              title: Text(item.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              subtitle: Text("${item.calories.toStringAsFixed(0)} kcal • ${item.date.month}/${item.date.day}", style: const TextStyle(color: Colors.grey)),
+                            );
+                          }
+                        },
+                      ),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text("CLOSE", style: TextStyle(color: profile.currentElement.primaryColor)),
+              )
+            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
 }
 
 class _WeightHistoryChart extends StatelessWidget {

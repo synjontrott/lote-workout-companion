@@ -47,7 +47,7 @@ class _NutritionViewState extends State<NutritionView> {
     final totalFats = todayMeals.fold<double>(0, (sum, m) => sum + m.fats);
     final totalSugar = todayMeals.fold<double>(0, (sum, m) => sum + m.sugar);
 
-    final progressPct = (totalCalories / calorieTarget).clamp(0.0, 1.0);
+    final progressPct = calorieTarget > 0 ? (totalCalories / calorieTarget).clamp(0.0, 1.0) : 0.0;
 
     return Scaffold(
       backgroundColor: const Color(0xFF020408),
@@ -621,6 +621,12 @@ class _NutritionViewState extends State<NutritionView> {
   }
 
   void _showMealLogDialog(BuildContext context, UserProfileManager profile) {
+    _mealName = "";
+    _mealCalories = "";
+    _mealProtein = "";
+    _mealCarbs = "";
+    _mealFats = "";
+    _mealSugar = "";
     showDialog(
       context: context,
       builder: (context) {
@@ -664,27 +670,49 @@ class _NutritionViewState extends State<NutritionView> {
                         children: [
                           Expanded(
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              decoration: InputDecoration(
                                 labelText: "CALORIES",
-                                labelStyle: TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                                labelStyle: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
                                 hintText: "kcal",
+                                suffixIcon: IconButton(
+                                  icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
+                                  onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
                               ),
                               style: const TextStyle(color: Colors.white, fontSize: 13),
                               onChanged: (val) => _mealCalories = val,
+                              validator: (val) {
+                                final d = double.tryParse(val ?? '');
+                                if (d == null || d < 0) return 'Invalid';
+                                return null;
+                              },
                             ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              decoration: InputDecoration(
                                 labelText: "PROTEIN (g)",
-                                labelStyle: TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                                labelStyle: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
                                 hintText: "grams",
+                                suffixIcon: IconButton(
+                                  icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
+                                  onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
                               ),
                               style: const TextStyle(color: Colors.white, fontSize: 13),
                               onChanged: (val) => _mealProtein = val,
+                              validator: (val) {
+                                final d = double.tryParse(val ?? '');
+                                if (d == null || d < 0) return 'Invalid';
+                                return null;
+                              },
                             ),
                           ),
                         ],
@@ -694,41 +722,74 @@ class _NutritionViewState extends State<NutritionView> {
                         children: [
                           Expanded(
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              decoration: InputDecoration(
                                 labelText: "CARBS (g)",
-                                labelStyle: TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                                labelStyle: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
                                 hintText: "grams",
+                                suffixIcon: IconButton(
+                                  icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
+                                  onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
                               ),
                               style: const TextStyle(color: Colors.white, fontSize: 13),
                               onChanged: (val) => _mealCarbs = val,
+                              validator: (val) {
+                                final d = double.tryParse(val ?? '');
+                                if (d == null || d < 0) return 'Invalid';
+                                return null;
+                              },
                             ),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: TextFormField(
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              decoration: InputDecoration(
                                 labelText: "FATS (g)",
-                                labelStyle: TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                                labelStyle: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
                                 hintText: "grams",
+                                suffixIcon: IconButton(
+                                  icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
+                                  onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
                               ),
                               style: const TextStyle(color: Colors.white, fontSize: 13),
                               onChanged: (val) => _mealFats = val,
+                              validator: (val) {
+                                final d = double.tryParse(val ?? '');
+                                if (d == null || d < 0) return 'Invalid';
+                                return null;
+                              },
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration: InputDecoration(
                           labelText: "SUGAR (g)",
-                          labelStyle: TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                          labelStyle: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
                           hintText: "grams",
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
+                            onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
                         ),
                         style: const TextStyle(color: Colors.white, fontSize: 13),
                         onChanged: (val) => _mealSugar = val,
+                        validator: (val) {
+                          final d = double.tryParse(val ?? '');
+                          if (d == null || d < 0) return 'Invalid';
+                          return null;
+                        },
                       ),
                     ],
                   ),
