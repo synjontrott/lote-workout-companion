@@ -228,6 +228,7 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                 ],
               ),
             ),
+          ),
             // Selected page view
             Expanded(
               child: IndexedStack(

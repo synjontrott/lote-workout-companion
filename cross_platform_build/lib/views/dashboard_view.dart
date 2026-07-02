@@ -519,6 +519,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                       ),
                     ),
                   ),
+                  ),
                   const SizedBox(height: 20),
 
                   // MARK: - HealthKit Status / Connect
