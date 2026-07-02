@@ -1,9 +1,13 @@
 # LotE Workout Companion - Agent Guidelines
 
 ## Project Overview
-This project implements the **Legends of the Elsaither Workout Companion**, a premium fitness companion with D&D RPG gamification based on the LotE (Legends of the Elements) Universe. The app is implemented in two codebases:
-1. **SwiftUI (Native iOS)** inside `LotE Workout Companion/`
-2. **Flutter (Cross-Platform)** inside `cross_platform_build/`
+This project implements the **Legends of the Elsaither Workout Companion**, a premium fitness companion with D&D RPG gamification based on the LotE (Legends of the Elements) Universe.
+
+### Active Codebase
+- **Flutter (Cross-Platform)**: Located in `cross_platform_build/`. This single codebase compiles to both **iOS** and **Android**, serves as the source of truth for both platforms, and is where all feature updates are implemented.
+
+### Deprecated Codebase
+- **SwiftUI (Native iOS)**: Moved to `deprecated_swift_version/`. This version is no longer active and should not be modified.
 
 ## Core Architecture & Pillars
 1. **HealthKit / Device Sync**: Retrieves steps, active energy (calories), active minutes (training time), and stand hours from the user's device/health app.
