@@ -76,6 +76,8 @@ Every character sprite in the dashboard is flanked by a floating power indicator
 
 ## Implementation Guidelines & Constraints
 
+> **Engineering standards & Definition of Done:** All code changes must follow the checklist in [`agents.md`](agents.md) — `flutter analyze` clean, `dart format` applied, `flutter test` green, logic changes ship with unit tests, widget behavior ships with widget tests, and persistence/HealthKit access stays behind managers. See `cross_platform_build/test/README.md` for the test harness.
+
 1. **Quest Adjective Variety**: Keep quest naming varied. Each element has 7 distinct adjectives (e.g. Laser uses *Beam, Photon, Arc, Reactor, Focus, Ray, Laser*). Select distinct adjectives inside loops to prevent name repetition on the same day.
 2. **Keyboard Dismissal Toolbar**:
    - **iOS**: Views must be structurally contained inside a `NavigationView` (or `NavigationStack`) with hidden navigation bars so that `ToolbarItemGroup(placement: .keyboard)` Done buttons display correctly.
