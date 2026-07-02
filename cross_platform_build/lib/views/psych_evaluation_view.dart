@@ -45,6 +45,15 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   late final TextEditingController _hipsController;
   late final TextEditingController _legsController;
 
+  // Goals & PR controllers
+  late final TextEditingController _weightGoalController;
+  late final TextEditingController _distanceGoalController;
+  late final TextEditingController _waterGoalController;
+  late final TextEditingController _benchPRController;
+  late final TextEditingController _squatPRController;
+  late final TextEditingController _deadliftPRController;
+  late final TextEditingController _ohpPRController;
+
   @override
   void initState() {
     super.initState();
@@ -57,6 +66,14 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     _waistController = TextEditingController(text: "32.0");
     _hipsController = TextEditingController(text: "40.0");
     _legsController = TextEditingController(text: "22.0");
+
+    _weightGoalController = TextEditingController(text: "150.0");
+    _distanceGoalController = TextEditingController(text: "10.0");
+    _waterGoalController = TextEditingController(text: "3.0");
+    _benchPRController = TextEditingController(text: "135.0");
+    _squatPRController = TextEditingController(text: "155.0");
+    _deadliftPRController = TextEditingController(text: "185.0");
+    _ohpPRController = TextEditingController(text: "95.0");
   }
 
   @override
@@ -69,6 +86,13 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     _waistController.dispose();
     _hipsController.dispose();
     _legsController.dispose();
+    _weightGoalController.dispose();
+    _distanceGoalController.dispose();
+    _waterGoalController.dispose();
+    _benchPRController.dispose();
+    _squatPRController.dispose();
+    _deadliftPRController.dispose();
+    _ohpPRController.dispose();
     super.dispose();
   }
 
@@ -85,6 +109,19 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     profile.waist = double.tryParse(_waistController.text) ?? 32.0;
     profile.hips = double.tryParse(_hipsController.text) ?? 40.0;
     profile.legs = double.tryParse(_legsController.text) ?? 22.0;
+
+    // Goals and PRs
+    profile.startWeight = double.tryParse(_weightController.text) ?? 160.0;
+    profile.goalWeight = double.tryParse(_weightGoalController.text) ?? 150.0;
+    profile.distanceGoal = double.tryParse(_distanceGoalController.text) ?? 10.0;
+    profile.waterIntakeGoal = double.tryParse(_waterGoalController.text) ?? 3.0;
+
+    final prs = Map<String, double>.from(profile.personalRecords);
+    prs["Bench Press"] = double.tryParse(_benchPRController.text) ?? 135.0;
+    prs["Barbell Squat"] = double.tryParse(_squatPRController.text) ?? 155.0;
+    prs["Deadlift"] = double.tryParse(_deadliftPRController.text) ?? 185.0;
+    prs["Overhead Press"] = double.tryParse(_ohpPRController.text) ?? 95.0;
+    profile.personalRecords = prs;
     
     profile.resetProgress();
     profile.hasCompletedInitialQuiz = true;
@@ -110,7 +147,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(3, (index) {
+                      children: List.generate(4, (index) {
                         final active = index <= _onboardingStep;
                         return Container(
                           margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -150,8 +187,10 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
       return _buildIdentityScreen(themeColor);
     } else if (_onboardingStep == 1) {
       return _buildMindsetScreen(themeColor);
-    } else {
+    } else if (_onboardingStep == 2) {
       return _buildVesselScreen(themeColor, profile);
+    } else {
+      return _buildGoalsScreen(themeColor, profile);
     }
   }
 
@@ -634,7 +673,9 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  _confirmProfile(profile);
+                  setState(() {
+                    _onboardingStep = 3;
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: themeColor,
@@ -642,7 +683,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 child: Text(
-                  "COMMENCE",
+                  "CONTINUE",
                   style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ),
@@ -832,6 +873,117 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildGoalsScreen(Color themeColor, UserProfileManager profile) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 10),
+        Text(
+          "GOALS & PERSONAL RECORDS",
+          textAlign: TextAlign.center,
+          style: GoogleFonts.orbitron(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            letterSpacing: 3,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          "Phase 4: Set starting fitness goals and strength benchmarks",
+          textAlign: TextAlign.center,
+          style: GoogleFonts.exo2(
+            fontSize: 12,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 25),
+
+        // Goals section header
+        Text(
+          "FITNESS GOALS",
+          style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: themeColor),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(child: _buildTextField("WEIGHT GOAL (LBS)", _weightGoalController, TextInputType.number)),
+            const SizedBox(width: 12),
+            Expanded(child: _buildTextField("DISTANCE GOAL (MILES)", _distanceGoalController, TextInputType.number)),
+          ],
+        ),
+        const SizedBox(height: 16),
+        _buildTextField("DAILY WATER INTAKE GOAL (LITERS)", _waterGoalController, TextInputType.number),
+        const SizedBox(height: 24),
+
+        // PRs section header
+        Text(
+          "STARTING PERSONAL RECORDS (PRs)",
+          style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: themeColor),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(child: _buildTextField("BENCH PRESS (LBS)", _benchPRController, TextInputType.number)),
+            const SizedBox(width: 12),
+            Expanded(child: _buildTextField("BARBELL SQUAT (LBS)", _squatPRController, TextInputType.number)),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(child: _buildTextField("DEADLIFT (LBS)", _deadliftPRController, TextInputType.number)),
+            const SizedBox(width: 12),
+            Expanded(child: _buildTextField("OVERHEAD PRESS (LBS)", _ohpPRController, TextInputType.number)),
+          ],
+        ),
+        const SizedBox(height: 30),
+
+        // Back / Confirm actions
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    _onboardingStep = 2;
+                  });
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: const BorderSide(color: Colors.white24),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                child: Text(
+                  "BACK",
+                  style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  _confirmProfile(profile);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: themeColor,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                child: Text(
+                  "COMMENCE",
+                  style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+      ],
     );
   }
 
