@@ -13,6 +13,7 @@ flutter precache --ios
 # Run pub get in the Flutter project directory.
 cd "$CI_PRIMARY_REPOSITORY_PATH/cross_platform_build"
 flutter pub get
+flutter build ios --config-only
 
 # Install CocoaPods dependencies.
 cd ios
