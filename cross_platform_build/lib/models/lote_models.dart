@@ -1380,7 +1380,7 @@ List<LotEQuest> generateQuests(
           title = titles[i % titles.length];
           desc = "Perform bodyweight dips, pushups, pullups, or handstands. Complete 15 minutes.";
           wType = WorkoutCategory.strength;
-          stat = StatType.strength;
+          stat = i.isOdd ? (i ~/ 2 % 2 == 0 ? StatType.intelligence : StatType.charisma) : StatType.strength;
           break;
         case TrainingFocus.lifting:
           final titles = [
@@ -1396,7 +1396,7 @@ List<LotEQuest> generateQuests(
           title = titles[i % titles.length];
           desc = "Perform squat, bench, or deadlift reps. Complete 20 minutes of heavy structural loading.";
           wType = WorkoutCategory.strength;
-          stat = StatType.strength;
+          stat = i.isOdd ? (i ~/ 2 % 2 == 0 ? StatType.charisma : StatType.intelligence) : StatType.strength;
           break;
         case TrainingFocus.cardio:
           final titles = [
@@ -1412,7 +1412,7 @@ List<LotEQuest> generateQuests(
           title = titles[i % titles.length];
           desc = "Complete a 15-minute run, jog, cycle, or cardio sprint.";
           wType = WorkoutCategory.cardio;
-          stat = StatType.dexterity;
+          stat = i.isOdd ? (i ~/ 2 % 2 == 0 ? StatType.intelligence : StatType.charisma) : StatType.dexterity;
           break;
         case TrainingFocus.flexibility:
           final titles = [
@@ -1428,7 +1428,7 @@ List<LotEQuest> generateQuests(
           title = titles[i % titles.length];
           desc = "Perform a flexibility, yoga, or dynamic mobility routine. Complete 15 minutes.";
           wType = WorkoutCategory.flexibility;
-          stat = StatType.wisdom;
+          stat = i.isOdd ? (i ~/ 2 % 2 == 0 ? StatType.charisma : StatType.intelligence) : StatType.wisdom;
           break;
         case TrainingFocus.cutting:
           final titles = [
@@ -1442,7 +1442,7 @@ List<LotEQuest> generateQuests(
           title = titles[i % titles.length];
           desc = "Log a high-protein, calorie-deficit meal to burn off excess fat.";
           wType = WorkoutCategory.nutrition;
-          stat = StatType.constitution;
+          stat = i.isOdd ? (i ~/ 2 % 2 == 0 ? StatType.intelligence : StatType.charisma) : StatType.constitution;
           break;
         case TrainingFocus.bulking:
           final titles = [
@@ -1456,7 +1456,7 @@ List<LotEQuest> generateQuests(
           title = titles[i % titles.length];
           desc = "Log a calorie-dense bulking meal to build size.";
           wType = WorkoutCategory.nutrition;
-          stat = StatType.constitution;
+          stat = i.isOdd ? (i ~/ 2 % 2 == 0 ? StatType.charisma : StatType.intelligence) : StatType.constitution;
           break;
       }
 

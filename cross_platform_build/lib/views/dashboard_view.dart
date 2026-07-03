@@ -1261,17 +1261,17 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                     children: [
                       Expanded(
                         child: _buildModalTextField(
-                          label: "WEIGHT (LBS)",
+                          label: profile.useImperialUnits ? "WEIGHT (LBS)" : "WEIGHT (KG)",
                           controller: _measureWeightController,
-                          hint: "lbs",
+                          hint: profile.useImperialUnits ? "lbs" : "kg",
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildModalTextField(
-                          label: "CHEST (INCHES)",
+                          label: profile.useImperialUnits ? "CHEST (INCHES)" : "CHEST (CM)",
                           controller: _measureChestController,
-                          hint: "inches",
+                          hint: profile.useImperialUnits ? "inches" : "cm",
                         ),
                       ),
                     ],
@@ -1281,17 +1281,17 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                     children: [
                       Expanded(
                         child: _buildModalTextField(
-                          label: "ARMS (INCHES)",
+                          label: profile.useImperialUnits ? "ARMS (INCHES)" : "ARMS (CM)",
                           controller: _measureArmsController,
-                          hint: "inches",
+                          hint: profile.useImperialUnits ? "inches" : "cm",
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildModalTextField(
-                          label: "WAIST (INCHES)",
+                          label: profile.useImperialUnits ? "WAIST (INCHES)" : "WAIST (CM)",
                           controller: _measureWaistController,
-                          hint: "inches",
+                          hint: profile.useImperialUnits ? "inches" : "cm",
                         ),
                       ),
                     ],
@@ -1301,17 +1301,17 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                     children: [
                       Expanded(
                         child: _buildModalTextField(
-                          label: "HIPS (INCHES)",
+                          label: profile.useImperialUnits ? "HIPS (INCHES)" : "HIPS (CM)",
                           controller: _measureHipsController,
-                          hint: "inches",
+                          hint: profile.useImperialUnits ? "inches" : "cm",
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _buildModalTextField(
-                          label: "LEGS (INCHES)",
+                          label: profile.useImperialUnits ? "LEGS (INCHES)" : "LEGS (CM)",
                           controller: _measureLegsController,
-                          hint: "inches",
+                          hint: profile.useImperialUnits ? "inches" : "cm",
                         ),
                       ),
                     ],

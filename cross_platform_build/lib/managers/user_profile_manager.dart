@@ -1631,6 +1631,7 @@ class UserProfileManager extends ChangeNotifier {
     _currentXP = 0;
     _crystals = 100;
     _streak = 0;
+    _previousStreak = 0;
     _stats = DNDStats();
     _unlockedBadges = [];
     _unlockedShopItems = [];
@@ -1638,7 +1639,20 @@ class UserProfileManager extends ChangeNotifier {
     _healthyMealsLoggedToday = 0;
     _hasClaimedWeightGoalReward = false;
     _hasClaimedDistanceGoalReward = false;
-    
+    _loggedWorkoutSessions = [];
+    _totalQuestsCompleted = 0;
+    _monthlyChallengeProgress = 0.0;
+    _todayWaterIntake = 0.0;
+    _measurementHistory = [];
+    _weightHistory = [];
+
+    // Reset equipped cosmetics to defaults
+    _equippedFrame = 'None';
+    _equippedTitle = 'None';
+    _equippedAura = 'None';
+    _equippedBackground = 'None';
+    _equippedAccessory = 'None';
+
     _personalRecords = {
       "Pullups": 5.0,
       "Pushups": 20.0,
