@@ -111,7 +111,7 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                   color: const Color(0xFF0F0F0F),
                   border: Border(
                     bottom: BorderSide(
-                      color: themeColor.withOpacity(0.2),
+                      color: themeColor.withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -123,8 +123,8 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                     height: 44,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: themeColor.withOpacity(0.1),
-                      border: Border.all(color: themeColor.withOpacity(0.3), width: 1),
+                      color: themeColor.withValues(alpha: 0.1),
+                      border: Border.all(color: themeColor.withValues(alpha: 0.3), width: 1),
                     ),
                     child: ClipOval(
                       child: Transform.scale(
@@ -181,7 +181,7 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                                   borderRadius: BorderRadius.circular(3),
                                   child: LinearProgressIndicator(
                                     value: progress,
-                                    backgroundColor: Colors.white.withOpacity(0.05),
+                                    backgroundColor: Colors.white.withValues(alpha: 0.05),
                                     valueColor: AlwaysStoppedAnimation<Color>(themeColor),
                                     minHeight: 5,
                                   ),
@@ -195,7 +195,7 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                                       style: TextStyle(fontSize: 7, color: themeColor, fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      "${profile.currentXP} / ${nextLevelXP} XP",
+                                      "${profile.currentXP} / $nextLevelXP XP",
                                       style: const TextStyle(fontSize: 7, color: Colors.grey),
                                     ),
                                   ],
@@ -211,9 +211,9 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.04),
+                      color: Colors.white.withValues(alpha: 0.04),
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.white.withOpacity(0.08)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,

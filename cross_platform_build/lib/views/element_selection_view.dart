@@ -56,7 +56,7 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
               height: 320,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _activeElement.primaryColor.withOpacity(0.08),
+                color: _activeElement.primaryColor.withValues(alpha: 0.08),
               ),
             ),
           ),
@@ -114,16 +114,16 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                             alignment: Alignment.center,
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             decoration: BoxDecoration(
-                              color: isSelected ? elem.primaryColor : Colors.white.withOpacity(0.03),
+                              color: isSelected ? elem.primaryColor : Colors.white.withValues(alpha: 0.03),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: isSelected ? elem.accentColor : Colors.white.withOpacity(0.1),
+                                color: isSelected ? elem.accentColor : Colors.white.withValues(alpha: 0.1),
                                 width: 1,
                               ),
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
-                                        color: elem.primaryColor.withOpacity(0.4),
+                                        color: elem.primaryColor.withValues(alpha: 0.4),
                                         blurRadius: 6,
                                       ),
                                     ]
@@ -186,12 +186,12 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                                     decoration: BoxDecoration(
                                       color: isSel
                                           ? _activeElement.primaryColor
-                                          : Colors.white.withOpacity(0.02),
+                                          : Colors.white.withValues(alpha: 0.02),
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
                                         color: isSel
                                             ? _activeElement.accentColor
-                                            : Colors.white.withOpacity(0.08),
+                                            : Colors.white.withValues(alpha: 0.08),
                                         width: 1,
                                       ),
                                     ),
@@ -202,7 +202,7 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                                         fontWeight: FontWeight.bold,
                                         color: isSel
                                             ? Colors.white
-                                            : (isDisabled ? Colors.white.withOpacity(0.15) : Colors.grey),
+                                            : (isDisabled ? Colors.white.withValues(alpha: 0.15) : Colors.grey),
                                       ),
                                     ),
                                   ),
@@ -217,7 +217,7 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                             "⚠️ Tenebrie elements are inherently corruptive. Standard Light alignment is locked by lore.",
                             style: GoogleFonts.exo2(
                               fontSize: 10,
-                              color: Colors.red.withOpacity(0.8),
+                              color: Colors.red.withValues(alpha: 0.8),
                             ),
                           ),
                         ],
@@ -227,10 +227,10 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.02),
+                            color: Colors.white.withValues(alpha: 0.02),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: _activeElement.primaryColor.withOpacity(0.3),
+                              color: _activeElement.primaryColor.withValues(alpha: 0.3),
                               width: 1.5,
                             ),
                           ),
@@ -252,7 +252,7 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.05),
+                                      color: Colors.white.withValues(alpha: 0.05),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
@@ -299,7 +299,7 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                                     stanceText,
                                     style: GoogleFonts.exo2(
                                       fontSize: 13,
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.white.withValues(alpha: 0.8),
                                       height: 1.5,
                                     ),
                                   );
@@ -322,7 +322,7 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               elevation: 6,
-                              shadowColor: _activeElement.primaryColor.withOpacity(0.4),
+                              shadowColor: _activeElement.primaryColor.withValues(alpha: 0.4),
                             ),
                             child: Text(
                               "CONFIRM ELEMENT THEME",

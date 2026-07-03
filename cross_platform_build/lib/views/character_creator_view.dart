@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -150,7 +149,7 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
       case 5:
         return profile.currentElement.accentColor;
       default:
-        return Colors.white.withOpacity(0.08);
+        return Colors.white.withValues(alpha: 0.08);
     }
   }
 
@@ -254,10 +253,10 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
+                    color: Colors.black.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: profile.currentElement.primaryColor.withOpacity(0.4),
+                      color: profile.currentElement.primaryColor.withValues(alpha: 0.4),
                       width: 1.5,
                     ),
                   ),
@@ -313,9 +312,9 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.02),
+                  color: Colors.white.withValues(alpha: 0.02),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,7 +365,7 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                           child: ElevatedButton(
                             onPressed: _generateBaseFromPresets,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: profile.currentElement.primaryColor.withOpacity(0.2),
+                              backgroundColor: profile.currentElement.primaryColor.withValues(alpha: 0.2),
                               side: BorderSide(color: profile.currentElement.primaryColor),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -387,7 +386,7 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                           child: OutlinedButton(
                             onPressed: _clearCanvas,
                             style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: Colors.grey.withOpacity(0.5)),
+                              side: BorderSide(color: Colors.grey.withValues(alpha: 0.5)),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -421,7 +420,7 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     elevation: 6,
-                    shadowColor: profile.currentElement.primaryColor.withOpacity(0.4),
+                    shadowColor: profile.currentElement.primaryColor.withValues(alpha: 0.4),
                   ),
                   child: Text(
                     "FORGE ARTIFACT",
@@ -456,7 +455,7 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: isEraser ? Colors.white.withOpacity(0.15) : color,
+              color: isEraser ? Colors.white.withValues(alpha: 0.15) : color,
               borderRadius: BorderRadius.circular(6),
               border: isSelected
                   ? Border.all(color: Colors.white, width: 2)
@@ -491,7 +490,7 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.03),
+          color: Colors.white.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(

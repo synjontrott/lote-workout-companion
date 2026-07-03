@@ -230,7 +230,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             Text("METRIC", style: TextStyle(color: _useImperial ? Colors.grey : themeColor, fontWeight: FontWeight.bold, fontSize: 12)),
             Switch(
               value: _useImperial,
-              activeColor: themeColor,
+              activeThumbColor: themeColor,
               onChanged: (val) {
                 setState(() {
                   _useImperial = val;
@@ -260,16 +260,16 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             Theme(
               data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
               child: DropdownButtonFormField<String>(
-                value: _selectedPlanet,
+                initialValue: _selectedPlanet,
                 style: GoogleFonts.orbitron(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   filled: true,
-                  fillColor: Colors.white.withOpacity(0.03),
+                  fillColor: Colors.white.withValues(alpha: 0.03),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -343,10 +343,10 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white.withOpacity(0.08) : Colors.white.withOpacity(0.02),
+                color: isSelected ? Colors.white.withValues(alpha: 0.08) : Colors.white.withValues(alpha: 0.02),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? el.primaryColor.withOpacity(0.5) : Colors.white.withOpacity(0.05),
+                  color: isSelected ? el.primaryColor.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.05),
                   width: 1.5,
                 ),
               ),
@@ -480,10 +480,10 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white.withOpacity(0.08) : Colors.white.withOpacity(0.02),
+                color: isSelected ? Colors.white.withValues(alpha: 0.08) : Colors.white.withValues(alpha: 0.02),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? themeColor.withOpacity(0.5) : Colors.white.withOpacity(0.05),
+                  color: isSelected ? themeColor.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.05),
                   width: 1.5,
                 ),
               ),
@@ -504,7 +504,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: themeColor.withOpacity(0.12),
+                          color: themeColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -530,7 +530,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
               ),
             ),
           );
-        }).toList(),
+        }),
         const SizedBox(height: 20),
 
         Text(
@@ -567,7 +567,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             controlAffinity: ListTileControlAffinity.trailing,
             contentPadding: EdgeInsets.zero,
           );
-        }).toList(),
+        }),
 
         const SizedBox(height: 25),
         Row(
@@ -649,7 +649,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             Text("METRIC", style: TextStyle(color: _useImperial ? Colors.grey : themeColor, fontWeight: FontWeight.bold, fontSize: 12)),
             Switch(
               value: _useImperial,
-              activeColor: themeColor,
+              activeThumbColor: themeColor,
               onChanged: (val) {
                 setState(() {
                   _useImperial = val;
@@ -755,7 +755,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             isDense: true,
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             filled: true,
-            fillColor: Colors.white.withOpacity(0.03),
+            fillColor: Colors.white.withValues(alpha: 0.03),
             suffixIcon: IconButton(
               icon: const Icon(Icons.check, color: Colors.green, size: 16),
               onPressed: () {
@@ -764,7 +764,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -808,9 +808,9 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.02),
+              color: Colors.white.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.08)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
             ),
             child: Text(
               q.questionText,
@@ -840,9 +840,9 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(0.04),
+                  backgroundColor: Colors.white.withValues(alpha: 0.04),
                   foregroundColor: Colors.white,
-                  side: BorderSide(color: Colors.white.withOpacity(0.08)),
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
                   padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -948,7 +948,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             Text("METRIC", style: GoogleFonts.orbitron(fontSize: 10, color: !_useImperial ? themeColor : Colors.grey)),
             Switch(
               value: _useImperial,
-              activeColor: themeColor,
+              activeThumbColor: themeColor,
               onChanged: (val) => setState(() => _useImperial = val),
             ),
             Text("IMPERIAL", style: GoogleFonts.orbitron(fontSize: 10, color: _useImperial ? themeColor : Colors.grey)),

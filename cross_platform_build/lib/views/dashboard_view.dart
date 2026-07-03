@@ -185,7 +185,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  themeColor.withOpacity(0.15),
+                  themeColor.withValues(alpha: 0.15),
                   const Color(0xFF090D16),
                   const Color(0xFF020408),
                 ],
@@ -206,7 +206,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      accentColor.withOpacity(0.15),
+                      accentColor.withValues(alpha: 0.15),
                       Colors.transparent,
                     ],
                   ),
@@ -221,7 +221,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                 height: 250,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: themeColor.withOpacity(0.08),
+                  color: themeColor.withValues(alpha: 0.08),
                 ),
               ),
             ),
@@ -239,23 +239,23 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.02),
+                          color: Colors.white.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: profile.currentElement.primaryColor.withOpacity(0.2),
+                          color: profile.currentElement.primaryColor.withValues(alpha: 0.2),
                           width: 1,
                         ),
                         gradient: profile.equippedBackground != "None" ? LinearGradient(
                           colors: (() {
                             switch (profile.equippedBackground) {
                               case "Neon Cyber Space":
-                                return [const Color(0xFF0A192F).withOpacity(0.45), const Color(0xFF172A45).withOpacity(0.2)];
+                                return [const Color(0xFF0A192F).withValues(alpha: 0.45), const Color(0xFF172A45).withValues(alpha: 0.2)];
                               case "Nebula Starfield":
-                                return [const Color(0xFF1F1235).withOpacity(0.45), const Color(0xFF362259).withOpacity(0.2)];
+                                return [const Color(0xFF1F1235).withValues(alpha: 0.45), const Color(0xFF362259).withValues(alpha: 0.2)];
                               case "Volcanic Core":
-                                return [const Color(0xFF2D0A0A).withOpacity(0.45), const Color(0xFF501B1B).withOpacity(0.2)];
+                                return [const Color(0xFF2D0A0A).withValues(alpha: 0.45), const Color(0xFF501B1B).withValues(alpha: 0.2)];
                               default:
-                                return [profile.currentElement.primaryColor.withOpacity(0.35), Colors.transparent];
+                                return [profile.currentElement.primaryColor.withValues(alpha: 0.35), Colors.transparent];
                             }
                           })(),
                           begin: Alignment.topLeft,
@@ -273,7 +273,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                 height: 100,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: profile.currentElement.primaryColor.withOpacity(0.12),
+                                  color: profile.currentElement.primaryColor.withValues(alpha: 0.12),
                                 ),
                               ),
                               if (profile.equippedAura != "None")
@@ -293,7 +293,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                       height: 110,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: auraColor.withOpacity(0.15),
+                                        color: auraColor.withValues(alpha: 0.15),
                                       ),
                                     );
                                   }
@@ -328,10 +328,10 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                   padding: const EdgeInsets.all(4),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: profile.currentElement.primaryColor.withOpacity(0.2),
+                                    color: profile.currentElement.primaryColor.withValues(alpha: 0.2),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: profile.currentElement.primaryColor.withOpacity(0.6),
+                                        color: profile.currentElement.primaryColor.withValues(alpha: 0.6),
                                         blurRadius: 6,
                                         spreadRadius: 1,
                                       ),
@@ -383,7 +383,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                         border: Border.all(color: frameColor, width: 2.5),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: frameColor.withOpacity(0.4),
+                                            color: frameColor.withValues(alpha: 0.4),
                                             blurRadius: 4,
                                             spreadRadius: 1,
                                           )
@@ -481,7 +481,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                      child: Container(
                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                        decoration: BoxDecoration(
-                                         color: Colors.orange.withOpacity(0.12),
+                                         color: Colors.orange.withValues(alpha: 0.12),
                                          borderRadius: BorderRadius.circular(6),
                                        ),
                                        child: Row(
@@ -532,10 +532,10 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                         child: Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.12),
+                            color: Colors.red.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Colors.red.withOpacity(0.3),
+                              color: Colors.red.withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
@@ -645,10 +645,10 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                         return Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.02),
+                            color: Colors.white.withValues(alpha: 0.02),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: exceeded ? Colors.red.withOpacity(0.3) : Colors.white.withOpacity(0.06),
+                              color: exceeded ? Colors.red.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.06),
                               width: 1,
                             ),
                           ),
@@ -684,7 +684,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                 child: LinearProgressIndicator(
                                   value: sugarPercent,
                                   minHeight: 6,
-                                  backgroundColor: Colors.white.withOpacity(0.1),
+                                  backgroundColor: Colors.white.withValues(alpha: 0.1),
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     exceeded ? Colors.red : profile.currentElement.primaryColor,
                                   ),
@@ -733,10 +733,10 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.02),
+                        color: Colors.white.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.06),
+                          color: Colors.white.withValues(alpha: 0.06),
                           width: 1,
                         ),
                       ),
@@ -786,7 +786,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                     child: LinearProgressIndicator(
                                       value: progressPercent,
                                       minHeight: 6,
-                                      backgroundColor: Colors.white.withOpacity(0.1),
+                                      backgroundColor: Colors.white.withValues(alpha: 0.1),
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                         profile.currentElement.primaryColor,
                                       ),
@@ -864,7 +864,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                     child: LinearProgressIndicator(
                                       value: distancePercent,
                                       minHeight: 6,
-                                      backgroundColor: Colors.white.withOpacity(0.1),
+                                      backgroundColor: Colors.white.withValues(alpha: 0.1),
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                         profile.currentElement.primaryColor,
                                       ),
@@ -909,7 +909,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                       width: double.infinity,
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
-                                        color: Colors.orange.withOpacity(0.08),
+                                        color: Colors.orange.withValues(alpha: 0.08),
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Column(
@@ -978,7 +978,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                     _selectedHistoryType == "Weight" ? "Weight History Log" : "$_selectedHistoryType PR History",
                                     style: GoogleFonts.exo2(
                                       fontSize: 12,
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.white.withValues(alpha: 0.8),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -1076,7 +1076,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                     "Body Measurements Log",
                                     style: GoogleFonts.exo2(
                                       fontSize: 12,
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.white.withValues(alpha: 0.8),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -1136,10 +1136,10 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                         margin: const EdgeInsets.only(right: 12),
                                         padding: const EdgeInsets.all(10),
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withOpacity(0.04),
+                                          color: Colors.white.withValues(alpha: 0.04),
                                           borderRadius: BorderRadius.circular(10),
                                           border: Border.all(
-                                            color: Colors.white.withOpacity(0.08),
+                                            color: Colors.white.withValues(alpha: 0.08),
                                             width: 1,
                                           ),
                                         ),
@@ -1227,7 +1227,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
   Widget _buildMeasurementLogModal(UserProfileManager profile) {
     return Positioned.fill(
       child: Container(
-        color: Colors.black.withOpacity(0.85),
+        color: Colors.black.withValues(alpha: 0.85),
         child: Center(
           child: SingleChildScrollView(
             child: Container(
@@ -1237,7 +1237,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                 color: const Color(0xFF151515),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: profile.currentElement.primaryColor.withOpacity(0.3),
+                  color: profile.currentElement.primaryColor.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
@@ -1420,7 +1420,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
             hintText: hint,
             hintStyle: const TextStyle(color: Colors.white24, fontSize: 13),
             filled: true,
-            fillColor: Colors.white.withOpacity(0.04),
+            fillColor: Colors.white.withValues(alpha: 0.04),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
@@ -1452,15 +1452,15 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.45),
+        color: Colors.black.withValues(alpha: 0.45),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: element.primaryColor.withOpacity(0.35),
+          color: element.primaryColor.withValues(alpha: 0.35),
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: element.primaryColor.withOpacity(0.06),
+            color: element.primaryColor.withValues(alpha: 0.06),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -1514,7 +1514,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                     height: 8,
                     width: constraints.maxWidth,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.08),
+                      color: Colors.white.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -1532,7 +1532,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                       borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
-                          color: element.primaryColor.withOpacity(0.5),
+                          color: element.primaryColor.withValues(alpha: 0.5),
                           blurRadius: 4,
                         ),
                       ],
@@ -1570,9 +1570,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.02),
+              color: Colors.white.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.06)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
             ),
             child: Column(
               children: [
@@ -1655,9 +1655,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.orange.withOpacity(0.08),
+              color: Colors.orange.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.orange.withOpacity(0.2)),
+              border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1675,7 +1675,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                   "Today's workout multiplier is active. If training feels heavy, switch workouts immediately or check the Dopamine Menu in the Quest Board. Low-friction starts only!",
                   style: GoogleFonts.exo2(
                     fontSize: 11,
-                    color: Colors.white.withOpacity(0.75),
+                    color: Colors.white.withValues(alpha: 0.75),
                     height: 1.4,
                   ),
                 )
@@ -1712,9 +1712,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.02),
+              color: Colors.white.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.06)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1746,9 +1746,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.02),
+              color: Colors.white.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.06)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1820,9 +1820,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.purple.withOpacity(0.06),
+              color: Colors.purple.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.purple.withOpacity(0.2)),
+              border: Border.all(color: Colors.purple.withValues(alpha: 0.2)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1846,7 +1846,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                   "Need flexibility today? Swap your workout type. If the default Quest is too demanding, you are fully authorized to substitute a quick 10-minute walk or a Dopamine Menu burst.",
                   style: GoogleFonts.exo2(
                     fontSize: 11,
-                    color: Colors.white.withOpacity(0.85),
+                    color: Colors.white.withValues(alpha: 0.85),
                     height: 1.4,
                   ),
                 )
@@ -1871,9 +1871,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.02),
+              color: Colors.white.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.06)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1891,7 +1891,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                   "• Immediately after my morning routine, I will check the Quest Board.",
                   style: GoogleFonts.exo2(
                     fontSize: 11,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     height: 1.4,
                   ),
                 ),
@@ -1900,7 +1900,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                   "• When I arrive home, I will log my healthy meal checklist.",
                   style: GoogleFonts.exo2(
                     fontSize: 11,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     height: 1.4,
                   ),
                 )
@@ -1913,9 +1913,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.02),
+              color: Colors.white.withValues(alpha: 0.02),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withOpacity(0.06)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2082,7 +2082,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
               border: Border.all(color: primary, width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: primary.withOpacity(0.4),
+                  color: primary.withValues(alpha: 0.4),
                   blurRadius: 3,
                   spreadRadius: 1,
                 )
@@ -2110,10 +2110,10 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.02),
+          color: Colors.white.withValues(alpha: 0.02),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: themeColor.withOpacity(0.15),
+            color: themeColor.withValues(alpha: 0.15),
             width: 1,
           ),
         ),
@@ -2175,7 +2175,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
               child: LinearProgressIndicator(
                 value: progressPercent,
                 minHeight: 6,
-                backgroundColor: Colors.white.withOpacity(0.06),
+                backgroundColor: Colors.white.withValues(alpha: 0.06),
                 valueColor: AlwaysStoppedAnimation<Color>(themeColor),
               ),
             ),
@@ -2198,7 +2198,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                           backgroundColor: const Color(0xFF0C0C0C),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
-                            side: BorderSide(color: themeColor.withOpacity(0.4), width: 1.5),
+                            side: BorderSide(color: themeColor.withValues(alpha: 0.4), width: 1.5),
                           ),
                           title: Text(
                             "LOG PROGRESS?",
@@ -2240,7 +2240,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: themeColor.withOpacity(0.12),
+                    backgroundColor: themeColor.withValues(alpha: 0.12),
                     foregroundColor: themeColor,
                     shadowColor: Colors.transparent,
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -2278,7 +2278,7 @@ void showActivityHistory(BuildContext context, UserProfileManager profile) {
         backgroundColor: const Color(0xFF0C0C0C),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: profile.currentElement.primaryColor.withOpacity(0.3)),
+          side: BorderSide(color: profile.currentElement.primaryColor.withValues(alpha: 0.3)),
         ),
         child: Container(
           width: double.maxFinite,

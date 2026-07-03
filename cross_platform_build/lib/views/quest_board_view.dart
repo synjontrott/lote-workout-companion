@@ -163,13 +163,13 @@ class _QuestBoardViewState extends State<QuestBoardView> {
   }) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.85),
+      barrierColor: Colors.black.withValues(alpha: 0.85),
       builder: (context) {
         return AlertDialog(
           backgroundColor: const Color(0xFF0C0C0C),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
-            side: BorderSide(color: themeColor.withOpacity(0.4), width: 1.5),
+            side: BorderSide(color: themeColor.withValues(alpha: 0.4), width: 1.5),
           ),
           title: Text(
             title,
@@ -184,7 +184,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
           content: Text(
             message,
             style: GoogleFonts.exo2(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               fontSize: 13,
               height: 1.5,
             ),
@@ -305,7 +305,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             ),
                             selected: isSelected,
                             selectedColor: profile.currentElement.primaryColor,
-                            backgroundColor: Colors.white.withOpacity(0.04),
+                            backgroundColor: Colors.white.withValues(alpha: 0.04),
                             onSelected: (val) {
                               if (val) {
                                 setState(() {
@@ -363,7 +363,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.cyan.withOpacity(0.15),
+                            backgroundColor: Colors.cyan.withValues(alpha: 0.15),
                             shadowColor: Colors.transparent,
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             minimumSize: Size.zero,
@@ -425,12 +425,12 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                               child: Container(
                                 padding: const EdgeInsets.all(14),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.02),
+                                  color: Colors.white.withValues(alpha: 0.02),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: quest.isCompleted
-                                        ? Colors.green.withOpacity(0.3)
-                                        : Colors.white.withOpacity(0.08),
+                                        ? Colors.green.withValues(alpha: 0.3)
+                                        : Colors.white.withValues(alpha: 0.08),
                                     width: 1,
                                   ),
                                 ),
@@ -443,8 +443,8 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: quest.isCompleted
-                                            ? Colors.green.withOpacity(0.2)
-                                            : profile.currentElement.primaryColor.withOpacity(0.1),
+                                            ? Colors.green.withValues(alpha: 0.2)
+                                            : profile.currentElement.primaryColor.withValues(alpha: 0.1),
                                       ),
                                       child: Icon(
                                         _iconForWorkoutCategory(quest.workoutType),
@@ -496,7 +496,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                           Container(
                                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                             decoration: BoxDecoration(
-                                              color: Colors.orange.withOpacity(0.15),
+                                              color: Colors.orange.withValues(alpha: 0.15),
                                               borderRadius: BorderRadius.circular(4),
                                             ),
                                             child: Text(
@@ -549,9 +549,9 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.02),
+                      color: Colors.white.withValues(alpha: 0.02),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withOpacity(0.08)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                     ),
                     child: Row(
                       children: [
@@ -626,9 +626,9 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.02),
+                      color: Colors.white.withValues(alpha: 0.02),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withOpacity(0.08)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                     ),
                     child: Row(
                       children: [
@@ -714,9 +714,9 @@ class _QuestBoardViewState extends State<QuestBoardView> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.03),
+        color: Colors.orange.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.orange.withOpacity(0.15)),
+        border: Border.all(color: Colors.orange.withValues(alpha: 0.15)),
       ),
       margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -770,10 +770,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       width: 130,
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.04),
+                        color: Colors.white.withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: profile.currentElement.primaryColor.withOpacity(0.3),
+                          color: profile.currentElement.primaryColor.withValues(alpha: 0.3),
                           width: 1,
                         ),
                       ),
@@ -837,7 +837,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
               });
             },
             child: Container(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
             ),
           ),
           // Dialog card
@@ -848,7 +848,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
               color: const Color(0xFF0C0C0C),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: themeColor.withOpacity(0.4),
+                color: themeColor.withValues(alpha: 0.4),
                 width: 1.5,
               ),
             ),
@@ -901,7 +901,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: quest.targetCount > 0 ? (quest.progressCount / quest.targetCount) : 0,
-                        backgroundColor: Colors.white.withOpacity(0.08),
+                        backgroundColor: Colors.white.withValues(alpha: 0.08),
                         valueColor: AlwaysStoppedAnimation<Color>(themeColor),
                         minHeight: 8,
                       ),
@@ -914,7 +914,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.02),
+                    color: Colors.white.withValues(alpha: 0.02),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(
@@ -1110,7 +1110,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
               });
             },
             child: Container(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
             ),
           ),
           Container(
@@ -1120,7 +1120,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
               color: const Color(0xFF0C0C0C),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: Colors.orange.withOpacity(0.4),
+                color: Colors.orange.withValues(alpha: 0.4),
                 width: 1.5,
               ),
             ),
@@ -1152,7 +1152,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.04),
+                    color: Colors.white.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
@@ -1253,7 +1253,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
               });
             },
             child: Container(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
             ),
           ),
           Container(
@@ -1263,7 +1263,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
               color: const Color(0xFF0C0C0C),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: themeColor.withOpacity(0.4),
+                color: themeColor.withValues(alpha: 0.4),
                 width: 1.5,
               ),
             ),
@@ -1296,11 +1296,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                     hintText: "e.g. Chicken breast & broccoli",
                     hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.04),
+                    fillColor: Colors.white.withValues(alpha: 0.04),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -1329,11 +1329,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                               hintText: "kcal",
                               hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.04),
+                              fillColor: Colors.white.withValues(alpha: 0.04),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -1368,11 +1368,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                               hintText: "grams",
                               hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.04),
+                              fillColor: Colors.white.withValues(alpha: 0.04),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -1412,11 +1412,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                               hintText: "grams",
                               hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.04),
+                              fillColor: Colors.white.withValues(alpha: 0.04),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -1451,11 +1451,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                               hintText: "grams",
                               hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.04),
+                              fillColor: Colors.white.withValues(alpha: 0.04),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -1494,11 +1494,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                               hintText: "grams",
                               hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
                               filled: true,
-                              fillColor: Colors.white.withOpacity(0.04),
+                              fillColor: Colors.white.withValues(alpha: 0.04),
                               contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -1668,15 +1668,15 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       )
                     : null,
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.04),
+                fillColor: Colors.white.withValues(alpha: 0.04),
                 contentPadding: const EdgeInsets.symmetric(vertical: 8),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: profile.currentElement.primaryColor.withOpacity(0.5)),
+                  borderSide: BorderSide(color: profile.currentElement.primaryColor.withValues(alpha: 0.5)),
                 ),
               ),
               onChanged: (val) {
@@ -1695,9 +1695,9 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.02),
+                    color: Colors.white.withValues(alpha: 0.02),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1723,11 +1723,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                 Theme(
                                   data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
                                   child: DropdownButtonFormField<String>(
-                                    value: _tailGender,
+                                    initialValue: _tailGender,
                                     isDense: true,
                                     decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: Colors.white.withOpacity(0.04),
+                                      fillColor: Colors.white.withValues(alpha: 0.04),
                                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
                                     ),
@@ -1754,7 +1754,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                   decoration: InputDecoration(
                                     isDense: true,
                                     filled: true,
-                                    fillColor: Colors.white.withOpacity(0.04),
+                                    fillColor: Colors.white.withValues(alpha: 0.04),
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
                                     suffixIcon: IconButton(
@@ -1785,7 +1785,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                   decoration: InputDecoration(
                                     isDense: true,
                                     filled: true,
-                                    fillColor: Colors.white.withOpacity(0.04),
+                                    fillColor: Colors.white.withValues(alpha: 0.04),
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
                                     suffixIcon: IconButton(
@@ -1817,11 +1817,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                 Theme(
                                   data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
                                   child: DropdownButtonFormField<String>(
-                                    value: _tailEquipment,
+                                    initialValue: _tailEquipment,
                                     isDense: true,
                                     decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: Colors.white.withOpacity(0.04),
+                                      fillColor: Colors.white.withValues(alpha: 0.04),
                                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
                                     ),
@@ -1850,11 +1850,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                 Theme(
                                   data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
                                   child: DropdownButtonFormField<String>(
-                                    value: _tailDifficulty,
+                                    initialValue: _tailDifficulty,
                                     isDense: true,
                                     decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: Colors.white.withOpacity(0.04),
+                                      fillColor: Colors.white.withValues(alpha: 0.04),
                                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
                                     ),
@@ -1879,11 +1879,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                 Theme(
                                   data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
                                   child: DropdownButtonFormField<MuscleGroup>(
-                                    value: _tailMuscleGroup,
+                                    initialValue: _tailMuscleGroup,
                                     isDense: true,
                                     decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: Colors.white.withOpacity(0.04),
+                                      fillColor: Colors.white.withValues(alpha: 0.04),
                                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
                                     ),
@@ -1916,9 +1916,9 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.02),
+                        color: Colors.white.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white.withOpacity(0.08)),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1937,7 +1937,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: profile.currentElement.primaryColor.withOpacity(0.15),
+                                  color: profile.currentElement.primaryColor.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -1956,7 +1956,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             workout.description,
                             style: GoogleFonts.exo2(
                               fontSize: 11,
-                              color: Colors.white.withOpacity(0.75),
+                              color: Colors.white.withValues(alpha: 0.75),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -2222,7 +2222,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
               });
             },
             child: Container(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
             ),
           ),
           Container(
@@ -2232,7 +2232,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
               color: const Color(0xFF0C0C0C),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: themeColor.withOpacity(0.4),
+                color: themeColor.withValues(alpha: 0.4),
                 width: 1.5,
               ),
             ),
@@ -2266,11 +2266,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       hintText: "e.g. Custom Pushups & Pullups",
                       hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
                       filled: true,
-                      fillColor: Colors.white.withOpacity(0.04),
+                      fillColor: Colors.white.withValues(alpha: 0.04),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -2299,7 +2299,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                 hintText: "e.g. 3",
                                 hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
                                 filled: true,
-                                fillColor: Colors.white.withOpacity(0.04),
+                                fillColor: Colors.white.withValues(alpha: 0.04),
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                                 suffixIcon: IconButton(
                                   icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
@@ -2309,7 +2309,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
@@ -2337,11 +2337,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                 hintText: "e.g. 10 reps / 30s",
                                 hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
                                 filled: true,
-                                fillColor: Colors.white.withOpacity(0.04),
+                                fillColor: Colors.white.withValues(alpha: 0.04),
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
@@ -2370,12 +2370,12 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             Theme(
                               data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
                               child: DropdownButtonFormField<WorkoutCategory>(
-                                value: _customWorkoutCategory,
+                                initialValue: _customWorkoutCategory,
                                 isDense: true,
                                 style: const TextStyle(color: Colors.white, fontSize: 13),
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Colors.white.withOpacity(0.04),
+                                  fillColor: Colors.white.withValues(alpha: 0.04),
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
                                 ),
@@ -2412,12 +2412,12 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             Theme(
                               data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
                               child: DropdownButtonFormField<String>(
-                                value: _customWorkoutDifficulty,
+                                initialValue: _customWorkoutDifficulty,
                                 isDense: true,
                                 style: const TextStyle(color: Colors.white, fontSize: 13),
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Colors.white.withOpacity(0.04),
+                                  fillColor: Colors.white.withValues(alpha: 0.04),
                                   contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
                                 ),
@@ -2452,7 +2452,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       ),
                       Switch(
                         value: _customWorkoutIsTimeBased,
-                        activeColor: themeColor,
+                        activeThumbColor: themeColor,
                         onChanged: (val) {
                           setState(() {
                             _customWorkoutIsTimeBased = val;
@@ -2476,7 +2476,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         hintText: "e.g. 15.0 or 0.33 for 20s",
                         hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
                         filled: true,
-                        fillColor: Colors.white.withOpacity(0.04),
+                        fillColor: Colors.white.withValues(alpha: 0.04),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                         suffixIcon: IconButton(
                           icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
@@ -2486,7 +2486,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),

@@ -76,10 +76,10 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.02),
+                        color: Colors.white.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: themeColor.withOpacity(0.2),
+                          color: themeColor.withValues(alpha: 0.2),
                           width: 1,
                         ),
                       ),
@@ -118,7 +118,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                                       child: LinearProgressIndicator(
                                         value: pct,
                                         minHeight: 6,
-                                        backgroundColor: Colors.white.withOpacity(0.1),
+                                        backgroundColor: Colors.white.withValues(alpha: 0.1),
                                         valueColor: AlwaysStoppedAnimation<Color>(themeColor),
                                       ),
                                     ),
@@ -145,7 +145,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                               profile.currentTier.description,
                               style: GoogleFonts.exo2(
                                 fontSize: 12,
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withValues(alpha: 0.8),
                                 height: 1.4,
                               ),
                               textAlign: TextAlign.center,
@@ -179,7 +179,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                                 ),
                                 selected: isSelected,
                                 selectedColor: themeColor,
-                                backgroundColor: Colors.white.withOpacity(0.04),
+                                backgroundColor: Colors.white.withValues(alpha: 0.04),
                                 onSelected: (val) {
                                   if (val) {
                                     setState(() {
@@ -255,10 +255,10 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                         child: Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.02),
+                            color: Colors.white.withValues(alpha: 0.02),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: themeColor.withOpacity(0.15),
+                              color: themeColor.withValues(alpha: 0.15),
                               width: 1,
                             ),
                           ),
@@ -297,10 +297,10 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                         child: Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.02),
+                            color: Colors.white.withValues(alpha: 0.02),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: themeColor.withOpacity(0.15),
+                              color: themeColor.withValues(alpha: 0.15),
                               width: 1,
                             ),
                           ),
@@ -363,10 +363,10 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                 child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.02),
+                    color: Colors.white.withValues(alpha: 0.02),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isUnlocked ? themeColor.withOpacity(0.3) : Colors.white.withOpacity(0.05),
+                      color: isUnlocked ? themeColor.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.05),
                       width: 1,
                     ),
                   ),
@@ -377,7 +377,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                         height: 48,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: isUnlocked ? themeColor.withOpacity(0.15) : Colors.white.withOpacity(0.04),
+                          color: isUnlocked ? themeColor.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.04),
                         ),
                         child: Icon(
                           isUnlocked ? _iconForBadge(badge.iconName) : Icons.lock,
@@ -414,7 +414,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.15),
+                            color: Colors.green.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -430,7 +430,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.06),
+                            color: Colors.white.withValues(alpha: 0.06),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -474,10 +474,10 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
+        color: Colors.white.withValues(alpha: 0.02),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: Colors.white.withOpacity(0.05),
+          color: Colors.white.withValues(alpha: 0.05),
           width: 1,
         ),
       ),
@@ -511,8 +511,8 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
             child: LinearProgressIndicator(
               value: pct,
               minHeight: 4,
-              backgroundColor: Colors.white.withOpacity(0.1),
-              valueColor: AlwaysStoppedAnimation<Color>(themeColor.withOpacity(0.7)),
+              backgroundColor: Colors.white.withValues(alpha: 0.1),
+              valueColor: AlwaysStoppedAnimation<Color>(themeColor.withValues(alpha: 0.7)),
             ),
           ),
           const SizedBox(height: 6),

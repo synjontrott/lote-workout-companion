@@ -5,7 +5,7 @@ import '../models/lote_models.dart';
 import '../managers/user_profile_manager.dart';
 
 class ShopView extends StatefulWidget {
-  const ShopView({Key? key}) : super(key: key);
+  const ShopView({super.key});
 
   @override
   State<ShopView> createState() => _ShopViewState();
@@ -90,7 +90,7 @@ class _ShopViewState extends State<ShopView> {
                             color: Colors.white,
                             shadows: [
                               Shadow(
-                                color: themeColor.withOpacity(0.6),
+                                color: themeColor.withValues(alpha: 0.6),
                                 blurRadius: 8,
                               )
                             ],
@@ -111,10 +111,10 @@ class _ShopViewState extends State<ShopView> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.06),
+                      color: Colors.white.withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: themeColor.withOpacity(0.3),
+                        color: themeColor.withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -164,12 +164,12 @@ class _ShopViewState extends State<ShopView> {
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isSelected ? themeColor : Colors.white.withOpacity(0.05),
+                          color: isSelected ? themeColor : Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
-                                    color: themeColor.withOpacity(0.3),
+                                    color: themeColor.withValues(alpha: 0.3),
                                     blurRadius: 6,
                                     offset: const Offset(0, 2),
                                   )
@@ -206,10 +206,10 @@ class _ShopViewState extends State<ShopView> {
                     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.03),
+                      color: Colors.white.withValues(alpha: 0.03),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.04),
+                        color: Colors.white.withValues(alpha: 0.04),
                         width: 1,
                       ),
                     ),
@@ -223,12 +223,12 @@ class _ShopViewState extends State<ShopView> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: isUnlocked ? Colors.green.withOpacity(0.4) : Colors.white.withOpacity(0.08),
+                              color: isUnlocked ? Colors.green.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.08),
                               width: 1,
                             ),
                             gradient: RadialGradient(
                               colors: [
-                                themeColor.withOpacity(isUnlocked ? 0.25 : 0.08),
+                                themeColor.withValues(alpha: isUnlocked ? 0.25 : 0.08),
                                 Colors.transparent,
                               ],
                             ),
@@ -260,7 +260,7 @@ class _ShopViewState extends State<ShopView> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: themeColor.withOpacity(0.12),
+                                      color: themeColor.withValues(alpha: 0.12),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
@@ -279,7 +279,7 @@ class _ShopViewState extends State<ShopView> {
                                 item.description,
                                 style: GoogleFonts.exo2(
                                   fontSize: 11,
-                                  color: Colors.white.withOpacity(0.7),
+                                  color: Colors.white.withValues(alpha: 0.7),
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -297,7 +297,7 @@ class _ShopViewState extends State<ShopView> {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: Colors.green.withOpacity(0.15),
+                                    color: Colors.green.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -315,7 +315,7 @@ class _ShopViewState extends State<ShopView> {
                                     profile.toggleEquipItem(item);
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: equipped ? Colors.orange.withOpacity(0.15) : Colors.green.withOpacity(0.15),
+                                    backgroundColor: equipped ? Colors.orange.withValues(alpha: 0.15) : Colors.green.withValues(alpha: 0.15),
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                                     minimumSize: Size.zero,
                                     shape: RoundedRectangleBorder(
@@ -343,7 +343,7 @@ class _ShopViewState extends State<ShopView> {
                                               backgroundColor: const Color(0xFF0C0C0C),
                                               shape: RoundedRectangleBorder(
                                                 borderRadius: BorderRadius.circular(16),
-                                                side: BorderSide(color: themeColor.withOpacity(0.4), width: 1.5),
+                                                side: BorderSide(color: themeColor.withValues(alpha: 0.4), width: 1.5),
                                               ),
                                               title: Text(
                                                 "CONFIRM ACQUISITION",
@@ -370,7 +370,7 @@ class _ShopViewState extends State<ShopView> {
                                                   Container(
                                                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                                     decoration: BoxDecoration(
-                                                      color: themeColor.withOpacity(0.12),
+                                                      color: themeColor.withValues(alpha: 0.12),
                                                       borderRadius: BorderRadius.circular(4),
                                                     ),
                                                     child: Text(
@@ -440,13 +440,13 @@ class _ShopViewState extends State<ShopView> {
                                       }
                                     : null,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: themeColor.withOpacity(0.2),
+                                  backgroundColor: themeColor.withValues(alpha: 0.2),
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                   minimumSize: Size.zero,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                     side: BorderSide(
-                                      color: themeColor.withOpacity(0.4),
+                                      color: themeColor.withValues(alpha: 0.4),
                                       width: 1,
                                     ),
                                   ),
@@ -488,10 +488,10 @@ class ItemPixelSpriteWidget extends StatelessWidget {
   final String type;
 
   const ItemPixelSpriteWidget({
-    Key? key,
+    super.key,
     required this.name,
     required this.type,
-  }) : super(key: key);
+  });
 
   List<List<int>> _generateGrid() {
     if (type == "stat") {
@@ -628,7 +628,7 @@ class ItemPixelSpriteWidget extends StatelessWidget {
       height: 44,
       padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.4),
+        color: Colors.black.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Column(

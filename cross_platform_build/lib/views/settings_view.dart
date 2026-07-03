@@ -175,10 +175,10 @@ class _SettingsViewState extends State<SettingsView> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.02),
+                        color: Colors.white.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: themeColor.withOpacity(0.15),
+                          color: themeColor.withValues(alpha: 0.15),
                           width: 1,
                         ),
                       ),
@@ -225,10 +225,10 @@ class _SettingsViewState extends State<SettingsView> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.02),
+                        color: Colors.white.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: themeColor.withOpacity(0.15),
+                          color: themeColor.withValues(alpha: 0.15),
                           width: 1,
                         ),
                       ),
@@ -298,10 +298,10 @@ class _SettingsViewState extends State<SettingsView> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.02),
+                        color: Colors.white.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: themeColor.withOpacity(0.15),
+                          color: themeColor.withValues(alpha: 0.15),
                           width: 1,
                         ),
                       ),
@@ -423,10 +423,10 @@ class _SettingsViewState extends State<SettingsView> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.02),
+                        color: Colors.white.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: themeColor.withOpacity(0.15),
+                          color: themeColor.withValues(alpha: 0.15),
                           width: 1,
                         ),
                       ),
@@ -529,10 +529,10 @@ class _SettingsViewState extends State<SettingsView> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.02),
+                        color: Colors.white.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: themeColor.withOpacity(0.15),
+                          color: themeColor.withValues(alpha: 0.15),
                           width: 1,
                         ),
                       ),
@@ -629,10 +629,10 @@ class _SettingsViewState extends State<SettingsView> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.02),
+                        color: Colors.white.withValues(alpha: 0.02),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: themeColor.withOpacity(0.15),
+                          color: themeColor.withValues(alpha: 0.15),
                           width: 1,
                         ),
                       ),
@@ -803,7 +803,7 @@ class _SettingsViewState extends State<SettingsView> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.02),
+                                color: Colors.white.withValues(alpha: 0.02),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(color: Colors.white10),
                               ),
@@ -866,7 +866,7 @@ class _SettingsViewState extends State<SettingsView> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.02),
+                                color: Colors.white.withValues(alpha: 0.02),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(color: Colors.white10),
                               ),
@@ -930,7 +930,7 @@ class _SettingsViewState extends State<SettingsView> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.02),
+                                color: Colors.white.withValues(alpha: 0.02),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(color: Colors.white10),
                               ),
@@ -1088,9 +1088,9 @@ class _SettingsViewState extends State<SettingsView> {
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.02),
+          color: Colors.white.withValues(alpha: 0.02),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
         ),
         child: Row(
           children: [

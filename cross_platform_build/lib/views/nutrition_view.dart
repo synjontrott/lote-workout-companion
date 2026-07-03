@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../managers/user_profile_manager.dart';
 
 class NutritionView extends StatefulWidget {
-  const NutritionView({Key? key}) : super(key: key);
+  const NutritionView({super.key});
 
   @override
   State<NutritionView> createState() => _NutritionViewState();
@@ -94,7 +94,7 @@ class _NutritionViewState extends State<NutritionView> {
                       height: 170,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: themeColor.withOpacity(0.04),
+                        color: themeColor.withValues(alpha: 0.04),
                       ),
                     ),
                     // Ring Progress Indicator
@@ -104,7 +104,7 @@ class _NutritionViewState extends State<NutritionView> {
                       child: CircularProgressIndicator(
                         value: progressPct,
                         strokeWidth: 10,
-                        backgroundColor: Colors.white.withOpacity(0.03),
+                        backgroundColor: Colors.white.withValues(alpha: 0.03),
                         valueColor: AlwaysStoppedAnimation<Color>(themeColor),
                       ),
                     ),
@@ -150,9 +150,9 @@ class _NutritionViewState extends State<NutritionView> {
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.02),
+                  color: Colors.white.withValues(alpha: 0.02),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,9 +216,9 @@ class _NutritionViewState extends State<NutritionView> {
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.02),
+                  color: Colors.white.withValues(alpha: 0.02),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,7 +321,7 @@ class _NutritionViewState extends State<NutritionView> {
                       child: LinearProgressIndicator(
                         value: profile.waterIntakeGoal > 0 ? (profile.todayWaterIntake / profile.waterIntakeGoal).clamp(0.0, 1.0) : 0.0,
                         minHeight: 8,
-                        backgroundColor: Colors.white.withOpacity(0.04),
+                        backgroundColor: Colors.white.withValues(alpha: 0.04),
                         valueColor: const AlwaysStoppedAnimation<Color>(Colors.blueAccent),
                       ),
                     ),
@@ -339,7 +339,7 @@ class _NutritionViewState extends State<NutritionView> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red.withOpacity(0.12),
+                              backgroundColor: Colors.red.withValues(alpha: 0.12),
                               foregroundColor: Colors.redAccent,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -354,7 +354,7 @@ class _NutritionViewState extends State<NutritionView> {
                               profile.evaluateQuestsCompletion();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent.withOpacity(0.12),
+                              backgroundColor: Colors.blueAccent.withValues(alpha: 0.12),
                               foregroundColor: Colors.blueAccent,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -369,7 +369,7 @@ class _NutritionViewState extends State<NutritionView> {
                               profile.evaluateQuestsCompletion();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent.withOpacity(0.12),
+                              backgroundColor: Colors.blueAccent.withValues(alpha: 0.12),
                               foregroundColor: Colors.blueAccent,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -387,7 +387,7 @@ class _NutritionViewState extends State<NutritionView> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red.withOpacity(0.12),
+                              backgroundColor: Colors.red.withValues(alpha: 0.12),
                               foregroundColor: Colors.redAccent,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -402,7 +402,7 @@ class _NutritionViewState extends State<NutritionView> {
                               profile.evaluateQuestsCompletion();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent.withOpacity(0.12),
+                              backgroundColor: Colors.blueAccent.withValues(alpha: 0.12),
                               foregroundColor: Colors.blueAccent,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -417,7 +417,7 @@ class _NutritionViewState extends State<NutritionView> {
                               profile.evaluateQuestsCompletion();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent.withOpacity(0.12),
+                              backgroundColor: Colors.blueAccent.withValues(alpha: 0.12),
                               foregroundColor: Colors.blueAccent,
                               elevation: 0,
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -478,7 +478,7 @@ class _NutritionViewState extends State<NutritionView> {
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.01),
+                    color: Colors.white.withValues(alpha: 0.01),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -508,9 +508,9 @@ class _NutritionViewState extends State<NutritionView> {
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.02),
+                    color: Colors.white.withValues(alpha: 0.02),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withOpacity(0.04)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.04)),
                   ),
                   child: Row(
                     children: [
@@ -558,7 +558,7 @@ class _NutritionViewState extends State<NutritionView> {
                       ),
                     ],
                   ),
-                )).toList(),
+                )),
             ],
           ),
         ),
@@ -607,7 +607,7 @@ class _NutritionViewState extends State<NutritionView> {
           child: LinearProgressIndicator(
             value: progress,
             minHeight: 6,
-            backgroundColor: Colors.white.withOpacity(0.03),
+            backgroundColor: Colors.white.withValues(alpha: 0.03),
             valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
         ),
@@ -631,7 +631,7 @@ class _NutritionViewState extends State<NutritionView> {
               backgroundColor: const Color(0xFF0C0C0C),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
-                side: BorderSide(color: profile.currentElement.primaryColor.withOpacity(0.4), width: 1.5),
+                side: BorderSide(color: profile.currentElement.primaryColor.withValues(alpha: 0.4), width: 1.5),
               ),
               title: Center(
                 child: Text(
