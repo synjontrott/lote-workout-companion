@@ -105,3 +105,84 @@ Every character sprite in the dashboard is flanked by a floating power indicator
 18. **Stand Metric**: Track and display 'Stand Hours' rather than 'Stand Minutes'.
 19. **Unit Selection**: Ask for Imperial or Metric preference at the very beginning of the onboarding flow.
 20. **Dynamic Quests**: Suggested large daily quests should disappear or change once completed.
+
+---
+
+## Credit-Saving: Qwen 3.6:27b Offloading via Ollama
+
+The user runs a remote Ollama server with `qwen3.6:27b` for offloading code generation to save Antigravity credits. **Use this for heavy/repetitive code generation tasks.**
+
+### Connection Details
+- **Remote Server**: `http://192.168.1.17:11434` (user's tower — may require wake-up)
+- **Local Fallback**: `http://localhost:11434` (has `qwen2.5-coder:7b` only)
+- **Model**: `qwen3.6:27b`
+
+### Critical: Disable Thinking Mode
+Qwen 3.6 is a thinking model. Without disabling thinking, it burns ALL tokens on its internal `thinking` chain and returns an **empty `response` field**. Always set:
+```json
+{
+  "think": false,
+  "options": { "num_predict": 4096 }
+}
+```
+
+### Usage Pattern
+```bash
+curl -s -o /tmp/qwen_out.json http://192.168.1.17:11434/api/generate -d '{
+  "model": "qwen3.6:27b",
+  "prompt": "YOUR PROMPT HERE",
+  "stream": false,
+  "think": false,
+  "options": {"temperature": 0.3, "num_predict": 4096}
+}' && python3 -c "
+import json
+with open('/tmp/qwen_out.json') as f:
+    d = json.load(f)
+print(d.get('response','EMPTY'))
+"
+```
+
+### Best Practices
+- **Run as background task** (`WaitMsBeforeAsync: 500`) and let the system auto-notify on completion — no timers needed.
+- **Give generous time**: 27B model takes 2-5 minutes per response. Don't set short timers.
+- **Best for**: Bulk name generation, repetitive code patterns (e.g., 16 switch cases), mechanical refactors, game design suggestions.
+- **Not ideal for**: Quick one-line fixes (overhead exceeds savings), context-heavy edits requiring full file understanding.
+- **Fallback**: If the server is unreachable, check with `curl -s --max-time 5 http://192.168.1.17:11434/` — user may need to wake it up.
+
+---
+
+## Current Project Status (as of July 3, 2026)
+
+### Analysis Health
+- **Flutter analyze**: 284 issues → **2 issues** (only unused pixel-painting methods in character_creator_view.dart)
+- **Deprecation cleanup**: All `withOpacity` → `withValues` migrated via `dart fix --apply`
+
+### WarriorTier Progression (Updated)
+10 tiers now span levels 1-100 (previously only 6 tiers to level 50):
+| Tier | Level | Default Name |
+|------|-------|-------------|
+| recruit | 1 | Elsaither Recruit |
+| apprentice | 5 | Krenpowen Apprentice |
+| vanguard | 12 | Warrion Vanguard |
+| sentinel | 20 | Ninjonian Sentinel |
+| master | 35 | Irghposan Master |
+| legend | 50 | Legend of the Elsaither |
+| champion | 60 | Ascended Champion |
+| sovereign | 75 | Sovereign Warlord |
+| mythic | 90 | Mythic Conqueror |
+| transcendent | 100 | Transcendent Elsaither |
+
+### Quest Stat Progression (Updated)
+- Even-indexed quests award the primary stat for their training focus
+- Odd-indexed quests cycle through Intelligence and Charisma
+- All 6 D&D stats now receive progression
+
+### Remaining Low-Priority Items
+- Overflow-prone fixed Rows on dashboard (small screens)
+- google_fonts fetches over network — should bundle as assets
+- Unit toggle rounding drift
+- State mutation in build() pattern
+- Full accessibility pass
+- CI/CD setup
+- Unit test coverage
+
