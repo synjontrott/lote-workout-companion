@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'dart:math' show min, max, Random;
+import 'dart:math' show min;
 
 Color hexToColor(String hex) {
   final buffer = StringBuffer();

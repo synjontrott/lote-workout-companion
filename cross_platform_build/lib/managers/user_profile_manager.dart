@@ -979,11 +979,17 @@ class UserProfileManager extends ChangeNotifier {
     if (item.type == 'stat') {
       if (item.name.contains('STR')) {
         _stats.increase(StatType.strength, 1);
-      } else if (item.name.contains('DEX')) _stats.increase(StatType.dexterity, 1);
-      else if (item.name.contains('CON')) _stats.increase(StatType.constitution, 1);
-      else if (item.name.contains('INT')) _stats.increase(StatType.intelligence, 1);
-      else if (item.name.contains('WIS')) _stats.increase(StatType.wisdom, 1);
-      else if (item.name.contains('CHA')) _stats.increase(StatType.charisma, 1);
+      } else if (item.name.contains('DEX')) {
+        _stats.increase(StatType.dexterity, 1);
+      } else if (item.name.contains('CON')) {
+        _stats.increase(StatType.constitution, 1);
+      } else if (item.name.contains('INT')) {
+        _stats.increase(StatType.intelligence, 1);
+      } else if (item.name.contains('WIS')) {
+        _stats.increase(StatType.wisdom, 1);
+      } else if (item.name.contains('CHA')) {
+        _stats.increase(StatType.charisma, 1);
+      }
     }
 
     unlockBadge("Guild Patron");
