@@ -13,7 +13,7 @@ class QuestBoardView extends StatefulWidget {
   State<QuestBoardView> createState() => _QuestBoardViewState();
 }
 
-class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStateMixin {
+class _QuestBoardViewState extends State<QuestBoardView> {
   LotEQuest? _selectedQuest;
   QuestCadence _selectedCadence = QuestCadence.daily;
 
@@ -43,29 +43,24 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
   final TextEditingController _workoutSearchController = TextEditingController();
   String _workoutSearchQuery = "";
 
-  // Suggested Workout Tailoring states
   String _tailGender = "Male";
   String _tailAge = "30";
   String _tailWeight = "170";
   String _tailEquipment = "Bodyweight Only";
   String _tailDifficulty = "Medium";
   MuscleGroup _tailMuscleGroup = MuscleGroup.chest;
-
-  // Dice/animation controller (stub, unused now but kept for compatibility)
-  late AnimationController _spinController;
+  late TextEditingController _tailAgeController;
+  late TextEditingController _tailWeightController;
 
   @override
   void initState() {
     super.initState();
-    _spinController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
+    _tailAgeController = TextEditingController(text: _tailAge);
+    _tailWeightController = TextEditingController(text: _tailWeight);
   }
 
   @override
   void dispose() {
-    _spinController.dispose();
     _mealNameController.dispose();
     _mealCaloriesController.dispose();
     _mealProteinController.dispose();
@@ -77,6 +72,8 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
     _customWorkoutSetsController.dispose();
     _customWorkoutDurationController.dispose();
     _workoutSearchController.dispose();
+    _tailAgeController.dispose();
+    _tailWeightController.dispose();
     super.dispose();
   }
 
@@ -1760,11 +1757,17 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                                     fillColor: Colors.white.withOpacity(0.04),
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
+                                    suffixIcon: IconButton(
+                                      icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 16),
+                                      onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                    ),
                                   ),
                                   onChanged: (val) {
                                     setState(() { _tailAge = val; });
                                   },
-                                  controller: TextEditingController(text: _tailAge)..selection = TextSelection.fromPosition(TextPosition(offset: _tailAge.length)),
+                                  controller: _tailAgeController,
                                 ),
                               ],
                             ),
@@ -1785,11 +1788,17 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                                     fillColor: Colors.white.withOpacity(0.04),
                                     contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
+                                    suffixIcon: IconButton(
+                                      icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 16),
+                                      onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                    ),
                                   ),
                                   onChanged: (val) {
                                     setState(() { _tailWeight = val; });
                                   },
-                                  controller: TextEditingController(text: _tailWeight)..selection = TextSelection.fromPosition(TextPosition(offset: _tailWeight.length)),
+                                  controller: _tailWeightController,
                                 ),
                               ],
                             ),
@@ -2292,6 +2301,12 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                                 filled: true,
                                 fillColor: Colors.white.withOpacity(0.04),
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                suffixIcon: IconButton(
+                                  icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
+                                  onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                   borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
@@ -2463,6 +2478,12 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                         filled: true,
                         fillColor: Colors.white.withOpacity(0.04),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
+                          onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),

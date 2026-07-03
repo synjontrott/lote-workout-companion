@@ -697,7 +697,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                     child: Text(
                                       exceeded
                                           ? "⚠️ Sugar threshold exceeded!"
-                                          : "Keep sugar under 30g daily to maintain clean energy flow.",
+                                          : "Keep sugar under ${profile.targetSugar.toStringAsFixed(0)}g daily to maintain clean energy flow.",
                                       style: TextStyle(
                                         fontSize: 10,
                                         color: exceeded ? Colors.red : Colors.grey,
@@ -1122,11 +1122,14 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                               else
                                 SizedBox(
                                   height: 125,
-                                  child: ListView.builder(
+                                  child: Builder(
+                                    builder: (context) {
+                                      final reversedHistory = profile.measurementHistory.reversed.toList();
+                                      return ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: profile.measurementHistory.length,
+                                    itemCount: reversedHistory.length,
                                     itemBuilder: (context, index) {
-                                      final entry = profile.measurementHistory.reversed.toList()[index];
+                                      final entry = reversedHistory[index];
                                       final dateStr = "${entry.date.month}/${entry.date.day}/${entry.date.year}";
                                       return Container(
                                         width: 140,
@@ -1179,6 +1182,8 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                           ],
                                         ),
                                       );
+                                    },
+                                  );
                                     },
                                   ),
                                 ),

@@ -365,6 +365,17 @@ class DNDStats {
       case StatType.charisma: charisma += amount; break;
     }
   }
+
+  void decrease(StatType stat, int amount) {
+    switch (stat) {
+      case StatType.strength: strength = (strength - amount).clamp(1, 999); break;
+      case StatType.dexterity: dexterity = (dexterity - amount).clamp(1, 999); break;
+      case StatType.constitution: constitution = (constitution - amount).clamp(1, 999); break;
+      case StatType.intelligence: intelligence = (intelligence - amount).clamp(1, 999); break;
+      case StatType.wisdom: wisdom = (wisdom - amount).clamp(1, 999); break;
+      case StatType.charisma: charisma = (charisma - amount).clamp(1, 999); break;
+    }
+  }
 }
 
 class CharacterSprite {
@@ -959,8 +970,8 @@ class WeightEntry {
 
   factory WeightEntry.fromJson(Map<String, dynamic> json) {
     return WeightEntry(
-      date: DateTime.parse(json['date'] ?? DateTime.now().toIso8601String()),
-      weight: (json['weight'] as num).toDouble(),
+      date: DateTime.tryParse(json['date'] ?? '') ?? DateTime.now(),
+      weight: (json['weight'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }
@@ -1034,7 +1045,7 @@ class ShopItem {
         ShopItem(name: "Wisdom Herb (+1 WIS)", cost: 500, description: "Permanently boost your Wisdom by 1 point, enhancing awareness.", type: "stat", sprite: "🌿"),
         ShopItem(name: "Crown of Command (+1 CHA)", cost: 500, description: "Permanently boost your Charisma by 1 point, enhancing social influence.", type: "stat", sprite: "👑"),
         // Badges
-        ShopItem(name: "Celestial Dragon Badge", cost: 100, description: "Unlocks the special celestial dragon profile badge indicating elite status.", type: "badge", sprite: "🐉"),
+        ShopItem(name: "Celestial Dragon Badge", cost: 200, description: "Unlocks the special celestial dragon profile badge indicating elite status.", type: "badge", sprite: "🐉"),
       ];
 }
 
@@ -1664,7 +1675,7 @@ class SuggestedWorkout {
       case MuscleGroup.cardio:
         return WorkoutCategory.cardio;
       case MuscleGroup.fullBody:
-        return WorkoutCategory.flexibility;
+        return WorkoutCategory.strength;
       default:
         return WorkoutCategory.strength;
     }
@@ -4295,8 +4306,8 @@ class PREntry {
 
   factory PREntry.fromJson(Map<String, dynamic> json) {
     return PREntry(
-      date: DateTime.parse(json['date']),
-      value: (json['value'] as num).toDouble(),
+      date: DateTime.tryParse(json['date'] ?? '') ?? DateTime.now(),
+      value: (json['value'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }

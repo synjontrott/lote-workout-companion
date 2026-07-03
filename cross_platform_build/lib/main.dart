@@ -63,6 +63,14 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
   Widget build(BuildContext context) {
     final profile = Provider.of<UserProfileManager>(context);
 
+    // Show a loading screen while profile loads from SharedPreferences
+    if (!profile.isLoaded) {
+      return const Scaffold(
+        backgroundColor: Color(0xFF020617),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     // If initial quiz is not completed, enforce evaluation view
     if (!profile.hasCompletedInitialQuiz) {
       return const PsychEvaluationView();

@@ -85,8 +85,10 @@ class UserProfileManager extends ChangeNotifier {
   };
   Map<String, List<PREntry>> _prHistory = {};
   List<WorkoutSession> _loggedWorkoutSessions = [];
+  bool _isLoaded = false;
 
   // Getters
+  bool get isLoaded => _isLoaded;
   String get characterName => _characterName;
   int get selectedElementIndex => _selectedElementIndex;
   ExpressionStyle get expressionStyle => _expressionStyle;
@@ -833,6 +835,7 @@ class UserProfileManager extends ChangeNotifier {
     } catch (_) {
       // SharedPreferences might fail under test/mock environment, fallbacks will apply
     }
+    _isLoaded = true;
     notifyListeners();
   }
 
@@ -942,12 +945,24 @@ class UserProfileManager extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeXP(int amount) {
+    _currentXP = (_currentXP - amount).clamp(0, 999999);
+    _save();
+    notifyListeners();
+  }
+
   int requiredXPForLevel(int lvl) {
     return 1000 + (lvl * 100) + (lvl * lvl * 5);
   }
 
   void earnCrystals(int amount) {
     _crystals += amount;
+    _save();
+    notifyListeners();
+  }
+
+  void spendCrystals(int amount) {
+    _crystals = (_crystals - amount).clamp(0, 999999);
     _save();
     notifyListeners();
   }
@@ -1212,9 +1227,9 @@ class UserProfileManager extends ChangeNotifier {
     _stats.increase(questToComplete.statReward, questToComplete.statValue);
     updateStreakOnActivity();
 
-    // Unlocks badge on 5 completed quests
+    // Unlocks badge on completing all daily quests
     final completedDailies = _dailyQuests.where((q) => q.isCompleted).length;
-    if (completedDailies >= 5) {
+    if (completedDailies >= 4) {
       unlockBadge("Flame Starter");
     }
 
@@ -1433,6 +1448,48 @@ class UserProfileManager extends ChangeNotifier {
       if (sessionIndex != -1) {
         _loggedWorkoutSessions.removeAt(sessionIndex);
       }
+
+      // Roll back monthly/yearly nutrition quest progress to prevent farming
+      for (int i = 0; i < _monthlyQuests.length; i++) {
+        if (_monthlyQuests[i].workoutType == WorkoutCategory.nutrition && !_monthlyQuests[i].isCompleted && _monthlyQuests[i].progressCount > 0) {
+          _monthlyQuests[i].progressCount -= 1;
+        }
+      }
+      for (int i = 0; i < _yearlyQuests.length; i++) {
+        if (_yearlyQuests[i].workoutType == WorkoutCategory.nutrition && !_yearlyQuests[i].isCompleted && _yearlyQuests[i].progressCount > 0) {
+          _yearlyQuests[i].progressCount -= 1;
+        }
+      }
+
+      // Reverse daily nutrition quest completion if condition no longer met
+      // This prevents the log→complete→delete→repeat farming exploit
+      final remainingNutritionSessions = _loggedWorkoutSessions.where((s) =>
+          s.type == "Nutrition" &&
+          s.date.year == now.year && s.date.month == now.month && s.date.day == now.day).length;
+
+      for (int i = 0; i < _dailyQuests.length; i++) {
+        final q = _dailyQuests[i];
+        if (q.workoutType != WorkoutCategory.nutrition) continue;
+        if (!q.isCompleted) continue;
+
+        // Skip hydration quests — they aren't meal-based
+        final isHydration = q.title.toLowerCase().contains("water") ||
+            q.title.toLowerCase().contains("hydration") ||
+            q.questDescription.toLowerCase().contains("water") ||
+            q.questDescription.toLowerCase().contains("hydration");
+        if (isHydration) continue;
+
+        // If there are no remaining nutrition sessions or meals today, reverse
+        if (_healthyMealsLoggedToday < 1 && remainingNutritionSessions == 0) {
+          _dailyQuests[i].isCompleted = false;
+          _dailyQuests[i].progressCount = 0;
+          if (_totalQuestsCompleted > 0) _totalQuestsCompleted -= 1;
+          // Reverse the rewards that were granted
+          removeXP(q.rewardXP);
+          spendCrystals(q.rewardCrystals);
+          _stats.decrease(q.statReward, q.statValue);
+        }
+      }
     }
     
     _loggedMeals.removeAt(mealIndex);
@@ -1626,7 +1683,7 @@ class UserProfileManager extends ChangeNotifier {
         _healthyMealsLoggedToday = 0;
         _todayWaterIntake = 0.0;
         _hasClaimedDistanceGoalReward = false;
-        final elementName = currentElement.name;
+        final elementName = availableElements[_normalizedElementIndex(_selectedElementIndex)].name;
         _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily, prs: _personalRecords, waterGoal: _waterIntakeGoal);
         
         if (_lastRefreshDate!.month != now.month) {
@@ -1685,7 +1742,7 @@ class UserProfileManager extends ChangeNotifier {
   }
 
   void regenerateDailyQuests() {
-    final elementName = currentElement.name;
+    final elementName = availableElements[_normalizedElementIndex(_selectedElementIndex)].name;
     _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily, prs: _personalRecords, waterGoal: _waterIntakeGoal);
     _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
     _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
@@ -1827,9 +1884,8 @@ class UserProfileManager extends ChangeNotifier {
         "December": "December Quests Badge"
       };
       final specificBadge = badgeMap[challenge.monthName];
-      if (specificBadge != null && !_unlockedBadges.contains(specificBadge)) {
-        _unlockedBadges.add(specificBadge);
-        _crystals += 100; // Reward crystals
+      if (specificBadge != null) {
+        unlockBadge(specificBadge);
       }
     }
   }
