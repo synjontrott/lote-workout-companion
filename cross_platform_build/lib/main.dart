@@ -15,6 +15,7 @@ import 'views/widgets/pixel_sprite_widget.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false;
   runApp(
     MultiProvider(
       providers: [
