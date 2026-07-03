@@ -1845,9 +1845,9 @@ class UserProfileManager extends ChangeNotifier {
       case 9:
         return MonthlyChallenge(
             monthName: "September",
-            targetDescription: "Log 250,000 steps",
+            targetDescription: "Log 150,000 steps",
             targetMetric: "steps",
-            targetAmount: 250000.0,
+            targetAmount: 150000.0,
             currentAmount: _monthlyChallengeProgress);
       case 10:
         return MonthlyChallenge(
