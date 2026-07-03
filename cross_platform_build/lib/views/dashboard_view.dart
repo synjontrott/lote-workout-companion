@@ -40,7 +40,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     _bobController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
-    )..repeat(reverse: true);
+    );
     
     _bobAnimation = Tween<double>(begin: 0.0, end: -6.0).animate(
       CurvedAnimation(parent: _bobController, curve: Curves.easeInOut),
@@ -52,6 +52,19 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     _measureWaistController = TextEditingController();
     _measureHipsController = TextEditingController();
     _measureLegsController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Respect reduced-motion accessibility preference
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    if (!reduceMotion && !_bobController.isAnimating) {
+      _bobController.repeat(reverse: true);
+    } else if (reduceMotion && _bobController.isAnimating) {
+      _bobController.stop();
+      _bobController.value = 0.0;
+    }
   }
 
   @override

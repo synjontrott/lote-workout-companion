@@ -178,13 +178,19 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(3),
-                                  child: LinearProgressIndicator(
-                                    value: progress,
-                                    backgroundColor: Colors.white.withValues(alpha: 0.05),
-                                    valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                                    minHeight: 5,
+                                Semantics(
+                                  label: '${profile.currentTier.dynamicDisplayName(profile.currentElement.name)}, '
+                                      'Level ${profile.currentLevel}, '
+                                      '${profile.currentXP} of $nextLevelXP XP',
+                                  value: '${(progress * 100).toInt()} percent',
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(3),
+                                    child: LinearProgressIndicator(
+                                      value: progress,
+                                      backgroundColor: Colors.white.withValues(alpha: 0.05),
+                                      valueColor: AlwaysStoppedAnimation<Color>(themeColor),
+                                      minHeight: 5,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 2),
