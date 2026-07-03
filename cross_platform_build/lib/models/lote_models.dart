@@ -118,7 +118,11 @@ enum WarriorTier {
   vanguard('Warrion Vanguard', 12),
   sentinel('Ninjonian Sentinel', 20),
   master('Irghposan Master', 35),
-  legend('Legend of the Elsaither', 50);
+  legend('Legend of the Elsaither', 50),
+  champion('Ascended Champion', 60),
+  sovereign('Sovereign Warlord', 75),
+  mythic('Mythic Conqueror', 90),
+  transcendent('Transcendent Elsaither', 100);
 
   final String displayName;
   final int levelRequired;
@@ -134,6 +138,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Blaze Sentinel";
           case WarriorTier.master: return "Inferno Master";
           case WarriorTier.legend: return "Legend of the Phoenix";
+          case WarriorTier.champion: return "Molten Warchief";
+          case WarriorTier.sovereign: return "Volcanic Imperator";
+          case WarriorTier.mythic: return "Supernova Destroyer";
+          case WarriorTier.transcendent: return "Eternal Inferno";
         }
       case 'Water':
         switch (this) {
@@ -143,6 +151,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Wave Sentinel";
           case WarriorTier.master: return "Abyss Master";
           case WarriorTier.legend: return "Legend of the Ocean";
+          case WarriorTier.champion: return "Tide Breaker";
+          case WarriorTier.sovereign: return "Abyss Lord";
+          case WarriorTier.mythic: return "Ocean Legend";
+          case WarriorTier.transcendent: return "Hydro Sovereign";
         }
       case 'Earth':
         switch (this) {
@@ -152,6 +164,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Ridge Sentinel";
           case WarriorTier.master: return "Mountain Master";
           case WarriorTier.legend: return "Legend of the Golem";
+          case WarriorTier.champion: return "Stone Warden";
+          case WarriorTier.sovereign: return "Mountain King";
+          case WarriorTier.mythic: return "Golem Legend";
+          case WarriorTier.transcendent: return "Ridge Titan";
         }
       case 'Air':
         switch (this) {
@@ -161,6 +177,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Vortex Sentinel";
           case WarriorTier.master: return "Tempest Master";
           case WarriorTier.legend: return "Legend of the Storm";
+          case WarriorTier.champion: return "Wind Dancer";
+          case WarriorTier.sovereign: return "Tempest Ruler";
+          case WarriorTier.mythic: return "Storm Legend";
+          case WarriorTier.transcendent: return "Vortex Master";
         }
       case 'Lightning':
         switch (this) {
@@ -170,6 +190,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Storm Sentinel";
           case WarriorTier.master: return "Voltage Master";
           case WarriorTier.legend: return "Legend of Thunder";
+          case WarriorTier.champion: return "Spark Runner";
+          case WarriorTier.sovereign: return "Bolt Striker";
+          case WarriorTier.mythic: return "Thunder Legend";
+          case WarriorTier.transcendent: return "Voltage God";
         }
       case 'Metal':
         switch (this) {
@@ -179,6 +203,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Shield Sentinel";
           case WarriorTier.master: return "Forge Master";
           case WarriorTier.legend: return "Legend of Titanium";
+          case WarriorTier.champion: return "Iron Guard";
+          case WarriorTier.sovereign: return "Steel Lord";
+          case WarriorTier.mythic: return "Titanium Legend";
+          case WarriorTier.transcendent: return "Forge Master";
         }
       case 'Ice':
         switch (this) {
@@ -188,6 +216,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Shard Sentinel";
           case WarriorTier.master: return "Tundra Master";
           case WarriorTier.legend: return "Legend of Blizzard";
+          case WarriorTier.champion: return "Glacial Warchief";
+          case WarriorTier.sovereign: return "Blizzard Imperator";
+          case WarriorTier.mythic: return "Arctic Annihilator";
+          case WarriorTier.transcendent: return "Eternal Permafrost";
         }
       case 'Bone':
         switch (this) {
@@ -197,6 +229,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Marrow Sentinel";
           case WarriorTier.master: return "Crypt Master";
           case WarriorTier.legend: return "Legend of the Grave";
+          case WarriorTier.champion: return "Skeletal Knight";
+          case WarriorTier.sovereign: return "Crypt Walker";
+          case WarriorTier.mythic: return "Grave Legend";
+          case WarriorTier.transcendent: return "Marrow King";
         }
       case 'Gas':
         switch (this) {
@@ -206,6 +242,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Fume Sentinel";
           case WarriorTier.master: return "Plasma Master";
           case WarriorTier.legend: return "Legend of Atmosphere";
+          case WarriorTier.champion: return "Mist Weaver";
+          case WarriorTier.sovereign: return "Cloud Ruler";
+          case WarriorTier.mythic: return "Atmosphere Legend";
+          case WarriorTier.transcendent: return "Plasma Lord";
         }
       case 'Laser':
         switch (this) {
@@ -215,6 +255,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Focus Sentinel";
           case WarriorTier.master: return "Photon Master";
           case WarriorTier.legend: return "Legend of the Cosmos";
+          case WarriorTier.champion: return "Ray Caster";
+          case WarriorTier.sovereign: return "Beam Master";
+          case WarriorTier.mythic: return "Cosmos Legend";
+          case WarriorTier.transcendent: return "Photon God";
         }
       case 'Zero Space':
         switch (this) {
@@ -224,6 +268,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Gate Sentinel";
           case WarriorTier.master: return "Singularity Master";
           case WarriorTier.legend: return "Legend of the Void";
+          case WarriorTier.champion: return "Rift Walker";
+          case WarriorTier.sovereign: return "Warp Lord";
+          case WarriorTier.mythic: return "Void Legend";
+          case WarriorTier.transcendent: return "Singularity King";
         }
       case 'Darki':
         switch (this) {
@@ -233,6 +281,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Royal Sentinel";
           case WarriorTier.master: return "Sovereign Master";
           case WarriorTier.legend: return "Legend of Eclipse";
+          case WarriorTier.champion: return "Shade Hunter";
+          case WarriorTier.sovereign: return "Night Sovereign";
+          case WarriorTier.mythic: return "Eclipse Legend";
+          case WarriorTier.transcendent: return "Royal Shadow";
         }
       case 'Death':
         switch (this) {
@@ -242,6 +294,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Soul Sentinel";
           case WarriorTier.master: return "Crypt Master";
           case WarriorTier.legend: return "Legend of Doom";
+          case WarriorTier.champion: return "Wither Touch";
+          case WarriorTier.sovereign: return "Reaper Lord";
+          case WarriorTier.mythic: return "Doom Legend";
+          case WarriorTier.transcendent: return "Soul King";
         }
       case 'Knife':
         switch (this) {
@@ -251,6 +307,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Pierce Sentinel";
           case WarriorTier.master: return "Saber Master";
           case WarriorTier.legend: return "Legend of the Sword";
+          case WarriorTier.champion: return "Edge Master";
+          case WarriorTier.sovereign: return "Blade Sovereign";
+          case WarriorTier.mythic: return "Sword Legend";
+          case WarriorTier.transcendent: return "Pierce God";
         }
       case 'Poison':
         switch (this) {
@@ -260,6 +320,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Acid Sentinel";
           case WarriorTier.master: return "Serum Master";
           case WarriorTier.legend: return "Legend of Plague";
+          case WarriorTier.champion: return "Venom Spitter";
+          case WarriorTier.sovereign: return "Toxin Lord";
+          case WarriorTier.mythic: return "Plague Legend";
+          case WarriorTier.transcendent: return "Acid King";
         }
       case 'Shadow':
         switch (this) {
@@ -269,6 +333,10 @@ enum WarriorTier {
           case WarriorTier.sentinel: return "Phantom Sentinel";
           case WarriorTier.master: return "Eclipse Master";
           case WarriorTier.legend: return "Legend of the Ghost";
+          case WarriorTier.champion: return "Veil Walker";
+          case WarriorTier.sovereign: return "Phantom Lord";
+          case WarriorTier.mythic: return "Ghost Legend";
+          case WarriorTier.transcendent: return "Eclipse Shade";
         }
       default:
         return displayName;
@@ -289,6 +357,14 @@ enum WarriorTier {
         return "A rare champion who harnesses the power inside or the darkness within.";
       case WarriorTier.legend:
         return "Achieved perfect balance and raw spatial mastery. A force of the cosmos.";
+      case WarriorTier.champion:
+        return "An ascended warrior who transcends elemental boundaries and bends reality itself.";
+      case WarriorTier.sovereign:
+        return "A sovereign force of nature commanding absolute elemental dominion.";
+      case WarriorTier.mythic:
+        return "A mythic being whose very existence reshapes the world around them.";
+      case WarriorTier.transcendent:
+        return "Beyond mortal comprehension. The ultimate warrior who has become one with the cosmos.";
     }
   }
 }
