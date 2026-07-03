@@ -123,7 +123,7 @@ class HealthManager extends ChangeNotifier {
               totalStand += val.numericValue.toDouble();
             }
           }
-          _todayStandHours = totalStand / 60.0;
+          _todayStandHours = totalStand / 3600.0;
         } else {
           _todayStandHours = 0.0;
         }

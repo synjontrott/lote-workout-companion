@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../models/lote_models.dart';
 import '../managers/user_profile_manager.dart';
 
@@ -83,8 +84,7 @@ class _ShopViewState extends State<ShopView> {
                       children: [
                         Text(
                           "ELSAITHER ARMORY",
-                          style: TextStyle(
-                            fontFamily: "Orbitron",
+                          style: GoogleFonts.orbitron(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -97,10 +97,9 @@ class _ShopViewState extends State<ShopView> {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
+                        Text(
                           "Equip items to style your profile and boost stats",
-                          style: TextStyle(
-                            fontFamily: "Exo2",
+                          style: GoogleFonts.exo2(
                             fontSize: 12,
                             color: Colors.grey,
                           ),
@@ -129,8 +128,7 @@ class _ShopViewState extends State<ShopView> {
                         const SizedBox(width: 4),
                         Text(
                           "${profile.crystals}",
-                          style: const TextStyle(
-                            fontFamily: "Orbitron",
+                          style: GoogleFonts.orbitron(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -180,8 +178,7 @@ class _ShopViewState extends State<ShopView> {
                         ),
                         child: Text(
                           cat,
-                          style: TextStyle(
-                            fontFamily: "Orbitron",
+                          style: GoogleFonts.orbitron(
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                             color: isSelected ? Colors.black : Colors.white,
@@ -252,8 +249,7 @@ class _ShopViewState extends State<ShopView> {
                                 children: [
                                   Text(
                                     item.name,
-                                    style: const TextStyle(
-                                      fontFamily: "Exo2",
+                                    style: GoogleFonts.exo2(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
@@ -269,8 +265,7 @@ class _ShopViewState extends State<ShopView> {
                                     ),
                                     child: Text(
                                       item.type.toUpperCase(),
-                                      style: TextStyle(
-                                        fontFamily: "Orbitron",
+                                      style: GoogleFonts.orbitron(
                                         fontSize: 7,
                                         fontWeight: FontWeight.bold,
                                         color: themeColor,
@@ -282,8 +277,7 @@ class _ShopViewState extends State<ShopView> {
                               const SizedBox(height: 4),
                               Text(
                                 item.description,
-                                style: TextStyle(
-                                  fontFamily: "Exo2",
+                                style: GoogleFonts.exo2(
                                   fontSize: 11,
                                   color: Colors.white.withOpacity(0.7),
                                 ),
@@ -306,10 +300,9 @@ class _ShopViewState extends State<ShopView> {
                                     color: Colors.green.withOpacity(0.15),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     "UNLOCKED",
-                                    style: TextStyle(
-                                      fontFamily: "Orbitron",
+                                    style: GoogleFonts.orbitron(
                                       fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.green,
@@ -332,8 +325,7 @@ class _ShopViewState extends State<ShopView> {
                                   ),
                                   child: Text(
                                     equipped ? "UNEQUIP" : "EQUIP",
-                                    style: TextStyle(
-                                      fontFamily: "Orbitron",
+                                    style: GoogleFonts.orbitron(
                                       fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                       color: equipped ? Colors.orange : Colors.green,
@@ -353,10 +345,9 @@ class _ShopViewState extends State<ShopView> {
                                                 borderRadius: BorderRadius.circular(16),
                                                 side: BorderSide(color: themeColor.withOpacity(0.4), width: 1.5),
                                               ),
-                                              title: const Text(
+                                              title: Text(
                                                 "CONFIRM ACQUISITION",
-                                                style: TextStyle(
-                                                  fontFamily: "Orbitron",
+                                                style: GoogleFonts.orbitron(
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,
@@ -369,8 +360,7 @@ class _ShopViewState extends State<ShopView> {
                                                 children: [
                                                   Text(
                                                     item.name.toUpperCase(),
-                                                    style: const TextStyle(
-                                                      fontFamily: "Orbitron",
+                                                    style: GoogleFonts.orbitron(
                                                       fontSize: 14,
                                                       fontWeight: FontWeight.bold,
                                                       color: Colors.white,
@@ -385,8 +375,7 @@ class _ShopViewState extends State<ShopView> {
                                                     ),
                                                     child: Text(
                                                       item.type.toUpperCase(),
-                                                      style: TextStyle(
-                                                        fontFamily: "Orbitron",
+                                                      style: GoogleFonts.orbitron(
                                                         fontSize: 8,
                                                         fontWeight: FontWeight.bold,
                                                         color: themeColor,
@@ -394,10 +383,9 @@ class _ShopViewState extends State<ShopView> {
                                                     ),
                                                   ),
                                                   const SizedBox(height: 12),
-                                                  const Text(
+                                                  Text(
                                                     "EXPANDED DESCRIPTION:",
-                                                    style: TextStyle(
-                                                      fontFamily: "Orbitron",
+                                                    style: GoogleFonts.orbitron(
                                                       fontSize: 9,
                                                       color: Colors.grey,
                                                     ),
@@ -405,8 +393,7 @@ class _ShopViewState extends State<ShopView> {
                                                   const SizedBox(height: 4),
                                                   Text(
                                                     item.description,
-                                                    style: const TextStyle(
-                                                      fontFamily: "Exo2",
+                                                    style: GoogleFonts.exo2(
                                                       fontSize: 12,
                                                       color: Colors.white70,
                                                     ),
@@ -414,13 +401,13 @@ class _ShopViewState extends State<ShopView> {
                                                   const SizedBox(height: 16),
                                                   Row(
                                                     children: [
-                                                      const Text(
+                                                      Text(
                                                         "Cost: ",
-                                                        style: TextStyle(fontFamily: "Exo2", fontSize: 13, color: Colors.grey),
+                                                        style: GoogleFonts.exo2(fontSize: 13, color: Colors.grey),
                                                       ),
                                                       Text(
                                                         "${item.cost}",
-                                                        style: const TextStyle(fontFamily: "Orbitron", fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                                                        style: GoogleFonts.orbitron(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
                                                       ),
                                                       const SizedBox(width: 4),
                                                       const Text("💎"),
@@ -470,8 +457,7 @@ class _ShopViewState extends State<ShopView> {
                                   children: [
                                     Text(
                                       "${item.cost}",
-                                      style: const TextStyle(
-                                        fontFamily: "Orbitron",
+                                      style: GoogleFonts.orbitron(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,

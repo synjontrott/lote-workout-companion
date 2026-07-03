@@ -1462,7 +1462,7 @@ List<LotEQuest> generateQuests(
         cadence: QuestCadence.daily,
         progressCount: 0,
         targetCount: 1,
-        requiredMinutes: 15.0,
+        requiredMinutes: wType == WorkoutCategory.nutrition ? 0.0 : (wType == WorkoutCategory.cardio ? 20.0 : 15.0),
       ));
     }
   } else if (cadence == QuestCadence.monthly) {

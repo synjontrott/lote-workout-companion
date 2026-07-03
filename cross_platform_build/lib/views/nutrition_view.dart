@@ -71,10 +71,9 @@ class _NutritionViewState extends State<NutritionView> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
+                    Text(
                       "Monitor caloric input and metabolic fuel ratios",
-                      style: TextStyle(
-                        fontFamily: "Exo2",
+                      style: GoogleFonts.exo2(
                         fontSize: 14,
                         color: Colors.grey,
                       ),
@@ -263,10 +262,9 @@ class _NutritionViewState extends State<NutritionView> {
                                 color: Colors.white,
                               ),
                             ),
-                            const Text(
+                            Text(
                               "Daily Intake Target",
-                              style: TextStyle(
-                                fontFamily: "Exo2",
+                              style: GoogleFonts.exo2(
                                 fontSize: 13,
                                 color: Colors.grey,
                               ),
@@ -484,22 +482,20 @@ class _NutritionViewState extends State<NutritionView> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
-                    children: const [
+                    children: [
                       Text(
                         "No bio-fuel logged today.",
-                        style: TextStyle(
-                          fontFamily: "Exo2",
+                        style: GoogleFonts.exo2(
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         "Sync your healthy eating to boost constitution attributes.",
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: "Exo2",
+                        style: GoogleFonts.exo2(
                           fontSize: 11,
                           color: Colors.grey,
                         ),
@@ -524,8 +520,7 @@ class _NutritionViewState extends State<NutritionView> {
                           children: [
                             Text(
                               meal.name.toUpperCase(),
-                              style: const TextStyle(
-                                fontFamily: "Exo2",
+                              style: GoogleFonts.exo2(
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,

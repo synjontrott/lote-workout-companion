@@ -1000,9 +1000,9 @@ class _SettingsViewState extends State<SettingsView> {
                                     "RESET ALL PROGRESS?",
                                     style: GoogleFonts.orbitron(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
-                                  content: const Text(
+                                  content: Text(
                                     "This will permanently erase all your stats, character customizations, logged workouts, and level progress. This action cannot be undone.",
-                                    style: TextStyle(color: Colors.white70, fontFamily: "Exo2", fontSize: 13),
+                                    style: GoogleFonts.exo2(color: Colors.white70, fontSize: 13),
                                   ),
                                   actions: [
                                     TextButton(

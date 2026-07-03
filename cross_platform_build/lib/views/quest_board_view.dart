@@ -2064,9 +2064,8 @@ class _QuestBoardViewState extends State<QuestBoardView> with TickerProviderStat
                                       ),
                                       content: Text(
                                         "Are you sure you have completed '${workout.name}'? You will earn XP and Crystals based on difficulty.",
-                                        style: const TextStyle(
+                                        style: GoogleFonts.exo2(
                                           color: Colors.white70,
-                                          fontFamily: "Exo2",
                                           fontSize: 13,
                                         ),
                                       ),

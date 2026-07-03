@@ -1042,6 +1042,40 @@ class UserProfileManager extends ChangeNotifier {
     checkDistanceGoalProgress(healthManager.todaySteps);
   }
 
+  /// Checks profile-only badges (no HealthManager needed).
+  /// Called after quest completion and other profile-state mutations.
+  void _checkProfileBadges() {
+    if (_totalQuestsCompleted >= 100) {
+      unlockBadge("Quest Crusader (100 Quests)");
+    }
+    if (_totalQuestsCompleted >= 1000) {
+      unlockBadge("Legendary Champion (1000 Quests)");
+    }
+    if (_streak >= 7) {
+      unlockBadge("Streak Master");
+    }
+    if (_streak >= 14) {
+      unlockBadge("Vanguard Streak (14 Days)");
+    }
+    if (_streak >= 30) {
+      unlockBadge("Sovereign Streak (30 Days)");
+    }
+    if (_streak >= 100) {
+      unlockBadge("Immortal Streak (100 Days)");
+    }
+    if (_stats.strength >= 18 ||
+        _stats.dexterity >= 18 ||
+        _stats.constitution >= 18 ||
+        _stats.wisdom >= 18 ||
+        _stats.intelligence >= 18 ||
+        _stats.charisma >= 18) {
+      unlockBadge("Demi-God");
+    }
+    if (_hasCompletedInitialQuiz) {
+      unlockBadge("Lore Scholar");
+    }
+  }
+
   void checkDistanceGoalProgress(double todaySteps) {
     final currentDistance = todaySteps / 2000.0;
     if (!_hasClaimedDistanceGoalReward && currentDistance >= _distanceGoal) {
@@ -1183,6 +1217,8 @@ class UserProfileManager extends ChangeNotifier {
     if (completedDailies >= 5) {
       unlockBadge("Flame Starter");
     }
+
+    _checkProfileBadges();
 
     _save();
     notifyListeners();

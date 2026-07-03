@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'managers/user_profile_manager.dart';
 import 'managers/health_manager.dart';
@@ -143,8 +144,7 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                           children: [
                             Text(
                               profile.characterName.toUpperCase(),
-                              style: const TextStyle(
-                                fontFamily: "Orbitron",
+                              style: GoogleFonts.orbitron(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -153,8 +153,7 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                             ),
                             Text(
                               "LV. ${profile.currentLevel}",
-                              style: const TextStyle(
-                                fontFamily: "Orbitron",
+                              style: GoogleFonts.orbitron(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -215,8 +214,7 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                         const SizedBox(width: 4),
                         Text(
                           "${profile.crystals}",
-                          style: const TextStyle(
-                            fontFamily: "Orbitron",
+                          style: GoogleFonts.orbitron(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,

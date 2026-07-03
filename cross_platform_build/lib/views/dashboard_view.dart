@@ -2197,8 +2197,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                           ),
                           title: Text(
                             "LOG PROGRESS?",
-                            style: TextStyle(
-                              fontFamily: "Orbitron",
+                            style: GoogleFonts.orbitron(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: themeColor,
@@ -2207,8 +2206,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                           ),
                           content: Text(
                             "Confirm adding +${amount.toInt()} ${challenge.targetMetric} toward your ${challenge.monthName} monthly challenge: \"${challenge.targetDescription}\"?",
-                            style: const TextStyle(
-                              fontFamily: "Exo2",
+                            style: GoogleFonts.exo2(
                               fontSize: 13,
                               color: Colors.white,
                             ),
