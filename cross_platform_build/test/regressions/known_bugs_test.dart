@@ -37,7 +37,7 @@ void main() {
             reason: 'Quest "${q.title}" auto-completes because '
                 'requiredMinutes is ${q.requiredMinutes}');
       }
-    }, skip: 'KNOWN BUG (audit 4562): generateQuests never sets requiredMinutes');
+    }, /* FIXED Jul 2, 2026: generateQuests now sets requiredMinutes per type */);
   });
 
   group('KNOWN BUG: history entry fromJson wipes data on malformed records', () {
@@ -51,14 +51,14 @@ void main() {
         () => WeightEntry.fromJson({'date': '2026-01-01T00:00:00.000'}),
         returnsNormally,
       );
-    }, skip: 'KNOWN BUG (audit 4567): WeightEntry.fromJson throws on null weight');
+    }, /* FIXED Jul 3, 2026: WeightEntry.fromJson is now null-safe */);
 
     test('PREntry.fromJson tolerates a missing date', () {
       expect(
         () => PREntry.fromJson({'value': 135.0}),
         returnsNormally,
       );
-    }, skip: 'KNOWN BUG (audit 4567): PREntry.fromJson throws on null date');
+    }, /* FIXED Jul 3, 2026: PREntry.fromJson is now null-safe */);
   });
 
   group('KNOWN BUG: confirming the onboarding profile wipes progress', () {

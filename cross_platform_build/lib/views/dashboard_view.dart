@@ -127,9 +127,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     final profile = Provider.of<UserProfileManager>(context);
     final health = Provider.of<HealthManager>(context);
 
-    // Sync values daily on load
-    profile.checkNewDayRefresh();
+    // Sync values daily on load (deferred to avoid mutating state during build)
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      profile.checkNewDayRefresh();
       profile.checkBadges(health);
     });
 
