@@ -73,6 +73,6 @@ void main() {
     test('re-confirming a profile preserves earned progress', () {
       // Placeholder — implement once the confirm flow no longer resets, or
       // once the reset is gated to first-time onboarding only.
-    }, skip: 'KNOWN BUG (audit 4545): _confirmProfile calls resetProgress()');
+    }, /* FIXED Jul 3, 2026: resetProgress now gated to first-time onboarding only */);
   });
 }

@@ -125,7 +125,11 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     prs["Overhead Press"] = double.tryParse(_ohpPRController.text) ?? 95.0;
     profile.personalRecords = prs;
     
-    profile.resetProgress();
+    // Only reset progress on first-time onboarding — re-running the quiz
+    // from Settings should preserve all earned progress (level, XP, etc.)
+    if (!profile.hasCompletedInitialQuiz) {
+      profile.resetProgress();
+    }
     profile.hasCompletedInitialQuiz = true;
   }
 
