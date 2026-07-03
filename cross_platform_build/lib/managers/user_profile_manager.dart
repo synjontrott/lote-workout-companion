@@ -232,6 +232,7 @@ class UserProfileManager extends ChangeNotifier {
   set useImperialUnits(bool val) {
     if (_useImperialUnits != val) {
       if (val) {
+        // Metric → Imperial: convert L to oz, snap to 8oz grid, store as L
         final double rawOzGoal = _waterIntakeGoal * 33.814;
         final double roundedOzGoal = ((rawOzGoal / 8.0).round() * 8.0).clamp(8.0, double.infinity);
         _waterIntakeGoal = roundedOzGoal / 33.814;
@@ -240,8 +241,9 @@ class UserProfileManager extends ChangeNotifier {
         final double roundedOzIntake = (rawOzIntake / 8.0).round() * 8.0;
         _todayWaterIntake = roundedOzIntake / 33.814;
       } else {
+        // Imperial → Metric: snap to 0.5L grid to eliminate oz→L drift
         _waterIntakeGoal = ((_waterIntakeGoal * 2.0).round() / 2.0).clamp(0.5, double.infinity);
-        _todayWaterIntake = (_todayWaterIntake * 2.0).round() / 2.0;
+        _todayWaterIntake = ((_todayWaterIntake * 2.0).round() / 2.0).clamp(0.0, double.infinity);
       }
       _useImperialUnits = val;
       _save();
