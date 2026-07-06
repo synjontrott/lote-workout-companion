@@ -572,7 +572,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
   Widget _buildStatRow(String label, int value, String desc, Color themeColor) {
     final mod = ((value - 10) / 2).floor();
     final modStr = mod >= 0 ? "+$mod" : "$mod";
-    final pct = (value / 30.0).clamp(0.0, 1.0);
+    final pct = (value / 100.0).clamp(0.0, 1.0);
 
     return Container(
       padding: const EdgeInsets.all(12),

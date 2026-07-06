@@ -2192,7 +2192,7 @@ List<LotEQuest> generateQuests(
           ];
           title = titles[i % titles.length];
           desc =
-              "Perform bodyweight dips, pushups, pullups, or handstands. Complete 15 minutes.";
+              "Perform 5 sets of bodyweight dips, pushups, pullups, or handstands.";
           wType = WorkoutCategory.strength;
           stat = i.isOdd
               ? (i ~/ 2 % 2 == 0 ? StatType.intelligence : StatType.charisma)
@@ -2211,7 +2211,7 @@ List<LotEQuest> generateQuests(
           ];
           title = titles[i % titles.length];
           desc =
-              "Perform squat, bench, or deadlift reps. Complete 20 minutes of heavy structural loading.";
+              "Perform 5 working sets of squats, bench presses, or deadlifts.";
           wType = WorkoutCategory.strength;
           stat = i.isOdd
               ? (i ~/ 2 % 2 == 0 ? StatType.charisma : StatType.intelligence)
@@ -2303,7 +2303,9 @@ List<LotEQuest> generateQuests(
           cadence: QuestCadence.daily,
           progressCount: 0,
           targetCount: 1,
-          requiredMinutes: wType == WorkoutCategory.nutrition
+          requiredMinutes:
+              (wType == WorkoutCategory.nutrition ||
+                  wType == WorkoutCategory.strength)
               ? 0.0
               : (wType == WorkoutCategory.cardio ? 20.0 : 15.0),
         ),
