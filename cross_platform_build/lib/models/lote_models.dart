@@ -90,10 +90,10 @@ enum ExpressionStyle {
 }
 
 enum CognitiveProfile {
-  adhd('The Flame Sentinel'),
-  autistic('The Iron Archivist'),
-  audhd('The Chimera'),
-  neurotypical('The Radiant Vanguard');
+  adhd('The Hunter'),
+  autistic('The Vanguard'),
+  audhd('The Revenant'),
+  neurotypical('The Warrior');
 
   final String title;
   const CognitiveProfile(this.title);
@@ -5374,6 +5374,60 @@ class PREntry {
     return PREntry(
       date: DateTime.tryParse(json['date'] ?? '') ?? DateTime.now(),
       value: (json['value'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+}
+
+class WorkoutSchedule {
+  final Map<int, String> routinesByDay; // 1=Mon, 7=Sun, maps to Routine ID
+  final Map<int, bool> restDays;
+  final String flowTime; // For ADHD/AuDHD: "Morning", "Afternoon", "Night"
+  final String? consistentTime; // For Autistic/Neurotypical: e.g. "08:00"
+
+  WorkoutSchedule({
+    this.routinesByDay = const {},
+    this.restDays = const {},
+    this.flowTime = "Morning",
+    this.consistentTime,
+  });
+
+  factory WorkoutSchedule.fromJson(Map<String, dynamic> json) {
+    return WorkoutSchedule(
+      routinesByDay:
+          (json['routinesByDay'] as Map<String, dynamic>?)?.map(
+            (k, v) => MapEntry(int.parse(k), v as String),
+          ) ??
+          {},
+      restDays:
+          (json['restDays'] as Map<String, dynamic>?)?.map(
+            (k, v) => MapEntry(int.parse(k), v as bool),
+          ) ??
+          {},
+      flowTime: json['flowTime'] as String? ?? "Morning",
+      consistentTime: json['consistentTime'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'routinesByDay': routinesByDay.map((k, v) => MapEntry(k.toString(), v)),
+      'restDays': restDays.map((k, v) => MapEntry(k.toString(), v)),
+      'flowTime': flowTime,
+      'consistentTime': consistentTime,
+    };
+  }
+
+  WorkoutSchedule copyWith({
+    Map<int, String>? routinesByDay,
+    Map<int, bool>? restDays,
+    String? flowTime,
+    String? consistentTime,
+  }) {
+    return WorkoutSchedule(
+      routinesByDay: routinesByDay ?? this.routinesByDay,
+      restDays: restDays ?? this.restDays,
+      flowTime: flowTime ?? this.flowTime,
+      consistentTime: consistentTime ?? this.consistentTime,
     );
   }
 }

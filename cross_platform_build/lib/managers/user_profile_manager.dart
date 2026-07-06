@@ -119,6 +119,15 @@ class UserProfileManager extends ChangeNotifier {
   List<WorkoutRoutine> _customRoutines = [];
   List<WorkoutRoutine> get customRoutines => _customRoutines;
 
+  WorkoutSchedule _schedule = WorkoutSchedule();
+  WorkoutSchedule get schedule => _schedule;
+
+  void updateSchedule(WorkoutSchedule newSchedule) {
+    _schedule = newSchedule;
+    _save();
+    notifyListeners();
+  }
+
   void saveCustomRoutine(WorkoutRoutine routine) {
     final idx = _customRoutines.indexWhere((r) => r.id == routine.id);
     if (idx != -1) {
@@ -995,6 +1004,19 @@ class UserProfileManager extends ChangeNotifier {
         _cognitiveProfile = null;
       }
 
+      final routinesStr = prefs.getString('lote_custom_routines');
+      if (routinesStr != null) {
+        final decoded = jsonDecode(routinesStr) as List;
+        _customRoutines = decoded
+            .map((x) => WorkoutRoutine.fromJson(x))
+            .toList();
+      }
+
+      final scheduleStr = prefs.getString('lote_schedule');
+      if (scheduleStr != null) {
+        _schedule = WorkoutSchedule.fromJson(jsonDecode(scheduleStr));
+      }
+
       final statsJson = prefs.getString('lote_dnd_stats');
       if (statsJson != null) {
         try {
@@ -1416,6 +1438,11 @@ class UserProfileManager extends ChangeNotifier {
         'lote_logged_workout_sessions',
         jsonEncode(_loggedWorkoutSessions.map((s) => s.toJson()).toList()),
       );
+
+      final routinesList = _customRoutines.map((r) => r.toJson()).toList();
+      await prefs.setString('lote_custom_routines', jsonEncode(routinesList));
+
+      await prefs.setString('lote_schedule', jsonEncode(_schedule.toJson()));
 
       await prefs.setDouble('lote_start_weight', _startWeight);
       await prefs.setDouble('lote_goal_weight', _goalWeight);
