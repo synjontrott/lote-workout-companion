@@ -3,7 +3,7 @@
 A deliberately **light** harness built on the Flutter SDK's built-in
 `flutter_test` — no extra test dependencies, no mocking framework, no
 `integration_test` (yet). See the "Engineering Standards & Definition of Done"
-section in the repo-root `agents.md` for the rules every change must follow.
+section in the repo-root `AGENTS.md` for the rules every change must follow.
 
 ## Run
 

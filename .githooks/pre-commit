@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Pre-commit quality gate for lote-workout-companion.
+#
+# Enforces that staged code is formatted, lint-clean, and tested BEFORE it can be
+# committed. See ../agents.md -> "Engineering Standards" for the policy.
+#
+# Activate once per clone (from the repo root):
+#     git config core.hooksPath .githooks
+#
+# Requires: flutter/dart (Dart changes), ruff + pytest (Python changes).
+#     pip install ruff pytest
+#
+# Bypass in an emergency with `git commit --no-verify` (discouraged; CI still gates).
+set -uo pipefail
+
+APP_DIR="cross_platform_build"
+fail=0
+
+changed() { git diff --cached --name-only --diff-filter=ACM; }
+
+# ---------- Dart (product code) ----------
+dart_files=$(changed | grep -E "^${APP_DIR}/.*\.dart$" || true)
+if [ -n "$dart_files" ]; then
+  echo "▶ Dart: format + analyze + test"
+  if ! command -v flutter >/dev/null 2>&1; then
+    echo "✖ flutter not found — install Flutter to commit Dart changes."
+    exit 1
+  fi
+  if ! dart format --output=none --set-exit-if-changed $dart_files; then
+    echo "✖ dart format: run 'dart format .' and re-stage the files."
+    fail=1
+  fi
+  ( cd "$APP_DIR" && flutter analyze --no-fatal-infos ) || { echo "✖ flutter analyze failed."; fail=1; }
+  ( cd "$APP_DIR" && flutter test ) || { echo "✖ flutter test failed."; fail=1; }
+fi
+
+# ---------- Python (helper / codegen scripts) ----------
+py_files=$(changed | grep -E "\.py$" || true)
+if [ -n "$py_files" ]; then
+  echo "▶ Python: ruff + pytest"
+  if ! command -v ruff >/dev/null 2>&1 || ! command -v pytest >/dev/null 2>&1; then
+    echo "✖ ruff/pytest not found — run 'pip install ruff pytest' to commit Python changes."
+    exit 1
+  fi
+  ( cd "$APP_DIR" && ruff check . ) || { echo "✖ ruff check failed (try 'ruff check --fix .')."; fail=1; }
+  ( cd "$APP_DIR" && pytest -q ) || { echo "✖ pytest failed."; fail=1; }
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "✗ pre-commit gate failed — commit aborted."
+  exit 1
+fi
+echo "✓ pre-commit gate passed."
+exit 0

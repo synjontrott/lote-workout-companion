@@ -74,7 +74,7 @@ Scheduling, Workouts & Quests, Nutrition & Health, RPG & Gamification, Dynamic
 Health Metrics.
 
 The initial 28 tickets were migrated on **2026-07-02** from a single "Master List
-of Tickets to be Resolved" checklist that used to live in `agents.md`. They share
+of Tickets to be Resolved" checklist that used to live in `AGENTS.md`. They share
 `created: 2026-07-02` (the migration date; per-ticket creation dates were not
 recorded in the original checklist) and `completed: 2026-07-06` (the day their
 implementing commits landed). All 28 are `done`.
