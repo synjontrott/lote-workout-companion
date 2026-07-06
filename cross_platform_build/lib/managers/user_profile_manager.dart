@@ -28,6 +28,7 @@ class UserProfileManager extends ChangeNotifier {
   int _healthyMealsLoggedToday = 0;
   String _homePlanet = 'Warrion';
   List<MealEntry> _loggedMeals = [];
+  List<MealEntry> _savedMeals = [];
 
   List<TrainingFocus> _selectedFocuses = [
     TrainingFocus.calisthenics,
@@ -96,6 +97,12 @@ class UserProfileManager extends ChangeNotifier {
   bool get isLoaded => _isLoaded;
   String get characterName => _characterName;
   int get age => _age;
+  set age(int val) {
+    _age = val;
+    _save();
+    notifyListeners();
+  }
+
   int get selectedElementIndex => _selectedElementIndex;
   ExpressionStyle get expressionStyle => _expressionStyle;
   CognitiveProfile? get cognitiveProfile => _cognitiveProfile;
@@ -115,6 +122,7 @@ class UserProfileManager extends ChangeNotifier {
   int get healthyMealsLoggedToday => _healthyMealsLoggedToday;
   String get homePlanet => _homePlanet;
   List<MealEntry> get loggedMeals => _loggedMeals;
+  List<MealEntry> get savedMeals => _savedMeals;
 
   List<TrainingFocus> get selectedFocuses => _selectedFocuses;
   double get height => _height;
@@ -1243,6 +1251,19 @@ class UserProfileManager extends ChangeNotifier {
       } else {
         _loggedMeals = [];
       }
+
+      final savedMealsJson = prefs.getString('lote_saved_meals');
+      if (savedMealsJson != null) {
+        try {
+          final List<dynamic> raw = jsonDecode(savedMealsJson);
+          _savedMeals = raw.map((m) => MealEntry.fromJson(m)).toList();
+        } catch (_) {
+          _savedMeals = [];
+        }
+      } else {
+        _savedMeals = [];
+      }
+
       final defaultPlanet =
           availableElements[_selectedElementIndex].planetOfOrigin;
       _homePlanet = prefs.getString('lote_home_planet') ?? defaultPlanet;
@@ -1300,6 +1321,11 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setString(
         'lote_logged_meals',
         jsonEncode(_loggedMeals.map((m) => m.toJson()).toList()),
+      );
+
+      await prefs.setString(
+        'lote_saved_meals',
+        jsonEncode(_savedMeals.map((m) => m.toJson()).toList()),
       );
 
       await prefs.setDouble('lote_body_height', _height);
@@ -1973,6 +1999,12 @@ class UserProfileManager extends ChangeNotifier {
     _loggedMeals.add(entry);
     _healthyMealsLoggedToday += 1;
     logWorkout(WorkoutCategory.nutrition);
+    _save();
+    notifyListeners();
+  }
+
+  void saveMealTemplate(MealEntry meal) {
+    _savedMeals.add(meal);
     _save();
     notifyListeners();
   }

@@ -20,6 +20,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
 
   // Identity states
   late final TextEditingController _nameController;
+  late final TextEditingController _ageController;
   String _selectedPlanet = "Warrion";
   int _tempElementIdx = 0;
 
@@ -59,6 +60,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: "Warrior");
+    _ageController = TextEditingController(text: "25");
 
     _heightController = TextEditingController(text: "70.0");
     _weightController = TextEditingController(text: "160.0");

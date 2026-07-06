@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../managers/user_profile_manager.dart';
+import '../models/lote_models.dart';
 
 class NutritionView extends StatefulWidget {
   const NutritionView({super.key});
@@ -20,6 +21,7 @@ class _NutritionViewState extends State<NutritionView> {
   String _mealCarbs = "";
   String _mealFats = "";
   String _mealSugar = "";
+  bool _saveAsTemplate = false;
 
   @override
   Widget build(BuildContext context) {
@@ -542,6 +544,58 @@ class _NutritionViewState extends State<NutritionView> {
               ),
               const SizedBox(height: 24),
 
+              if (profile.savedMeals.isNotEmpty) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "QUICK LOG MEALS",
+                        style: GoogleFonts.orbitron(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: profile.savedMeals.map((meal) {
+                          return ActionChip(
+                            label: Text(
+                              meal.name,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Colors.white,
+                              ),
+                            ),
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.05,
+                            ),
+                            side: BorderSide(
+                              color: Colors.white.withValues(alpha: 0.1),
+                            ),
+                            onPressed: () {
+                              profile.logDetailedMeal(
+                                name: meal.name,
+                                calories: meal.calories,
+                                protein: meal.protein,
+                                carbs: meal.carbs,
+                                fats: meal.fats,
+                                sugar: meal.sugar,
+                              );
+                              setState(() {});
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
               // Action button to log food
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1009,6 +1063,24 @@ class _NutritionViewState extends State<NutritionView> {
                           return null;
                         },
                       ),
+                      const SizedBox(height: 12),
+                      CheckboxListTile(
+                        title: const Text(
+                          "Save as Quick Meal template",
+                          style: TextStyle(color: Colors.white, fontSize: 11),
+                        ),
+                        value: _saveAsTemplate,
+                        activeColor: profile.currentElement.primaryColor,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                        onChanged: (val) {
+                          if (val != null) {
+                            setDialogState(() {
+                              _saveAsTemplate = val;
+                            });
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -1040,6 +1112,23 @@ class _NutritionViewState extends State<NutritionView> {
                           final carb = double.tryParse(_mealCarbs) ?? 0;
                           final fat = double.tryParse(_mealFats) ?? 0;
                           final sug = double.tryParse(_mealSugar) ?? 0;
+
+                          if (_saveAsTemplate) {
+                            profile.saveMealTemplate(
+                              MealEntry(
+                                id: UniqueKey().toString(),
+                                name: _mealName.isEmpty
+                                    ? "Healthy Rations"
+                                    : _mealName,
+                                calories: cal,
+                                protein: prot,
+                                carbs: carb,
+                                fats: fat,
+                                sugar: sug,
+                                date: DateTime.now(),
+                              ),
+                            );
+                          }
 
                           profile.logDetailedMeal(
                             name: _mealName.isEmpty

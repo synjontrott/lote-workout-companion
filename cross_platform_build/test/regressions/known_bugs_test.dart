@@ -25,7 +25,6 @@ void main() {
       final timeGated = quests.where(
         (q) =>
             q.workoutType == WorkoutCategory.cardio ||
-            q.workoutType == WorkoutCategory.strength ||
             q.workoutType == WorkoutCategory.flexibility,
       );
 

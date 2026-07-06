@@ -220,16 +220,16 @@ class _SettingsViewState extends State<SettingsView> {
                               onChanged: (val) => profile.characterName = val,
                             ),
                             const SizedBox(height: 12),
-                          _buildConfigField(
-                            label: "AGE",
-                            hint: "Enter Age",
-                            initialValue: profile.age.toString(),
-                            onChanged: (val) {
-                              final a = int.tryParse(val);
-                              if (a != null) profile.age = a;
-                            },
-                          ),
-                          const SizedBox(height: 12),
+                            _buildConfigField(
+                              label: "AGE",
+                              hint: "Enter Age",
+                              initialValue: profile.age.toString(),
+                              onChanged: (val) {
+                                final a = int.tryParse(val);
+                                if (a != null) profile.age = a;
+                              },
+                            ),
+                            const SizedBox(height: 12),
 
                             // Home Planet Input
                             Column(
