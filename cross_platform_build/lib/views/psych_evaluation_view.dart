@@ -100,6 +100,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   void _confirmProfile(UserProfileManager profile) {
     profile.useImperialUnits = _useImperial;
     profile.characterName = _nameController.text;
+    profile.age = int.tryParse(_ageController.text) ?? 25;
     profile.homePlanet = _selectedPlanet;
     profile.selectedElementIndex = _tempElementIdx;
     profile.cognitiveProfile = _selectedProfile;
@@ -257,6 +258,8 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
 
         // Textfields
         _buildTextField("CHARACTER NAME", _nameController, TextInputType.name),
+        const SizedBox(height: 16),
+        _buildTextField("AGE", _ageController, TextInputType.number),
         const SizedBox(height: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

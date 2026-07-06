@@ -7,6 +7,7 @@ import 'health_manager.dart';
 class UserProfileManager extends ChangeNotifier {
   // Persisted Fields
   String _characterName = 'Recruit';
+  int _age = 25;
   int _selectedElementIndex = 0;
   ExpressionStyle _expressionStyle = ExpressionStyle.standard;
   CognitiveProfile? _cognitiveProfile;
@@ -94,6 +95,7 @@ class UserProfileManager extends ChangeNotifier {
   // Getters
   bool get isLoaded => _isLoaded;
   String get characterName => _characterName;
+  int get age => _age;
   int get selectedElementIndex => _selectedElementIndex;
   ExpressionStyle get expressionStyle => _expressionStyle;
   CognitiveProfile? get cognitiveProfile => _cognitiveProfile;
@@ -932,6 +934,7 @@ class UserProfileManager extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       _characterName = prefs.getString('lote_char_name') ?? 'Recruit';
+      _age = prefs.getInt('lote_age') ?? 25;
       _selectedElementIndex = _normalizedElementIndex(
         prefs.getInt('lote_selected_element_idx') ?? 0,
       );
@@ -1257,6 +1260,7 @@ class UserProfileManager extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('lote_char_name', _characterName);
+      await prefs.setInt('lote_age', _age);
       await prefs.setInt('lote_selected_element_idx', _selectedElementIndex);
       await prefs.setString('lote_expression_style', _expressionStyle.name);
       await prefs.setString(

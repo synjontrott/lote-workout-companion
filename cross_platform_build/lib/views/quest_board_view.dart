@@ -1907,7 +1907,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "TAILORED SUGGESTED WORKOUTS",
+              "WORKOUT LIBRARY",
               style: GoogleFonts.orbitron(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
