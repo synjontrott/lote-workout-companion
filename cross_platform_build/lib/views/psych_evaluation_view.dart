@@ -59,7 +59,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: "Warrior");
-    
+
     _heightController = TextEditingController(text: "70.0");
     _weightController = TextEditingController(text: "160.0");
     _chestController = TextEditingController(text: "38.0");
@@ -104,27 +104,27 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     profile.selectedElementIndex = _tempElementIdx;
     profile.cognitiveProfile = _selectedProfile;
     profile.selectedFocuses = _tempSelectedFocuses.toList();
-    profile.height = double.tryParse(_heightController.text) ?? 70.0;
-    profile.weight = double.tryParse(_weightController.text) ?? 160.0;
-    profile.chest = double.tryParse(_chestController.text) ?? 38.0;
-    profile.arms = double.tryParse(_armsController.text) ?? 13.0;
-    profile.waist = double.tryParse(_waistController.text) ?? 32.0;
-    profile.hips = double.tryParse(_hipsController.text) ?? 40.0;
-    profile.legs = double.tryParse(_legsController.text) ?? 22.0;
+    profile.height = double.tryParse(_heightController.text) ?? 0.0;
+    profile.weight = double.tryParse(_weightController.text) ?? 0.0;
+    profile.chest = double.tryParse(_chestController.text) ?? 0.0;
+    profile.arms = double.tryParse(_armsController.text) ?? 0.0;
+    profile.waist = double.tryParse(_waistController.text) ?? 0.0;
+    profile.hips = double.tryParse(_hipsController.text) ?? 0.0;
+    profile.legs = double.tryParse(_legsController.text) ?? 0.0;
 
     // Goals and PRs
-    profile.startWeight = double.tryParse(_weightController.text) ?? 160.0;
-    profile.goalWeight = double.tryParse(_weightGoalController.text) ?? 150.0;
-    profile.distanceGoal = double.tryParse(_distanceGoalController.text) ?? 10.0;
-    profile.waterIntakeGoal = double.tryParse(_waterGoalController.text) ?? 3.0;
+    profile.startWeight = double.tryParse(_weightController.text) ?? 0.0;
+    profile.goalWeight = double.tryParse(_weightGoalController.text) ?? 0.0;
+    profile.distanceGoal = double.tryParse(_distanceGoalController.text) ?? 0.0;
+    profile.waterIntakeGoal = double.tryParse(_waterGoalController.text) ?? 0.0;
 
     final prs = Map<String, double>.from(profile.personalRecords);
-    prs["Bench Press"] = double.tryParse(_benchPRController.text) ?? 135.0;
-    prs["Barbell Squat"] = double.tryParse(_squatPRController.text) ?? 155.0;
-    prs["Deadlift"] = double.tryParse(_deadliftPRController.text) ?? 185.0;
-    prs["Overhead Press"] = double.tryParse(_ohpPRController.text) ?? 95.0;
+    prs["Bench Press"] = double.tryParse(_benchPRController.text) ?? 0.0;
+    prs["Barbell Squat"] = double.tryParse(_squatPRController.text) ?? 0.0;
+    prs["Deadlift"] = double.tryParse(_deadliftPRController.text) ?? 0.0;
+    prs["Overhead Press"] = double.tryParse(_ohpPRController.text) ?? 0.0;
     profile.personalRecords = prs;
-    
+
     // Only reset progress on first-time onboarding — re-running the quiz
     // from Settings should preserve all earned progress (level, XP, etc.)
     if (!profile.hasCompletedInitialQuiz) {
@@ -133,11 +133,11 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     profile.hasCompletedInitialQuiz = true;
   }
 
-
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<UserProfileManager>(context);
-    final themeColor = UserProfileManager.availableElements[_tempElementIdx].primaryColor;
+    final themeColor =
+        UserProfileManager.availableElements[_tempElementIdx].primaryColor;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -178,9 +178,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                 ],
               ),
               if (_showingQuiz)
-                Positioned.fill(
-                  child: _buildQuizOverlay(themeColor),
-                ),
+                Positioned.fill(child: _buildQuizOverlay(themeColor)),
             ],
           ),
         ),
@@ -220,10 +218,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         Text(
           "Phase 1: Define name, planet, and element alignment",
           textAlign: TextAlign.center,
-          style: GoogleFonts.exo2(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
+          style: GoogleFonts.exo2(fontSize: 12, color: Colors.grey),
         ),
         const SizedBox(height: 25),
 
@@ -231,7 +226,14 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("METRIC", style: TextStyle(color: _useImperial ? Colors.grey : themeColor, fontWeight: FontWeight.bold, fontSize: 12)),
+            Text(
+              "METRIC",
+              style: TextStyle(
+                color: _useImperial ? Colors.grey : themeColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
             Switch(
               value: _useImperial,
               activeThumbColor: themeColor,
@@ -241,7 +243,14 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                 });
               },
             ),
-            Text("IMPERIAL", style: TextStyle(color: _useImperial ? themeColor : Colors.grey, fontWeight: FontWeight.bold, fontSize: 12)),
+            Text(
+              "IMPERIAL",
+              style: TextStyle(
+                color: _useImperial ? themeColor : Colors.grey,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
@@ -262,18 +271,29 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             ),
             const SizedBox(height: 6),
             Theme(
-              data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
+              data: Theme.of(
+                context,
+              ).copyWith(canvasColor: const Color(0xFF0F0F0F)),
               child: DropdownButtonFormField<String>(
                 initialValue: _selectedPlanet,
-                style: GoogleFonts.orbitron(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+                style: GoogleFonts.orbitron(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
                   filled: true,
                   fillColor: Colors.white.withValues(alpha: 0.03),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                    borderSide: BorderSide(
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
@@ -281,10 +301,12 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                   ),
                 ),
                 items: ["Ninjonia", "Techno", "Warrion", "Battacaria"]
-                    .map((planet) => DropdownMenuItem(
-                          value: planet,
-                          child: Text(planet.toUpperCase()),
-                        ))
+                    .map(
+                      (planet) => DropdownMenuItem(
+                        value: planet,
+                        child: Text(planet.toUpperCase()),
+                      ),
+                    )
                     .toList(),
                 onChanged: (val) {
                   if (val != null) {
@@ -310,12 +332,18 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
           icon: const Icon(Icons.psychology, color: Colors.black, size: 18),
           label: Text(
             "TAKE ELEMENTAL INITIATION QUIZ",
-            style: GoogleFonts.orbitron(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black),
+            style: GoogleFonts.orbitron(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
           ),
           style: ElevatedButton.styleFrom(
             backgroundColor: themeColor,
             padding: const EdgeInsets.symmetric(vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
         const SizedBox(height: 25),
@@ -347,47 +375,59 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white.withValues(alpha: 0.08) : Colors.white.withValues(alpha: 0.02),
+                color: isSelected
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.white.withValues(alpha: 0.02),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? el.primaryColor.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.05),
+                  color: isSelected
+                      ? el.primaryColor.withValues(alpha: 0.5)
+                      : Colors.white.withValues(alpha: 0.05),
                   width: 1.5,
                 ),
               ),
               child: Row(
                 children: [
-                   Text(
-                     el.name == "Fire" ? "🔥" : el.name == "Water" ? "💧" : el.name == "Earth" ? "🪨" : "💨",
-                     style: const TextStyle(fontSize: 20),
-                   ),
-                   const SizedBox(width: 12),
-                   Expanded(
-                     child: Column(
-                       crossAxisAlignment: CrossAxisAlignment.start,
-                       children: [
-                         Text(
-                           el.name.toUpperCase(),
-                           style: GoogleFonts.orbitron(
-                             fontSize: 13,
-                             fontWeight: FontWeight.bold,
-                             color: Colors.white,
-                           ),
-                         ),
-                         Text(
-                           el.description,
-                           style: GoogleFonts.exo2(
-                             fontSize: 10,
-                             color: Colors.grey,
-                           ),
-                         ),
-                       ],
-                     ),
-                   ),
+                  Text(
+                    el.name == "Fire"
+                        ? "🔥"
+                        : el.name == "Water"
+                        ? "💧"
+                        : el.name == "Earth"
+                        ? "🪨"
+                        : "💨",
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          el.name.toUpperCase(),
+                          style: GoogleFonts.orbitron(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Text(
+                          el.description,
+                          style: GoogleFonts.exo2(
+                            fontSize: 10,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Icon(
-                    isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+                    isSelected
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_off,
                     color: isSelected ? el.primaryColor : Colors.grey,
                     size: 18,
-                  )
+                  ),
                 ],
               ),
             ),
@@ -404,7 +444,9 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
           style: ElevatedButton.styleFrom(
             backgroundColor: themeColor,
             padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
           child: Text(
             "NEXT PHASE",
@@ -448,10 +490,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         Text(
           "Phase 2: Select mindset profile & workout focuses",
           textAlign: TextAlign.center,
-          style: GoogleFonts.exo2(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
+          style: GoogleFonts.exo2(fontSize: 12, color: Colors.grey),
         ),
         const SizedBox(height: 25),
 
@@ -470,8 +509,12 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         ...profiles.map((cp) {
           final isSelected = _selectedProfile == cp;
           String displayName = cp == CognitiveProfile.neurotypical
-              ? "Neurotypical"
-              : (cp == CognitiveProfile.adhd ? "ADHD" : (cp == CognitiveProfile.autistic ? "Autism" : "AuDHD"));
+              ? "Vanguard"
+              : (cp == CognitiveProfile.adhd
+                    ? "Hunter"
+                    : (cp == CognitiveProfile.autistic
+                          ? "Revenant"
+                          : "Warrior"));
 
           return InkWell(
             onTap: () {
@@ -484,10 +527,14 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.white.withValues(alpha: 0.08) : Colors.white.withValues(alpha: 0.02),
+                color: isSelected
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.white.withValues(alpha: 0.02),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? themeColor.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.05),
+                  color: isSelected
+                      ? themeColor.withValues(alpha: 0.5)
+                      : Colors.white.withValues(alpha: 0.05),
                   width: 1.5,
                 ),
               ),
@@ -506,7 +553,10 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: themeColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(4),
@@ -525,10 +575,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                   const SizedBox(height: 6),
                   Text(
                     cp.description,
-                    style: GoogleFonts.exo2(
-                      fontSize: 10,
-                      color: Colors.grey,
-                    ),
+                    style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey),
                   ),
                 ],
               ),
@@ -586,11 +633,17 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   side: const BorderSide(color: Colors.white24),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(
                   "BACK",
-                  style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: GoogleFonts.orbitron(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -605,11 +658,17 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: themeColor,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(
                   "NEXT PHASE",
-                  style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
+                  style: GoogleFonts.orbitron(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -640,17 +699,21 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         Text(
           "Phase 3: Input initial body metrics to track progress",
           textAlign: TextAlign.center,
-          style: GoogleFonts.exo2(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
+          style: GoogleFonts.exo2(fontSize: 12, color: Colors.grey),
         ),
         const SizedBox(height: 25),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("METRIC", style: TextStyle(color: _useImperial ? Colors.grey : themeColor, fontWeight: FontWeight.bold, fontSize: 12)),
+            Text(
+              "METRIC",
+              style: TextStyle(
+                color: _useImperial ? Colors.grey : themeColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
             Switch(
               value: _useImperial,
               activeThumbColor: themeColor,
@@ -660,36 +723,83 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                 });
               },
             ),
-            Text("IMPERIAL", style: TextStyle(color: _useImperial ? themeColor : Colors.grey, fontWeight: FontWeight.bold, fontSize: 12)),
+            Text(
+              "IMPERIAL",
+              style: TextStyle(
+                color: _useImperial ? themeColor : Colors.grey,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
 
         Row(
           children: [
-            Expanded(child: _buildTextField(_useImperial ? "HEIGHT (INCHES)" : "HEIGHT (CM)", _heightController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "HEIGHT (INCHES)" : "HEIGHT (CM)",
+                _heightController,
+                TextInputType.number,
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField(_useImperial ? "WEIGHT (LBS)" : "WEIGHT (KG)", _weightController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "WEIGHT (LBS)" : "WEIGHT (KG)",
+                _weightController,
+                TextInputType.number,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildTextField(_useImperial ? "CHEST (INCHES)" : "CHEST (CM)", _chestController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "CHEST (INCHES)" : "CHEST (CM)",
+                _chestController,
+                TextInputType.number,
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField(_useImperial ? "ARMS (INCHES)" : "ARMS (CM)", _armsController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "ARMS (INCHES)" : "ARMS (CM)",
+                _armsController,
+                TextInputType.number,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildTextField(_useImperial ? "WAIST (INCHES)" : "WAIST (CM)", _waistController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "WAIST (INCHES)" : "WAIST (CM)",
+                _waistController,
+                TextInputType.number,
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField(_useImperial ? "HIPS (INCHES)" : "HIPS (CM)", _hipsController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "HIPS (INCHES)" : "HIPS (CM)",
+                _hipsController,
+                TextInputType.number,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
-        _buildTextField(_useImperial ? "LEGS (INCHES)" : "LEGS (CM)", _legsController, TextInputType.number),
+        _buildTextField(
+          _useImperial ? "LEGS (INCHES)" : "LEGS (CM)",
+          _legsController,
+          TextInputType.number,
+        ),
 
         const SizedBox(height: 30),
         Row(
@@ -704,11 +814,17 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   side: const BorderSide(color: Colors.white24),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(
                   "BACK",
-                  style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: GoogleFonts.orbitron(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -723,11 +839,17 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: themeColor,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(
                   "CONTINUE",
-                  style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
+                  style: GoogleFonts.orbitron(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -738,7 +860,11 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, TextInputType type) {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller,
+    TextInputType type,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -754,10 +880,17 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         TextField(
           controller: controller,
           keyboardType: type,
-          style: GoogleFonts.orbitron(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+          style: GoogleFonts.orbitron(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+          ),
           decoration: InputDecoration(
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
             filled: true,
             fillColor: Colors.white.withValues(alpha: 0.03),
             suffixIcon: IconButton(
@@ -768,7 +901,9 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+              borderSide: BorderSide(
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -803,10 +938,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
           Text(
             "Question ${_currentQuizQuestionIdx + 1} of ${_quizQuestions.length}",
             textAlign: TextAlign.center,
-            style: GoogleFonts.exo2(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
+            style: GoogleFonts.exo2(fontSize: 12, color: Colors.grey),
           ),
           const SizedBox(height: 30),
           Container(
@@ -847,12 +979,20 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                   backgroundColor: Colors.white.withValues(alpha: 0.04),
                   foregroundColor: Colors.white,
                   side: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(
                   opt.text,
-                  style: GoogleFonts.exo2(fontSize: 13, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.exo2(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             );
@@ -866,11 +1006,16 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
             },
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: Colors.redAccent),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             child: Text(
               "CANCEL QUIZ",
-              style: GoogleFonts.orbitron(fontSize: 11, color: Colors.redAccent),
+              style: GoogleFonts.orbitron(
+                fontSize: 11,
+                color: Colors.redAccent,
+              ),
             ),
           ),
         ],
@@ -899,12 +1044,24 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
 
   void _showQuizCompleteDialog() {
     final elName = UserProfileManager.availableElements[_tempElementIdx].name;
-    final emoji = elName == "Fire" ? "🔥" : elName == "Water" ? "💧" : elName == "Earth" ? "🪨" : "💨";
+    final emoji = elName == "Fire"
+        ? "🔥"
+        : elName == "Water"
+        ? "💧"
+        : elName == "Earth"
+        ? "🪨"
+        : "💨";
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF0F172A),
-        title: Text("QUIZ COMPLETE", style: GoogleFonts.orbitron(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text(
+          "QUIZ COMPLETE",
+          style: GoogleFonts.orbitron(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         content: Text(
           "The Elsaither energy in your responses aligns with the element of $elName $emoji!\n\nThis element has been automatically selected for you.",
           style: GoogleFonts.exo2(color: Colors.grey),
@@ -912,7 +1069,10 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("COMMENCE", style: GoogleFonts.orbitron(color: Colors.greenAccent)),
+            child: Text(
+              "COMMENCE",
+              style: GoogleFonts.orbitron(color: Colors.greenAccent),
+            ),
           ),
         ],
       ),
@@ -938,10 +1098,7 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         Text(
           "Phase 4: Set starting fitness goals and strength benchmarks",
           textAlign: TextAlign.center,
-          style: GoogleFonts.exo2(
-            fontSize: 12,
-            color: Colors.grey,
-          ),
+          style: GoogleFonts.exo2(fontSize: 12, color: Colors.grey),
         ),
         const SizedBox(height: 25),
 
@@ -949,13 +1106,25 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("METRIC", style: GoogleFonts.orbitron(fontSize: 10, color: !_useImperial ? themeColor : Colors.grey)),
+            Text(
+              "METRIC",
+              style: GoogleFonts.orbitron(
+                fontSize: 10,
+                color: !_useImperial ? themeColor : Colors.grey,
+              ),
+            ),
             Switch(
               value: _useImperial,
               activeThumbColor: themeColor,
               onChanged: (val) => setState(() => _useImperial = val),
             ),
-            Text("IMPERIAL", style: GoogleFonts.orbitron(fontSize: 10, color: _useImperial ? themeColor : Colors.grey)),
+            Text(
+              "IMPERIAL",
+              style: GoogleFonts.orbitron(
+                fontSize: 10,
+                color: _useImperial ? themeColor : Colors.grey,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 15),
@@ -963,39 +1132,87 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         // Goals section header
         Text(
           "FITNESS GOALS",
-          style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: themeColor),
+          style: GoogleFonts.orbitron(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: themeColor,
+          ),
         ),
         const SizedBox(height: 12),
         Row(
           children: [
-            Expanded(child: _buildTextField(_useImperial ? "WEIGHT GOAL (LBS)" : "WEIGHT GOAL (KG)", _weightGoalController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "WEIGHT GOAL (LBS)" : "WEIGHT GOAL (KG)",
+                _weightGoalController,
+                TextInputType.number,
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField(_useImperial ? "CARDIO GOAL (MILES)" : "CARDIO GOAL (KM)", _distanceGoalController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "CARDIO GOAL (MILES)" : "CARDIO GOAL (KM)",
+                _distanceGoalController,
+                TextInputType.number,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
-        _buildTextField(_useImperial ? "WATER GOAL (LITERS/GALLONS)" : "WATER GOAL (L)", _waterGoalController, TextInputType.number),
+        _buildTextField(
+          _useImperial ? "WATER GOAL (LITERS/GALLONS)" : "WATER GOAL (L)",
+          _waterGoalController,
+          TextInputType.number,
+        ),
         const SizedBox(height: 24),
 
         // PRs section header
         Text(
           "STARTING PERSONAL RECORDS (PRs)",
-          style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: themeColor),
+          style: GoogleFonts.orbitron(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: themeColor,
+          ),
         ),
         const SizedBox(height: 12),
         Row(
           children: [
-            Expanded(child: _buildTextField(_useImperial ? "BENCH PRESS (LBS)" : "BENCH PRESS (KG)", _benchPRController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "BENCH PRESS (LBS)" : "BENCH PRESS (KG)",
+                _benchPRController,
+                TextInputType.number,
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField(_useImperial ? "SQUAT (LBS)" : "SQUAT (KG)", _squatPRController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "SQUAT (LBS)" : "SQUAT (KG)",
+                _squatPRController,
+                TextInputType.number,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: _buildTextField(_useImperial ? "DEADLIFT (LBS)" : "DEADLIFT (KG)", _deadliftPRController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "DEADLIFT (LBS)" : "DEADLIFT (KG)",
+                _deadliftPRController,
+                TextInputType.number,
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: _buildTextField(_useImperial ? "OVERHEAD PRESS (LBS)" : "OVERHEAD PRESS (KG)", _ohpPRController, TextInputType.number)),
+            Expanded(
+              child: _buildTextField(
+                _useImperial ? "OVERHEAD PRESS (LBS)" : "OVERHEAD PRESS (KG)",
+                _ohpPRController,
+                TextInputType.number,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 30),
@@ -1013,11 +1230,17 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   side: const BorderSide(color: Colors.white24),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(
                   "BACK",
-                  style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: GoogleFonts.orbitron(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -1030,11 +1253,17 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: themeColor,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(
                   "COMMENCE",
-                  style: GoogleFonts.orbitron(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
+                  style: GoogleFonts.orbitron(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -1051,35 +1280,74 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
       options: [
         QuizOption(text: "Crimson Red & Flame Orange (Fire)", elementIndex: 0),
         QuizOption(text: "Deep Blue & Aquamarine (Water)", elementIndex: 1),
-        QuizOption(text: "Earthy Brown & Emerald Green (Earth)", elementIndex: 2),
+        QuizOption(
+          text: "Earthy Brown & Emerald Green (Earth)",
+          elementIndex: 2,
+        ),
         QuizOption(text: "Sky Blue & Cloud White (Air)", elementIndex: 3),
       ],
     ),
     QuizQuestion(
       questionText: "How do you naturally respond to direct adversity?",
       options: [
-        QuizOption(text: "Confront it with intense, direct passion.", elementIndex: 0),
-        QuizOption(text: "Adapt and flow around the obstacle.", elementIndex: 1),
-        QuizOption(text: "Stand firm and absorb the impact with resilience.", elementIndex: 2),
-        QuizOption(text: "Rise above it to find a clever alternative route.", elementIndex: 3),
+        QuizOption(
+          text: "Confront it with intense, direct passion.",
+          elementIndex: 0,
+        ),
+        QuizOption(
+          text: "Adapt and flow around the obstacle.",
+          elementIndex: 1,
+        ),
+        QuizOption(
+          text: "Stand firm and absorb the impact with resilience.",
+          elementIndex: 2,
+        ),
+        QuizOption(
+          text: "Rise above it to find a clever alternative route.",
+          elementIndex: 3,
+        ),
       ],
     ),
     QuizQuestion(
       questionText: "Where do you feel most at peace and energized?",
       options: [
-        QuizOption(text: "Near a roaring bonfire or under the baking sun.", elementIndex: 0),
-        QuizOption(text: "Beside a rushing river, lake, or in a rainstorm.", elementIndex: 1),
-        QuizOption(text: "Walking in a dense forest or on solid mountain soil.", elementIndex: 2),
-        QuizOption(text: "Standing on a breezy cliff looking at open skies.", elementIndex: 3),
+        QuizOption(
+          text: "Near a roaring bonfire or under the baking sun.",
+          elementIndex: 0,
+        ),
+        QuizOption(
+          text: "Beside a rushing river, lake, or in a rainstorm.",
+          elementIndex: 1,
+        ),
+        QuizOption(
+          text: "Walking in a dense forest or on solid mountain soil.",
+          elementIndex: 2,
+        ),
+        QuizOption(
+          text: "Standing on a breezy cliff looking at open skies.",
+          elementIndex: 3,
+        ),
       ],
     ),
     QuizQuestion(
       questionText: "What is your primary training style or preference?",
       options: [
-        QuizOption(text: "High-intensity bursts that test speed and determination.", elementIndex: 0),
-        QuizOption(text: "Smooth, flowing workouts like swimming or cycling.", elementIndex: 1),
-        QuizOption(text: "Heavy strength training and solid ground lifts.", elementIndex: 2),
-        QuizOption(text: "Calisthenics, mobility drills, and agile movement.", elementIndex: 3),
+        QuizOption(
+          text: "High-intensity bursts that test speed and determination.",
+          elementIndex: 0,
+        ),
+        QuizOption(
+          text: "Smooth, flowing workouts like swimming or cycling.",
+          elementIndex: 1,
+        ),
+        QuizOption(
+          text: "Heavy strength training and solid ground lifts.",
+          elementIndex: 2,
+        ),
+        QuizOption(
+          text: "Calisthenics, mobility drills, and agile movement.",
+          elementIndex: 3,
+        ),
       ],
     ),
     QuizQuestion(
@@ -1088,16 +1356,31 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
         QuizOption(text: "Burning passion and drive.", elementIndex: 0),
         QuizOption(text: "Calm, intuitive adaptability.", elementIndex: 1),
         QuizOption(text: "Steadfast patience and strength.", elementIndex: 2),
-        QuizOption(text: "Quick-witted curiosity and agility.", elementIndex: 3),
+        QuizOption(
+          text: "Quick-witted curiosity and agility.",
+          elementIndex: 3,
+        ),
       ],
     ),
     QuizQuestion(
       questionText: "In a team battle, what role do you naturally choose?",
       options: [
-        QuizOption(text: "Vanguard - leading the charge with power.", elementIndex: 0),
-        QuizOption(text: "Tactical support - healing and maintaining flow.", elementIndex: 1),
-        QuizOption(text: "Defender - protecting allies from attacks.", elementIndex: 2),
-        QuizOption(text: "Scout - moving swiftly to disrupt the enemy.", elementIndex: 3),
+        QuizOption(
+          text: "Vanguard - leading the charge with power.",
+          elementIndex: 0,
+        ),
+        QuizOption(
+          text: "Tactical support - healing and maintaining flow.",
+          elementIndex: 1,
+        ),
+        QuizOption(
+          text: "Defender - protecting allies from attacks.",
+          elementIndex: 2,
+        ),
+        QuizOption(
+          text: "Scout - moving swiftly to disrupt the enemy.",
+          elementIndex: 3,
+        ),
       ],
     ),
   ];
@@ -1114,4 +1397,3 @@ class QuizOption {
   final int elementIndex;
   QuizOption({required this.text, required this.elementIndex});
 }
-

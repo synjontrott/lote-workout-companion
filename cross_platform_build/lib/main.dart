@@ -85,11 +85,16 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
     final aura = () {
       if (profile.equippedAura != "None") {
         switch (profile.equippedAura) {
-          case "Glitch Aura": return const Color(0xFF00F0FF);
-          case "Phoenix Flare": return Colors.orange;
-          case "Abyssal Mist": return const Color(0xFF880E4F);
-          case "Lightning Spark": return Colors.yellow;
-          default: return profile.currentElement.accentColor;
+          case "Glitch Aura":
+            return const Color(0xFF00F0FF);
+          case "Phoenix Flare":
+            return Colors.orange;
+          case "Abyssal Mist":
+            return const Color(0xFF880E4F);
+          case "Lightning Spark":
+            return Colors.yellow;
+          default:
+            return profile.currentElement.accentColor;
         }
       } else {
         return profile.currentElement.accentColor;
@@ -107,7 +112,10 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                 showActivityHistory(context, profile);
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF0F0F0F),
                   border: Border(
@@ -118,136 +126,162 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
                   ),
                 ),
                 child: Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: themeColor.withValues(alpha: 0.1),
-                      border: Border.all(color: themeColor.withValues(alpha: 0.3), width: 1),
-                    ),
-                    child: ClipOval(
-                      child: Transform.scale(
-                        scale: 1.7,
-                        child: PixelSpriteWidget(
-                          grid: profile.sprite.pixelGrid,
-                          skinColor: skin,
-                          hairColor: hair,
-                          eyeColor: eye,
-                          outfitColor: outfit,
-                          auraColor: aura,
-                          pixelSize: 0.15,
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: themeColor.withValues(alpha: 0.1),
+                        border: Border.all(
+                          color: themeColor.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: Transform.scale(
+                          scale: 1.7,
+                          child: PixelSpriteWidget(
+                            grid: profile.sprite.pixelGrid,
+                            skinColor: skin,
+                            hairColor: hair,
+                            eyeColor: eye,
+                            outfitColor: outfit,
+                            auraColor: aura,
+                            pixelSize: 0.15,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              profile.characterName.toUpperCase(),
-                              style: GoogleFonts.orbitron(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                letterSpacing: 1,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                profile.characterName.toUpperCase(),
+                                style: GoogleFonts.orbitron(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  letterSpacing: 1,
+                                ),
                               ),
-                            ),
-                            Text(
-                              "LV. ${profile.currentLevel}",
-                              style: GoogleFonts.orbitron(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                              Text(
+                                "LV. ${profile.currentLevel}",
+                                style: GoogleFonts.orbitron(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Builder(
-                          builder: (context) {
-                            final nextLevelXP = profile.requiredXPForLevel(profile.currentLevel);
-                            final progress = (profile.currentXP / nextLevelXP).clamp(0.0, 1.0);
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Semantics(
-                                  label: '${profile.currentTier.dynamicDisplayName(profile.currentElement.name)}, '
-                                      'Level ${profile.currentLevel}, '
-                                      '${profile.currentXP} of $nextLevelXP XP',
-                                  value: '${(progress * 100).toInt()} percent',
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(3),
-                                    child: LinearProgressIndicator(
-                                      value: progress,
-                                      backgroundColor: Colors.white.withValues(alpha: 0.05),
-                                      valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                                      minHeight: 5,
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Builder(
+                            builder: (context) {
+                              final nextLevelXP = profile.requiredXPForLevel(
+                                profile.currentLevel,
+                              );
+                              final progress = (profile.currentXP / nextLevelXP)
+                                  .clamp(0.0, 1.0);
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Semantics(
+                                    label:
+                                        '${profile.currentTier.dynamicDisplayName(profile.currentElement.name)}, '
+                                        'Level ${profile.currentLevel}, '
+                                        '${profile.currentXP} of $nextLevelXP XP',
+                                    value:
+                                        '${(progress * 100).toInt()} percent',
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(3),
+                                      child: LinearProgressIndicator(
+                                        value: progress,
+                                        backgroundColor: Colors.white
+                                            .withValues(alpha: 0.05),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              themeColor,
+                                            ),
+                                        minHeight: 5,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 2),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      profile.currentTier.dynamicDisplayName(profile.currentElement.name).toUpperCase(),
-                                      style: TextStyle(fontSize: 7, color: themeColor, fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      "${profile.currentXP} / $nextLevelXP XP",
-                                      style: const TextStyle(fontSize: 7, color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.04),
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text("💎", style: TextStyle(fontSize: 11)),
-                        const SizedBox(width: 4),
-                        Text(
-                          "${profile.crystals}",
-                          style: GoogleFonts.orbitron(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                                  const SizedBox(height: 2),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        profile.currentTier
+                                            .dynamicDisplayName(
+                                              profile.currentElement.name,
+                                            )
+                                            .toUpperCase(),
+                                        style: TextStyle(
+                                          fontSize: 7,
+                                          color: themeColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        "${profile.currentXP} / $nextLevelXP XP",
+                                        style: const TextStyle(
+                                          fontSize: 7,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 16),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.04),
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.08),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text("💎", style: TextStyle(fontSize: 11)),
+                          const SizedBox(width: 4),
+                          Text(
+                            "${profile.crystals}",
+                            style: GoogleFonts.orbitron(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
             // Selected page view
             Expanded(
-              child: IndexedStack(
-                index: _currentIndex,
-                children: _views,
-              ),
+              child: IndexedStack(index: _currentIndex, children: _views),
             ),
           ],
         ),
@@ -263,17 +297,17 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: themeColor,
         unselectedItemColor: Colors.grey,
-        selectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+        selectedLabelStyle: const TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
         unselectedLabelStyle: const TextStyle(fontSize: 9),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.terminal),
             label: "Dashboard",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shield),
-            label: "Quests",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.shield), label: "Quests"),
           BottomNavigationBarItem(
             icon: Icon(Icons.restaurant),
             label: "Feast Log",
@@ -286,10 +320,7 @@ class _MainHomeWrapperState extends State<MainHomeWrapper> {
             icon: Icon(Icons.shopping_cart),
             label: "Armory",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.tune),
-            label: "Systems HUD",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.tune), label: "Systems HUD"),
         ],
       ),
     );

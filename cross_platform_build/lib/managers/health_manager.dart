@@ -77,7 +77,9 @@ class HealthManager extends ChangeNotifier {
       }
 
       // Fetch calories
-      final List<HealthDataType> calorieTypes = [HealthDataType.ACTIVE_ENERGY_BURNED];
+      final List<HealthDataType> calorieTypes = [
+        HealthDataType.ACTIVE_ENERGY_BURNED,
+      ];
       List<HealthDataPoint> dataPoints = await health.getHealthDataFromTypes(
         types: calorieTypes,
         startTime: startOfDay,
@@ -109,7 +111,9 @@ class HealthManager extends ChangeNotifier {
       // Fetch/Estimate stand hours
       try {
         if (!kIsWeb && Platform.isIOS) {
-          final List<HealthDataType> standTypes = [HealthDataType.APPLE_STAND_TIME];
+          final List<HealthDataType> standTypes = [
+            HealthDataType.APPLE_STAND_TIME,
+          ];
           List<HealthDataPoint> standData = await health.getHealthDataFromTypes(
             types: standTypes,
             startTime: startOfDay,
@@ -122,7 +126,7 @@ class HealthManager extends ChangeNotifier {
               totalStand += val.numericValue.toDouble();
             }
           }
-          _todayStandHours = totalStand / 3600.0;
+          _todayStandHours = totalStand / 60.0;
         } else {
           _todayStandHours = 0.0;
         }
@@ -150,14 +154,18 @@ class HealthManager extends ChangeNotifier {
           }
         }
       } catch (_) {}
-
     } catch (e) {
       debugPrint("Error fetching health data: $e");
     }
     notifyListeners();
   }
 
-  void simulateActivity({required double steps, required double calories, required double minutes, double standHours = 0.0}) {
+  void simulateActivity({
+    required double steps,
+    required double calories,
+    required double minutes,
+    double standHours = 0.0,
+  }) {
     _todaySteps += steps;
     _todayCalories += calories;
     _activeMinutes += minutes;

@@ -6,8 +6,9 @@ import 'package:lote_workout_companion/views/widgets/pixel_sprite_widget.dart';
 /// StatelessWidget, which makes it an ideal, non-flaky proof that the
 /// widget-test tier works.
 void main() {
-  testWidgets('renders a CustomPaint sized to its pixel grid',
-      (WidgetTester tester) async {
+  testWidgets('renders a CustomPaint sized to its pixel grid', (
+    WidgetTester tester,
+  ) async {
     final grid = <List<int>>[
       [0, 1, 0],
       [2, 3, 4],
@@ -41,8 +42,9 @@ void main() {
     expect(customPaints, findsOneWidget);
   });
 
-  testWidgets('handles an empty grid without throwing',
-      (WidgetTester tester) async {
+  testWidgets('handles an empty grid without throwing', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(

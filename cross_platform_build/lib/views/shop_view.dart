@@ -18,7 +18,7 @@ class _ShopViewState extends State<ShopView> {
     "Auras",
     "Backgrounds",
     "Legendary Items",
-    "Stats & More"
+    "Stats & More",
   ];
 
   List<ShopItem> _getFilteredItems() {
@@ -75,7 +75,10 @@ class _ShopViewState extends State<ShopView> {
           children: [
             // Header Section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 16.0,
+              ),
               child: Row(
                 children: [
                   Expanded(
@@ -92,7 +95,7 @@ class _ShopViewState extends State<ShopView> {
                               Shadow(
                                 color: themeColor.withValues(alpha: 0.6),
                                 blurRadius: 8,
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -109,7 +112,10 @@ class _ShopViewState extends State<ShopView> {
                   ),
                   // Crystals Balance Badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(20),
@@ -121,10 +127,7 @@ class _ShopViewState extends State<ShopView> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          "💎",
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        const Text("💎", style: TextStyle(fontSize: 16)),
                         const SizedBox(width: 4),
                         Text(
                           "${profile.crystals}",
@@ -161,10 +164,15 @@ class _ShopViewState extends State<ShopView> {
                       },
                       borderRadius: BorderRadius.circular(24),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isSelected ? themeColor : Colors.white.withValues(alpha: 0.05),
+                          color: isSelected
+                              ? themeColor
+                              : Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: isSelected
                               ? [
@@ -172,7 +180,7 @@ class _ShopViewState extends State<ShopView> {
                                     color: themeColor.withValues(alpha: 0.3),
                                     blurRadius: 6,
                                     offset: const Offset(0, 2),
-                                  )
+                                  ),
                                 ]
                               : null,
                         ),
@@ -199,11 +207,16 @@ class _ShopViewState extends State<ShopView> {
                 itemCount: filteredItems.length,
                 itemBuilder: (context, index) {
                   final item = filteredItems[index];
-                  final isUnlocked = profile.unlockedShopItems.contains(item.name);
+                  final isUnlocked = profile.unlockedShopItems.contains(
+                    item.name,
+                  );
                   final equipped = _isEquipped(item, profile);
 
                   return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 6,
+                    ),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.03),
@@ -223,12 +236,16 @@ class _ShopViewState extends State<ShopView> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: isUnlocked ? Colors.green.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.08),
+                              color: isUnlocked
+                                  ? Colors.green.withValues(alpha: 0.4)
+                                  : Colors.white.withValues(alpha: 0.08),
                               width: 1,
                             ),
                             gradient: RadialGradient(
                               colors: [
-                                themeColor.withValues(alpha: isUnlocked ? 0.25 : 0.08),
+                                themeColor.withValues(
+                                  alpha: isUnlocked ? 0.25 : 0.08,
+                                ),
                                 Colors.transparent,
                               ],
                             ),
@@ -258,7 +275,10 @@ class _ShopViewState extends State<ShopView> {
                                   const SizedBox(width: 6),
                                   // Category Badge
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 5,
+                                      vertical: 2,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: themeColor.withValues(alpha: 0.12),
                                       borderRadius: BorderRadius.circular(4),
@@ -295,7 +315,10 @@ class _ShopViewState extends State<ShopView> {
                             if (isUnlocked)
                               if (item.type == "stat" || item.type == "badge")
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 6,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.green.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(8),
@@ -315,8 +338,13 @@ class _ShopViewState extends State<ShopView> {
                                     profile.toggleEquipItem(item);
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: equipped ? Colors.orange.withValues(alpha: 0.15) : Colors.green.withValues(alpha: 0.15),
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                    backgroundColor: equipped
+                                        ? Colors.orange.withValues(alpha: 0.15)
+                                        : Colors.green.withValues(alpha: 0.15),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
                                     minimumSize: Size.zero,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -328,7 +356,9 @@ class _ShopViewState extends State<ShopView> {
                                     style: GoogleFonts.orbitron(
                                       fontSize: 9,
                                       fontWeight: FontWeight.bold,
-                                      color: equipped ? Colors.orange : Colors.green,
+                                      color: equipped
+                                          ? Colors.orange
+                                          : Colors.green,
                                     ),
                                   ),
                                 )
@@ -340,10 +370,18 @@ class _ShopViewState extends State<ShopView> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
-                                              backgroundColor: const Color(0xFF0C0C0C),
+                                              backgroundColor: const Color(
+                                                0xFF0C0C0C,
+                                              ),
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(16),
-                                                side: BorderSide(color: themeColor.withValues(alpha: 0.4), width: 1.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(16),
+                                                side: BorderSide(
+                                                  color: themeColor.withValues(
+                                                    alpha: 0.4,
+                                                  ),
+                                                  width: 1.5,
+                                                ),
                                               ),
                                               title: Text(
                                                 "CONFIRM ACQUISITION",
@@ -356,30 +394,44 @@ class _ShopViewState extends State<ShopView> {
                                               ),
                                               content: Column(
                                                 mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     item.name.toUpperCase(),
                                                     style: GoogleFonts.orbitron(
                                                       fontSize: 14,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       color: Colors.white,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 4),
                                                   Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 6,
+                                                          vertical: 2,
+                                                        ),
                                                     decoration: BoxDecoration(
-                                                      color: themeColor.withValues(alpha: 0.12),
-                                                      borderRadius: BorderRadius.circular(4),
+                                                      color: themeColor
+                                                          .withValues(
+                                                            alpha: 0.12,
+                                                          ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            4,
+                                                          ),
                                                     ),
                                                     child: Text(
                                                       item.type.toUpperCase(),
-                                                      style: GoogleFonts.orbitron(
-                                                        fontSize: 8,
-                                                        fontWeight: FontWeight.bold,
-                                                        color: themeColor,
-                                                      ),
+                                                      style:
+                                                          GoogleFonts.orbitron(
+                                                            fontSize: 8,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: themeColor,
+                                                          ),
                                                     ),
                                                   ),
                                                   const SizedBox(height: 12),
@@ -403,11 +455,22 @@ class _ShopViewState extends State<ShopView> {
                                                     children: [
                                                       Text(
                                                         "Cost: ",
-                                                        style: GoogleFonts.exo2(fontSize: 13, color: Colors.grey),
+                                                        style: GoogleFonts.exo2(
+                                                          fontSize: 13,
+                                                          color: Colors.grey,
+                                                        ),
                                                       ),
                                                       Text(
                                                         "${item.cost}",
-                                                        style: GoogleFonts.orbitron(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                                                        style:
+                                                            GoogleFonts.orbitron(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
                                                       ),
                                                       const SizedBox(width: 4),
                                                       const Text("💎"),
@@ -417,10 +480,16 @@ class _ShopViewState extends State<ShopView> {
                                               ),
                                               actions: [
                                                 TextButton(
-                                                  onPressed: () => Navigator.of(context).pop(),
+                                                  onPressed: () => Navigator.of(
+                                                    context,
+                                                  ).pop(),
                                                   child: const Text(
                                                     "CANCEL",
-                                                    style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+                                                    style: TextStyle(
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
                                                 TextButton(
@@ -430,7 +499,11 @@ class _ShopViewState extends State<ShopView> {
                                                   },
                                                   child: Text(
                                                     "CONFIRM PURCHASE",
-                                                    style: TextStyle(color: themeColor, fontWeight: FontWeight.bold),
+                                                    style: TextStyle(
+                                                      color: themeColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -440,8 +513,13 @@ class _ShopViewState extends State<ShopView> {
                                       }
                                     : null,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: themeColor.withValues(alpha: 0.2),
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                  backgroundColor: themeColor.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
                                   minimumSize: Size.zero,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -464,7 +542,10 @@ class _ShopViewState extends State<ShopView> {
                                       ),
                                     ),
                                     const SizedBox(width: 2),
-                                    const Text("💎", style: TextStyle(fontSize: 10)),
+                                    const Text(
+                                      "💎",
+                                      style: TextStyle(fontSize: 10),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -503,7 +584,7 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         [0, 2, 3, 3, 3, 3, 2, 0],
         [0, 2, 3, 3, 3, 3, 2, 0],
         [0, 2, 2, 2, 2, 2, 2, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 0, 0, 0],
       ];
     } else if (type == "accessory" && name.toLowerCase().contains("sword")) {
       return [
@@ -514,7 +595,7 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         [0, 0, 2, 0, 0, 0, 0, 0],
         [0, 2, 3, 2, 0, 0, 0, 0],
         [2, 0, 2, 0, 0, 0, 0, 0],
-        [0, 2, 0, 0, 0, 0, 0, 0]
+        [0, 2, 0, 0, 0, 0, 0, 0],
       ];
     } else if (type == "accessory" && name.contains("Visor")) {
       return [
@@ -525,7 +606,7 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         [0, 2, 1, 1, 1, 1, 2, 0],
         [0, 0, 2, 2, 2, 2, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 0, 0, 0],
       ];
     } else if (type == "accessory" && name.contains("Wings")) {
       return [
@@ -536,7 +617,7 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         [0, 0, 1, 2, 2, 1, 0, 0],
         [0, 0, 0, 2, 2, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 0, 0, 0],
       ];
     } else if (type == "frame") {
       return [
@@ -547,7 +628,7 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         [1, 2, 0, 0, 0, 0, 2, 1],
         [1, 2, 0, 0, 0, 0, 2, 1],
         [1, 2, 2, 2, 2, 2, 2, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1]
+        [1, 1, 1, 1, 1, 1, 1, 1],
       ];
     } else if (type == "aura") {
       return [
@@ -558,7 +639,7 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         [1, 0, 0, 0, 0, 0, 0, 1],
         [1, 0, 0, 0, 0, 0, 0, 1],
         [0, 1, 0, 0, 0, 0, 1, 0],
-        [0, 0, 1, 1, 1, 1, 0, 0]
+        [0, 0, 1, 1, 1, 1, 0, 0],
       ];
     } else if (type == "background") {
       return [
@@ -569,7 +650,7 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         [4, 4, 4, 5, 5, 4, 4, 4],
         [4, 5, 5, 5, 5, 5, 5, 4],
         [5, 5, 5, 5, 5, 5, 5, 5],
-        [5, 5, 5, 5, 5, 5, 5, 5]
+        [5, 5, 5, 5, 5, 5, 5, 5],
       ];
     } else if (type == "title" || name.contains("Crown")) {
       return [
@@ -580,7 +661,7 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         [1, 2, 1, 2, 1, 2, 1, 1],
         [1, 1, 1, 1, 1, 1, 1, 1],
         [0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 0, 0, 0],
       ];
     } else {
       return [
@@ -591,7 +672,7 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         [1, 2, 3, 4, 4, 3, 2, 1],
         [0, 1, 2, 3, 3, 2, 1, 0],
         [0, 0, 1, 2, 2, 1, 0, 0],
-        [0, 0, 0, 1, 1, 0, 0, 0]
+        [0, 0, 0, 1, 1, 0, 0, 0],
       ];
     }
   }
@@ -599,9 +680,22 @@ class ItemPixelSpriteWidget extends StatelessWidget {
   Color _getColorForValue(int val) {
     switch (val) {
       case 1:
-        if (name.contains("Ignis") || name.contains("Strength") || name.contains("Phoenix") || name.contains("Volcanic")) return Colors.red;
-        if (name.contains("Crystalline") || name.contains("Gale") || name.contains("Cyber") || name.contains("Neon") || name.contains("Glitch")) return Colors.cyan;
-        if (name.contains("Umbral") || name.contains("Abyssal") || name.contains("Mind") || name.contains("Wisdom")) return Colors.purple;
+        if (name.contains("Ignis") ||
+            name.contains("Strength") ||
+            name.contains("Phoenix") ||
+            name.contains("Volcanic"))
+          return Colors.red;
+        if (name.contains("Crystalline") ||
+            name.contains("Gale") ||
+            name.contains("Cyber") ||
+            name.contains("Neon") ||
+            name.contains("Glitch"))
+          return Colors.cyan;
+        if (name.contains("Umbral") ||
+            name.contains("Abyssal") ||
+            name.contains("Mind") ||
+            name.contains("Wisdom"))
+          return Colors.purple;
         return Colors.yellow;
       case 2:
         return Colors.grey;
@@ -609,7 +703,8 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         if (name.contains("Strength")) return Colors.red;
         if (name.contains("Gale")) return Colors.cyan;
         if (name.contains("Marrow")) return Colors.orange;
-        if (name.contains("Mind") || name.contains("Wisdom")) return Colors.purple;
+        if (name.contains("Mind") || name.contains("Wisdom"))
+          return Colors.purple;
         return Colors.orange;
       case 4:
         return Colors.yellow;

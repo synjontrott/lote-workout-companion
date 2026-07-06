@@ -27,23 +27,27 @@ class UserProfileManager extends ChangeNotifier {
   int _healthyMealsLoggedToday = 0;
   String _homePlanet = 'Warrion';
   List<MealEntry> _loggedMeals = [];
-  
-  List<TrainingFocus> _selectedFocuses = [TrainingFocus.calisthenics, TrainingFocus.cardio, TrainingFocus.cutting];
-  double _height = 70.0;
-  double _weight = 160.0;
-  double _startWeight = 160.0;
-  double _goalWeight = 150.0;
-  double _distanceGoal = 2.0;
+
+  List<TrainingFocus> _selectedFocuses = [
+    TrainingFocus.calisthenics,
+    TrainingFocus.cardio,
+    TrainingFocus.cutting,
+  ];
+  double _height = 0.0;
+  double _weight = 0.0;
+  double _startWeight = 0.0;
+  double _goalWeight = 0.0;
+  double _distanceGoal = 0.0;
   List<WeightEntry> _weightHistory = [];
   List<String> _unlockedShopItems = [];
   List<String> _unlockedBadges = [];
   bool _hasClaimedWeightGoalReward = false;
   bool _hasClaimedDistanceGoalReward = false;
-  double _chest = 38.0;
-  double _arms = 13.0;
-  double _waist = 32.0;
-  double _hips = 40.0;
-  double _legs = 22.0;
+  double _chest = 0.0;
+  double _arms = 0.0;
+  double _waist = 0.0;
+  double _hips = 0.0;
+  double _legs = 0.0;
 
   String _notificationFrequency = 'Medium';
   double _monthlyChallengeProgress = 0.0;
@@ -53,13 +57,13 @@ class UserProfileManager extends ChangeNotifier {
   double _caloriesGoal = 400.0;
   double _activeMinutesGoal = 30.0;
   double _standHoursGoal = 10.0;
-  
+
   double _targetCalories = 2500.0;
   double _targetProtein = 150.0;
   double _targetCarbs = 250.0;
   double _targetFats = 80.0;
   double _targetSugar = 50.0;
-  
+
   int _totalQuestsCompleted = 0;
   List<BodyMeasurementEntry> _measurementHistory = [];
   String _equippedFrame = 'None';
@@ -72,16 +76,16 @@ class UserProfileManager extends ChangeNotifier {
   double _waterIntakeGoal = 3.0;
   bool _useImperialUnits = false;
   Map<String, double> _personalRecords = {
-    "Pullups": 5.0,
-    "Pushups": 20.0,
-    "Squats": 30.0,
-    "Dips": 8.0,
-    "Run (Miles)": 1.0,
-    "Handstand Hold (Sec)": 15.0,
-    "Bench Press": 135.0,
-    "Deadlift": 185.0,
-    "Barbell Squat": 155.0,
-    "Overhead Press": 95.0,
+    "Pullups": 0.0,
+    "Pushups": 0.0,
+    "Squats": 0.0,
+    "Dips": 0.0,
+    "Run (Miles)": 0.0,
+    "Handstand Hold (Sec)": 0.0,
+    "Bench Press": 0.0,
+    "Deadlift": 0.0,
+    "Barbell Squat": 0.0,
+    "Overhead Press": 0.0,
   };
   Map<String, List<PREntry>> _prHistory = {};
   List<WorkoutSession> _loggedWorkoutSessions = [];
@@ -109,7 +113,7 @@ class UserProfileManager extends ChangeNotifier {
   int get healthyMealsLoggedToday => _healthyMealsLoggedToday;
   String get homePlanet => _homePlanet;
   List<MealEntry> get loggedMeals => _loggedMeals;
-  
+
   List<TrainingFocus> get selectedFocuses => _selectedFocuses;
   double get height => _height;
   double get weight => _weight;
@@ -149,80 +153,326 @@ class UserProfileManager extends ChangeNotifier {
   int get previousStreak => _previousStreak;
 
   // Setters with save trigger
-  set characterName(String val) { _characterName = val; _save(); notifyListeners(); }
-  set selectedElementIndex(int val) { _selectedElementIndex = _normalizedElementIndex(val); _save(); regenerateDailyQuests(); notifyListeners(); }
-  set expressionStyle(ExpressionStyle val) { _expressionStyle = val; _save(); notifyListeners(); }
-  set cognitiveProfile(CognitiveProfile? val) { _cognitiveProfile = val; _save(); notifyListeners(); }
-  set stats(DNDStats val) { _stats = val; _save(); notifyListeners(); }
-  set sprite(CharacterSprite val) { _sprite = val; _save(); notifyListeners(); }
-  set currentXP(int val) { _currentXP = val; _save(); notifyListeners(); }
-  set currentLevel(int val) { _currentLevel = val; _save(); notifyListeners(); }
-  set crystals(int val) { _crystals = val; _save(); notifyListeners(); }
-  set dailyQuests(List<LotEQuest> val) { _dailyQuests = val; _save(); notifyListeners(); }
-  set monthlyQuests(List<LotEQuest> val) { _monthlyQuests = val; _save(); notifyListeners(); }
-  set yearlyQuests(List<LotEQuest> val) { _yearlyQuests = val; _save(); notifyListeners(); }
-  set streak(int val) { _streak = val; _save(); notifyListeners(); }
-  set lastActiveDate(DateTime? val) { _lastActiveDate = val; _save(); notifyListeners(); }
-  set shortTermGoal(String val) { _shortTermGoal = val; _save(); notifyListeners(); }
-  set longTermGoal(String val) { _longTermGoal = val; _save(); notifyListeners(); }
-  set hasCompletedInitialQuiz(bool val) { _hasCompletedInitialQuiz = val; _save(); notifyListeners(); }
-  set healthyMealsLoggedToday(int val) { _healthyMealsLoggedToday = val; _save(); notifyListeners(); }
-  set homePlanet(String val) { _homePlanet = val; _save(); notifyListeners(); }
-  set selectedFocuses(List<TrainingFocus> val) { _selectedFocuses = val; _save(); regenerateDailyQuests(); notifyListeners(); }
-  set height(double val) { _height = val; _save(); notifyListeners(); }
-  set weight(double val) { 
+  set characterName(String val) {
+    _characterName = val;
+    _save();
+    notifyListeners();
+  }
+
+  set selectedElementIndex(int val) {
+    _selectedElementIndex = _normalizedElementIndex(val);
+    _save();
+    regenerateDailyQuests();
+    notifyListeners();
+  }
+
+  set expressionStyle(ExpressionStyle val) {
+    _expressionStyle = val;
+    _save();
+    notifyListeners();
+  }
+
+  set cognitiveProfile(CognitiveProfile? val) {
+    _cognitiveProfile = val;
+    _save();
+    notifyListeners();
+  }
+
+  set stats(DNDStats val) {
+    _stats = val;
+    _save();
+    notifyListeners();
+  }
+
+  set sprite(CharacterSprite val) {
+    _sprite = val;
+    _save();
+    notifyListeners();
+  }
+
+  set currentXP(int val) {
+    _currentXP = val;
+    _save();
+    notifyListeners();
+  }
+
+  set currentLevel(int val) {
+    _currentLevel = val;
+    _save();
+    notifyListeners();
+  }
+
+  set crystals(int val) {
+    _crystals = val;
+    _save();
+    notifyListeners();
+  }
+
+  set dailyQuests(List<LotEQuest> val) {
+    _dailyQuests = val;
+    _save();
+    notifyListeners();
+  }
+
+  set monthlyQuests(List<LotEQuest> val) {
+    _monthlyQuests = val;
+    _save();
+    notifyListeners();
+  }
+
+  set yearlyQuests(List<LotEQuest> val) {
+    _yearlyQuests = val;
+    _save();
+    notifyListeners();
+  }
+
+  set streak(int val) {
+    _streak = val;
+    _save();
+    notifyListeners();
+  }
+
+  set lastActiveDate(DateTime? val) {
+    _lastActiveDate = val;
+    _save();
+    notifyListeners();
+  }
+
+  set shortTermGoal(String val) {
+    _shortTermGoal = val;
+    _save();
+    notifyListeners();
+  }
+
+  set longTermGoal(String val) {
+    _longTermGoal = val;
+    _save();
+    notifyListeners();
+  }
+
+  set hasCompletedInitialQuiz(bool val) {
+    _hasCompletedInitialQuiz = val;
+    _save();
+    notifyListeners();
+  }
+
+  set healthyMealsLoggedToday(int val) {
+    _healthyMealsLoggedToday = val;
+    _save();
+    notifyListeners();
+  }
+
+  set homePlanet(String val) {
+    _homePlanet = val;
+    _save();
+    notifyListeners();
+  }
+
+  set selectedFocuses(List<TrainingFocus> val) {
+    _selectedFocuses = val;
+    _save();
+    regenerateDailyQuests();
+    notifyListeners();
+  }
+
+  set height(double val) {
+    _height = val;
+    _save();
+    notifyListeners();
+  }
+
+  set weight(double val) {
     if (_weight != val) {
-      _weight = val; 
+      _weight = val;
       _weightHistory.add(WeightEntry(date: DateTime.now(), weight: val));
-      _save(); 
-      checkWeightGoalProgress(); 
-      notifyListeners(); 
+      _save();
+      checkWeightGoalProgress();
+      notifyListeners();
     }
   }
-  set startWeight(double val) { _startWeight = val; _save(); notifyListeners(); }
-  
-  set stepsGoal(double val) { _stepsGoal = val; _save(); notifyListeners(); }
-  set caloriesGoal(double val) { _caloriesGoal = val; _save(); notifyListeners(); }
-  set activeMinutesGoal(double val) { _activeMinutesGoal = val; _save(); notifyListeners(); }
-  set standHoursGoal(double val) { _standHoursGoal = val; _save(); notifyListeners(); }
-  
-  set targetCalories(double val) { _targetCalories = val; _save(); notifyListeners(); }
-  set targetProtein(double val) { _targetProtein = val; _save(); notifyListeners(); }
-  set targetCarbs(double val) { _targetCarbs = val; _save(); notifyListeners(); }
-  set targetFats(double val) { _targetFats = val; _save(); notifyListeners(); }
-  set targetSugar(double val) { _targetSugar = val; _save(); notifyListeners(); }
-  
-  set totalQuestsCompleted(int val) { _totalQuestsCompleted = val; _save(); notifyListeners(); }
-  set equippedFrame(String val) { _equippedFrame = val; _save(); notifyListeners(); }
-  set equippedTitle(String val) { _equippedTitle = val; _save(); notifyListeners(); }
-  set equippedAura(String val) { _equippedAura = val; _save(); notifyListeners(); }
-  set equippedBackground(String val) { _equippedBackground = val; _save(); notifyListeners(); }
-  set equippedAccessory(String val) { _equippedAccessory = val; _save(); notifyListeners(); }
-  
+
+  set startWeight(double val) {
+    _startWeight = val;
+    _save();
+    notifyListeners();
+  }
+
+  set stepsGoal(double val) {
+    _stepsGoal = val;
+    _save();
+    notifyListeners();
+  }
+
+  set caloriesGoal(double val) {
+    _caloriesGoal = val;
+    _save();
+    notifyListeners();
+  }
+
+  set activeMinutesGoal(double val) {
+    _activeMinutesGoal = val;
+    _save();
+    notifyListeners();
+  }
+
+  set standHoursGoal(double val) {
+    _standHoursGoal = val;
+    _save();
+    notifyListeners();
+  }
+
+  set targetCalories(double val) {
+    _targetCalories = val;
+    _save();
+    notifyListeners();
+  }
+
+  set targetProtein(double val) {
+    _targetProtein = val;
+    _save();
+    notifyListeners();
+  }
+
+  set targetCarbs(double val) {
+    _targetCarbs = val;
+    _save();
+    notifyListeners();
+  }
+
+  set targetFats(double val) {
+    _targetFats = val;
+    _save();
+    notifyListeners();
+  }
+
+  set targetSugar(double val) {
+    _targetSugar = val;
+    _save();
+    notifyListeners();
+  }
+
+  set totalQuestsCompleted(int val) {
+    _totalQuestsCompleted = val;
+    _save();
+    notifyListeners();
+  }
+
+  set equippedFrame(String val) {
+    _equippedFrame = val;
+    _save();
+    notifyListeners();
+  }
+
+  set equippedTitle(String val) {
+    _equippedTitle = val;
+    _save();
+    notifyListeners();
+  }
+
+  set equippedAura(String val) {
+    _equippedAura = val;
+    _save();
+    notifyListeners();
+  }
+
+  set equippedBackground(String val) {
+    _equippedBackground = val;
+    _save();
+    notifyListeners();
+  }
+
+  set equippedAccessory(String val) {
+    _equippedAccessory = val;
+    _save();
+    notifyListeners();
+  }
+
   set goalWeight(double val) {
     _goalWeight = val;
     _startWeight = _weight;
     _save();
     notifyListeners();
   }
-  set distanceGoal(double val) { _distanceGoal = val; _save(); notifyListeners(); }
-  set weightHistory(List<WeightEntry> val) { _weightHistory = val; _save(); notifyListeners(); }
-  set unlockedShopItems(List<String> val) { _unlockedShopItems = val; _save(); notifyListeners(); }
-  set unlockedBadges(List<String> val) { _unlockedBadges = val; _save(); notifyListeners(); }
-  set hasClaimedWeightGoalReward(bool val) { _hasClaimedWeightGoalReward = val; _save(); notifyListeners(); }
-  set hasClaimedDistanceGoalReward(bool val) { _hasClaimedDistanceGoalReward = val; _save(); notifyListeners(); }
-  set chest(double val) { _chest = val; _save(); notifyListeners(); }
-  set arms(double val) { _arms = val; _save(); notifyListeners(); }
-  set waist(double val) { _waist = val; _save(); notifyListeners(); }
-  set hips(double val) { _hips = val; _save(); notifyListeners(); }
-  set legs(double val) { _legs = val; _save(); notifyListeners(); }
+
+  set distanceGoal(double val) {
+    _distanceGoal = val;
+    _save();
+    notifyListeners();
+  }
+
+  set weightHistory(List<WeightEntry> val) {
+    _weightHistory = val;
+    _save();
+    notifyListeners();
+  }
+
+  set unlockedShopItems(List<String> val) {
+    _unlockedShopItems = val;
+    _save();
+    notifyListeners();
+  }
+
+  set unlockedBadges(List<String> val) {
+    _unlockedBadges = val;
+    _save();
+    notifyListeners();
+  }
+
+  set hasClaimedWeightGoalReward(bool val) {
+    _hasClaimedWeightGoalReward = val;
+    _save();
+    notifyListeners();
+  }
+
+  set hasClaimedDistanceGoalReward(bool val) {
+    _hasClaimedDistanceGoalReward = val;
+    _save();
+    notifyListeners();
+  }
+
+  set chest(double val) {
+    _chest = val;
+    _save();
+    notifyListeners();
+  }
+
+  set arms(double val) {
+    _arms = val;
+    _save();
+    notifyListeners();
+  }
+
+  set waist(double val) {
+    _waist = val;
+    _save();
+    notifyListeners();
+  }
+
+  set hips(double val) {
+    _hips = val;
+    _save();
+    notifyListeners();
+  }
+
+  set legs(double val) {
+    _legs = val;
+    _save();
+    notifyListeners();
+  }
 
   double get todayWaterIntake => _todayWaterIntake;
-  set todayWaterIntake(double val) { _todayWaterIntake = val; _save(); notifyListeners(); }
+  set todayWaterIntake(double val) {
+    _todayWaterIntake = val;
+    _save();
+    notifyListeners();
+  }
 
   double get waterIntakeGoal => _waterIntakeGoal;
   set waterIntakeGoal(double val) {
-    final double rounded = ((val * 2.0).round() / 2.0).clamp(0.5, double.infinity);
+    final double rounded = ((val * 2.0).round() / 2.0).clamp(
+      0.5,
+      double.infinity,
+    );
     _waterIntakeGoal = rounded;
     _save();
     notifyListeners();
@@ -234,7 +484,10 @@ class UserProfileManager extends ChangeNotifier {
       if (val) {
         // Metric → Imperial: convert L to oz, snap to 8oz grid, store as L
         final double rawOzGoal = _waterIntakeGoal * 33.814;
-        final double roundedOzGoal = ((rawOzGoal / 8.0).round() * 8.0).clamp(8.0, double.infinity);
+        final double roundedOzGoal = ((rawOzGoal / 8.0).round() * 8.0).clamp(
+          8.0,
+          double.infinity,
+        );
         _waterIntakeGoal = roundedOzGoal / 33.814;
 
         final double rawOzIntake = _todayWaterIntake * 33.814;
@@ -242,8 +495,14 @@ class UserProfileManager extends ChangeNotifier {
         _todayWaterIntake = roundedOzIntake / 33.814;
       } else {
         // Imperial → Metric: snap to 0.5L grid to eliminate oz→L drift
-        _waterIntakeGoal = ((_waterIntakeGoal * 2.0).round() / 2.0).clamp(0.5, double.infinity);
-        _todayWaterIntake = ((_todayWaterIntake * 2.0).round() / 2.0).clamp(0.0, double.infinity);
+        _waterIntakeGoal = ((_waterIntakeGoal * 2.0).round() / 2.0).clamp(
+          0.5,
+          double.infinity,
+        );
+        _todayWaterIntake = ((_todayWaterIntake * 2.0).round() / 2.0).clamp(
+          0.0,
+          double.infinity,
+        );
       }
       _useImperialUnits = val;
       _save();
@@ -253,7 +512,10 @@ class UserProfileManager extends ChangeNotifier {
 
   double get waterIntakeGoalOz => (_waterIntakeGoal * 33.814).roundToDouble();
   set waterIntakeGoalOz(double val) {
-    final double rounded = ((val / 8.0).round() * 8.0).clamp(8.0, double.infinity);
+    final double rounded = ((val / 8.0).round() * 8.0).clamp(
+      8.0,
+      double.infinity,
+    );
     _waterIntakeGoal = rounded / 33.814;
     _save();
     notifyListeners();
@@ -261,12 +523,14 @@ class UserProfileManager extends ChangeNotifier {
 
   double get todayWaterIntakeOz => (_todayWaterIntake * 33.814).roundToDouble();
   set todayWaterIntakeOz(double val) {
-    final double rounded = ((val / 8.0).round() * 8.0).clamp(0.0, double.infinity);
+    final double rounded = ((val / 8.0).round() * 8.0).clamp(
+      0.0,
+      double.infinity,
+    );
     _todayWaterIntake = rounded / 33.814;
     _save();
     notifyListeners();
   }
-
 
   Map<String, double> get personalRecords => _personalRecords;
   set personalRecords(Map<String, double> val) {
@@ -284,7 +548,11 @@ class UserProfileManager extends ChangeNotifier {
   }
 
   List<WorkoutSession> get loggedWorkoutSessions => _loggedWorkoutSessions;
-  set loggedWorkoutSessions(List<WorkoutSession> val) { _loggedWorkoutSessions = val; _save(); notifyListeners(); }
+  set loggedWorkoutSessions(List<WorkoutSession> val) {
+    _loggedWorkoutSessions = val;
+    _save();
+    notifyListeners();
+  }
 
   set notificationFrequency(String val) {
     _notificationFrequency = val;
@@ -311,11 +579,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Fire",
       corruptName: "Black Fire",
-      description: "Passionate and driven. Embodying intense heat, forging, and destructive power.",
-      corruptDescription: "Dark, violent, void black or purple flames that leave lasting burns.",
-      standardDetails: "Controlled, bright flames useful for defense, offense, and crafting/forging.",
-      corruptDetails: "Unpredictable void-fire burning with hostile and aggressive intensity.",
-      balancedDetails: "Allows for both precise crafting flames and sudden bursts of dark energy.",
+      description:
+          "Passionate and driven. Embodying intense heat, forging, and destructive power.",
+      corruptDescription:
+          "Dark, violent, void black or purple flames that leave lasting burns.",
+      standardDetails:
+          "Controlled, bright flames useful for defense, offense, and crafting/forging.",
+      corruptDetails:
+          "Unpredictable void-fire burning with hostile and aggressive intensity.",
+      balancedDetails:
+          "Allows for both precise crafting flames and sudden bursts of dark energy.",
       primaryColorHex: "#FF1616",
       accentColorHex: "#FF5E00",
       secondaryColorHex: "#FFC400",
@@ -326,11 +599,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Water",
       corruptName: "Acid Water",
-      description: "Adaptable and intuitive. Flows with life currents, providing barriers and hydration.",
-      corruptDescription: "Murky, acidic, corrosive water that erodes violently and causes decay.",
-      standardDetails: "Clean water used for defensive barriers, waterjets, and healing capabilities.",
-      corruptDetails: "Corrosive, toxic shielding and violent infectious outbreaks.",
-      balancedDetails: "Mastery of fluid water flows combined with corrosive outbursts.",
+      description:
+          "Adaptable and intuitive. Flows with life currents, providing barriers and hydration.",
+      corruptDescription:
+          "Murky, acidic, corrosive water that erodes violently and causes decay.",
+      standardDetails:
+          "Clean water used for defensive barriers, waterjets, and healing capabilities.",
+      corruptDetails:
+          "Corrosive, toxic shielding and violent infectious outbreaks.",
+      balancedDetails:
+          "Mastery of fluid water flows combined with corrosive outbursts.",
       primaryColorHex: "#00A3FF",
       accentColorHex: "#00E5FF",
       secondaryColorHex: "#00BFA5",
@@ -341,11 +619,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Earth",
       corruptName: "Blackstone",
-      description: "Grounded and resilient. Drawing strength from solid foundations and rock spikes.",
-      corruptDescription: "Jagged, unstable black volcanic rock causing sudden tremors and shattering shards.",
-      standardDetails: "Stable ground control, defensive shields, platforms, and solid projectiles.",
-      corruptDetails: "Violent shifts in the earth's crust, creating dangerous, jagged spikes.",
-      balancedDetails: "A perfect blend of solid structural defenses and aggressive, shattering spikes.",
+      description:
+          "Grounded and resilient. Drawing strength from solid foundations and rock spikes.",
+      corruptDescription:
+          "Jagged, unstable black volcanic rock causing sudden tremors and shattering shards.",
+      standardDetails:
+          "Stable ground control, defensive shields, platforms, and solid projectiles.",
+      corruptDetails:
+          "Violent shifts in the earth's crust, creating dangerous, jagged spikes.",
+      balancedDetails:
+          "A perfect blend of solid structural defenses and aggressive, shattering spikes.",
       primaryColorHex: "#4CAF50",
       accentColorHex: "#795548",
       secondaryColorHex: "#9E9E9E",
@@ -356,11 +639,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Air",
       corruptName: "Dark Air",
-      description: "Intellectual and curious. Soaring on clean gusts, controlling mobility.",
-      corruptDescription: "Turbulent, choking winds that disorient, suffocate, and create vortexes.",
-      standardDetails: "Agile current creation for speed, deflective barriers, and precision gusts.",
-      corruptDetails: "Suffocating void winds that suppress energy and choke opponents.",
-      balancedDetails: "Combines high mobility streams with heavy, suffocating pressure fields.",
+      description:
+          "Intellectual and curious. Soaring on clean gusts, controlling mobility.",
+      corruptDescription:
+          "Turbulent, choking winds that disorient, suffocate, and create vortexes.",
+      standardDetails:
+          "Agile current creation for speed, deflective barriers, and precision gusts.",
+      corruptDetails:
+          "Suffocating void winds that suppress energy and choke opponents.",
+      balancedDetails:
+          "Combines high mobility streams with heavy, suffocating pressure fields.",
       primaryColorHex: "#A5D6FF",
       accentColorHex: "#F6F7FC",
       secondaryColorHex: "#CFD8DC",
@@ -371,11 +659,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Lightning",
       corruptName: "Red Lightning",
-      description: "Electrifying and intense. Moving with blinding speed and powering technologies.",
-      corruptDescription: "Volatile crimson arcs that disrupt systems and create destructive pulses.",
-      standardDetails: "High-voltage electric discharges for precision stun, speed boosts, and charging.",
-      corruptDetails: "Red electromagnetic bursts that overload and destroy targets instantly.",
-      balancedDetails: "Unifying mechanical conduction with wild electromagnetic discharge.",
+      description:
+          "Electrifying and intense. Moving with blinding speed and powering technologies.",
+      corruptDescription:
+          "Volatile crimson arcs that disrupt systems and create destructive pulses.",
+      standardDetails:
+          "High-voltage electric discharges for precision stun, speed boosts, and charging.",
+      corruptDetails:
+          "Red electromagnetic bursts that overload and destroy targets instantly.",
+      balancedDetails:
+          "Unifying mechanical conduction with wild electromagnetic discharge.",
       primaryColorHex: "#00F0FF",
       accentColorHex: "#FFEA00",
       secondaryColorHex: "#7C4DFF",
@@ -386,11 +679,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Metal",
       corruptName: "Rusted Metal",
-      description: "Disciplined and structured. Wielding steel plates, weapons, and armor.",
-      corruptDescription: "Corroded, jagged shrapnel that inflicts tetanus and heavy bleeding.",
-      standardDetails: "Creation and shaping of durable alloys, shield armor, and precise weapons.",
-      corruptDetails: "Shattered metal scraps that tear flesh and corrode energy fields.",
-      balancedDetails: "Forging pristine defenses that decay into toxic rusted fragments on impact.",
+      description:
+          "Disciplined and structured. Wielding steel plates, weapons, and armor.",
+      corruptDescription:
+          "Corroded, jagged shrapnel that inflicts tetanus and heavy bleeding.",
+      standardDetails:
+          "Creation and shaping of durable alloys, shield armor, and precise weapons.",
+      corruptDetails:
+          "Shattered metal scraps that tear flesh and corrode energy fields.",
+      balancedDetails:
+          "Forging pristine defenses that decay into toxic rusted fragments on impact.",
       primaryColorHex: "#B0BEC5",
       accentColorHex: "#FFD700",
       secondaryColorHex: "#546E7A",
@@ -401,11 +699,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Ice",
       corruptName: "Black Ice",
-      description: "Cool-headed and serene. Freezing environments and crafting clear shields.",
-      corruptDescription: "Brittle, exploding dark crystal shards that pierce and scatter.",
-      standardDetails: "Smooth, dense ice barriers and freezing strikes to immobilize threats.",
-      corruptDetails: "Unstable frost arrays that explode upon pressure, launching sharp shrapnel.",
-      balancedDetails: "Immobilizing enemies in clear ice, then detonating it with dark frost energy.",
+      description:
+          "Cool-headed and serene. Freezing environments and crafting clear shields.",
+      corruptDescription:
+          "Brittle, exploding dark crystal shards that pierce and scatter.",
+      standardDetails:
+          "Smooth, dense ice barriers and freezing strikes to immobilize threats.",
+      corruptDetails:
+          "Unstable frost arrays that explode upon pressure, launching sharp shrapnel.",
+      balancedDetails:
+          "Immobilizing enemies in clear ice, then detonating it with dark frost energy.",
       primaryColorHex: "#26C6DA",
       accentColorHex: "#FFFFFF",
       secondaryColorHex: "#B2EBF2",
@@ -416,11 +719,15 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Bone",
       corruptName: "Wither Bone",
-      description: "Primal and stoic. Honoring ancestors, hardening skeletal defenses.",
-      corruptDescription: "Twisted, rotten bone spires that drain vital energy and entangle.",
-      standardDetails: "Durable calcium armor plates, spears, and organic structural barriers.",
+      description:
+          "Primal and stoic. Honoring ancestors, hardening skeletal defenses.",
+      corruptDescription:
+          "Twisted, rotten bone spires that drain vital energy and entangle.",
+      standardDetails:
+          "Durable calcium armor plates, spears, and organic structural barriers.",
       corruptDetails: "Decaying bone spurs that release toxic rot on contact.",
-      balancedDetails: "Unbreakable bone shields that latch onto attackers and drain life force.",
+      balancedDetails:
+          "Unbreakable bone shields that latch onto attackers and drain life force.",
       primaryColorHex: "#EEEEEE",
       accentColorHex: "#D7CCC8",
       secondaryColorHex: "#9E9E9E",
@@ -431,11 +738,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Gas",
       corruptName: "Toxic Gas",
-      description: "Volatile and mysterious. Blending into smokescreens and mist screens.",
-      corruptDescription: "Acidic, choking gas clouds that melt armor and burn airways.",
-      standardDetails: "Ethereal smoke overlays, sleep vapors, and gas propulsion currents.",
-      corruptDetails: "Corrosive chemical clouds that dissolve material structures.",
-      balancedDetails: "Controlling vapor density to suffocating points, shifting between mist and poison.",
+      description:
+          "Volatile and mysterious. Blending into smokescreens and mist screens.",
+      corruptDescription:
+          "Acidic, choking gas clouds that melt armor and burn airways.",
+      standardDetails:
+          "Ethereal smoke overlays, sleep vapors, and gas propulsion currents.",
+      corruptDetails:
+          "Corrosive chemical clouds that dissolve material structures.",
+      balancedDetails:
+          "Controlling vapor density to suffocating points, shifting between mist and poison.",
       primaryColorHex: "#80CBC4",
       accentColorHex: "#E1BEE7",
       secondaryColorHex: "#B2DFDB",
@@ -446,11 +758,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Laser",
       corruptName: "Dark Laser",
-      description: "Sharp-witted and technical. Surgical beam attacks that slice clean.",
-      corruptDescription: "Pulsating, unstable radiation waves that burn and disintegrate.",
-      standardDetails: "High-concentration light beams for drilling, welding, and focused attacks.",
-      corruptDetails: "Erratic radioactive pulses that spread decay and chaotic light energy.",
-      balancedDetails: "Precise surgical targeting overlay with highly destructive explosive pulses.",
+      description:
+          "Sharp-witted and technical. Surgical beam attacks that slice clean.",
+      corruptDescription:
+          "Pulsating, unstable radiation waves that burn and disintegrate.",
+      standardDetails:
+          "High-concentration light beams for drilling, welding, and focused attacks.",
+      corruptDetails:
+          "Erratic radioactive pulses that spread decay and chaotic light energy.",
+      balancedDetails:
+          "Precise surgical targeting overlay with highly destructive explosive pulses.",
       primaryColorHex: "#FF0055",
       accentColorHex: "#FF80DF",
       secondaryColorHex: "#FFFFFF",
@@ -461,11 +778,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Zero Space",
       corruptName: "Void Space",
-      description: "Transcendent and cosmic. Bending coordinates, folding spatial gaps.",
-      corruptDescription: "Unstable spatial rifts that tear matter apart and induce gravity crush.",
-      standardDetails: "Precise teleportation portals, dimension pocket storage, and displacement.",
-      corruptDetails: "Singularities and gravity wells that compress targets into nothingness.",
-      balancedDetails: "Maintaining portal nodes while tearing localized space with void micro-rifts.",
+      description:
+          "Transcendent and cosmic. Bending coordinates, folding spatial gaps.",
+      corruptDescription:
+          "Unstable spatial rifts that tear matter apart and induce gravity crush.",
+      standardDetails:
+          "Precise teleportation portals, dimension pocket storage, and displacement.",
+      corruptDetails:
+          "Singularities and gravity wells that compress targets into nothingness.",
+      balancedDetails:
+          "Maintaining portal nodes while tearing localized space with void micro-rifts.",
       primaryColorHex: "#3F51B5",
       accentColorHex: "#E040FB",
       secondaryColorHex: "#1A237E",
@@ -477,11 +799,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Darki",
       corruptName: "Darki",
-      description: "Pure corruptive energy that thrives on ambition, bending shadows, and royal command.",
-      corruptDescription: "Pure corruptive energy that thrives on ambition, bending shadows, and royal command.",
-      standardDetails: "Highly dangerous corruptive waves that debuff physical defenses.",
-      corruptDetails: "Mind domination, dark matter expansion, and black fire combination.",
-      balancedDetails: "Balanced output of raw negative energy and sovereign control.",
+      description:
+          "Pure corruptive energy that thrives on ambition, bending shadows, and royal command.",
+      corruptDescription:
+          "Pure corruptive energy that thrives on ambition, bending shadows, and royal command.",
+      standardDetails:
+          "Highly dangerous corruptive waves that debuff physical defenses.",
+      corruptDetails:
+          "Mind domination, dark matter expansion, and black fire combination.",
+      balancedDetails:
+          "Balanced output of raw negative energy and sovereign control.",
       primaryColorHex: "#880E4F",
       accentColorHex: "#FFB300",
       secondaryColorHex: "#3E2723",
@@ -492,11 +819,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Death",
       corruptName: "Death",
-      description: "Morbid decay. Accelerating decomposition and weakening molecular bonds.",
-      corruptDescription: "Morbid decay. Accelerating decomposition and weakening molecular bonds.",
-      standardDetails: "Slow, creeping decay that exhausts targets and degrades physical structures.",
-      corruptDetails: "Sudden cell collapse, spontaneous decomposition, and soul-reaping vibes.",
-      balancedDetails: "Controlling the boundary of life and rot to siphon endurance.",
+      description:
+          "Morbid decay. Accelerating decomposition and weakening molecular bonds.",
+      corruptDescription:
+          "Morbid decay. Accelerating decomposition and weakening molecular bonds.",
+      standardDetails:
+          "Slow, creeping decay that exhausts targets and degrades physical structures.",
+      corruptDetails:
+          "Sudden cell collapse, spontaneous decomposition, and soul-reaping vibes.",
+      balancedDetails:
+          "Controlling the boundary of life and rot to siphon endurance.",
       primaryColorHex: "#4A148C",
       accentColorHex: "#212121",
       secondaryColorHex: "#263238",
@@ -507,11 +839,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Knife",
       corruptName: "Knife",
-      description: "Precision lethality. Cold plasma blades cutting with perfect surgical angles.",
-      corruptDescription: "Precision lethality. Cold plasma blades cutting with perfect surgical angles.",
-      standardDetails: "Focusing energy into micro-thin plasma cutters for defense and offense.",
-      corruptDetails: "Vicious, vibrating jagged blades that leave tearing plasma burns.",
-      balancedDetails: "Wielding double-sided blades of surgical energy and raw plasma fire.",
+      description:
+          "Precision lethality. Cold plasma blades cutting with perfect surgical angles.",
+      corruptDescription:
+          "Precision lethality. Cold plasma blades cutting with perfect surgical angles.",
+      standardDetails:
+          "Focusing energy into micro-thin plasma cutters for defense and offense.",
+      corruptDetails:
+          "Vicious, vibrating jagged blades that leave tearing plasma burns.",
+      balancedDetails:
+          "Wielding double-sided blades of surgical energy and raw plasma fire.",
       primaryColorHex: "#00E5FF",
       accentColorHex: "#37474F",
       secondaryColorHex: "#78909C",
@@ -522,11 +859,16 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Poison",
       corruptName: "Poison",
-      description: "Cunning toxins. Injecting chemical formulas to disable, halt, or paralyze.",
-      corruptDescription: "Cunning toxins. Injecting chemical formulas to disable, halt, or paralyze.",
-      standardDetails: "Neurotoxins that slow down nervous impulses, inducing paralysis and peace.",
-      corruptDetails: "Necrotoxins that rot physical flesh instantly on a cellular scale.",
-      balancedDetails: "Synthesizing customized antidotes and complex combat serums.",
+      description:
+          "Cunning toxins. Injecting chemical formulas to disable, halt, or paralyze.",
+      corruptDescription:
+          "Cunning toxins. Injecting chemical formulas to disable, halt, or paralyze.",
+      standardDetails:
+          "Neurotoxins that slow down nervous impulses, inducing paralysis and peace.",
+      corruptDetails:
+          "Necrotoxins that rot physical flesh instantly on a cellular scale.",
+      balancedDetails:
+          "Synthesizing customized antidotes and complex combat serums.",
       primaryColorHex: "#00E676",
       accentColorHex: "#AA00FF",
       secondaryColorHex: "#8E24AA",
@@ -537,22 +879,28 @@ class UserProfileManager extends ChangeNotifier {
     LotEElement(
       name: "Shadow",
       corruptName: "Shadow",
-      description: "Elusive camouflage. Blending into shadows, creating illusions, and silencing footsteps.",
-      corruptDescription: "Elusive camouflage. Blending into shadows, creating illusions, and silencing footsteps.",
-      standardDetails: "Light refraction, absolute silence fields, and deceptive mirages.",
-      corruptDetails: "Oppressive darkness fields that block sensory perception entirely.",
-      balancedDetails: "Stealth infiltration coupled with blind darkness fields for quick assassination.",
+      description:
+          "Elusive camouflage. Blending into shadows, creating illusions, and silencing footsteps.",
+      corruptDescription:
+          "Elusive camouflage. Blending into shadows, creating illusions, and silencing footsteps.",
+      standardDetails:
+          "Light refraction, absolute silence fields, and deceptive mirages.",
+      corruptDetails:
+          "Oppressive darkness fields that block sensory perception entirely.",
+      balancedDetails:
+          "Stealth infiltration coupled with blind darkness fields for quick assassination.",
       primaryColorHex: "#263238",
       accentColorHex: "#311B92",
       secondaryColorHex: "#212121",
       detailColorHex: "#000000",
       planetOfOrigin: "Battacaria",
       inherentDark: false,
-    )
+    ),
   ];
 
   LotEElement get currentElement {
-    final base = availableElements[_normalizedElementIndex(_selectedElementIndex)];
+    final base =
+        availableElements[_normalizedElementIndex(_selectedElementIndex)];
     if (_expressionStyle == ExpressionStyle.corrupt) {
       return base.corruptedVersion();
     }
@@ -584,9 +932,13 @@ class UserProfileManager extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       _characterName = prefs.getString('lote_char_name') ?? 'Recruit';
-      _selectedElementIndex = _normalizedElementIndex(prefs.getInt('lote_selected_element_idx') ?? 0);
+      _selectedElementIndex = _normalizedElementIndex(
+        prefs.getInt('lote_selected_element_idx') ?? 0,
+      );
 
-      final savedStyle = prefs.getString('lote_expression_style') ?? ExpressionStyle.standard.name;
+      final savedStyle =
+          prefs.getString('lote_expression_style') ??
+          ExpressionStyle.standard.name;
       _expressionStyle = ExpressionStyle.values.firstWhere(
         (e) => e.name == savedStyle,
         orElse: () => ExpressionStyle.standard,
@@ -633,17 +985,26 @@ class UserProfileManager extends ChangeNotifier {
         try {
           final List<dynamic> raw = jsonDecode(focusesJson);
           _selectedFocuses = raw.map((f) {
-            if (f == 'weightGain' || f == 'bulking') return TrainingFocus.bulking;
+            if (f == 'weightGain' || f == 'bulking')
+              return TrainingFocus.bulking;
             return TrainingFocus.values.firstWhere(
               (e) => e.name == f,
               orElse: () => TrainingFocus.cardio,
             );
           }).toList();
         } catch (_) {
-          _selectedFocuses = [TrainingFocus.calisthenics, TrainingFocus.cardio, TrainingFocus.cutting];
+          _selectedFocuses = [
+            TrainingFocus.calisthenics,
+            TrainingFocus.cardio,
+            TrainingFocus.cutting,
+          ];
         }
       } else {
-        _selectedFocuses = [TrainingFocus.calisthenics, TrainingFocus.cardio, TrainingFocus.cutting];
+        _selectedFocuses = [
+          TrainingFocus.calisthenics,
+          TrainingFocus.cardio,
+          TrainingFocus.cutting,
+        ];
       }
 
       _height = prefs.getDouble('lote_body_height') ?? 70.0;
@@ -651,8 +1012,10 @@ class UserProfileManager extends ChangeNotifier {
       _startWeight = prefs.getDouble('lote_start_weight') ?? 160.0;
       _goalWeight = prefs.getDouble('lote_goal_weight') ?? 150.0;
       _distanceGoal = prefs.getDouble('lote_distance_goal') ?? 2.0;
-      _hasClaimedWeightGoalReward = prefs.getBool('lote_claimed_weight_reward') ?? false;
-      _hasClaimedDistanceGoalReward = prefs.getBool('lote_claimed_distance_reward') ?? false;
+      _hasClaimedWeightGoalReward =
+          prefs.getBool('lote_claimed_weight_reward') ?? false;
+      _hasClaimedDistanceGoalReward =
+          prefs.getBool('lote_claimed_distance_reward') ?? false;
 
       final weightHistoryJson = prefs.getString('lote_weight_history');
       if (weightHistoryJson != null) {
@@ -666,7 +1029,8 @@ class UserProfileManager extends ChangeNotifier {
         _weightHistory = [WeightEntry(date: DateTime.now(), weight: _weight)];
       }
 
-      _unlockedShopItems = prefs.getStringList('lote_unlocked_shop_items') ?? [];
+      _unlockedShopItems =
+          prefs.getStringList('lote_unlocked_shop_items') ?? [];
       _unlockedBadges = prefs.getStringList('lote_unlocked_badges') ?? [];
 
       _chest = prefs.getDouble('lote_body_chest') ?? 38.0;
@@ -679,18 +1043,19 @@ class UserProfileManager extends ChangeNotifier {
       _caloriesGoal = prefs.getDouble('lote_calories_goal') ?? 400.0;
       _activeMinutesGoal = prefs.getDouble('lote_active_minutes_goal') ?? 30.0;
       _standHoursGoal = prefs.getDouble('lote_stand_hours_goal') ?? 10.0;
-      
+
       _targetCalories = prefs.getDouble('lote_target_calories') ?? 2500.0;
       _targetProtein = prefs.getDouble('lote_target_protein') ?? 150.0;
       _targetCarbs = prefs.getDouble('lote_target_carbs') ?? 250.0;
       _targetFats = prefs.getDouble('lote_target_fats') ?? 80.0;
       _targetSugar = prefs.getDouble('lote_target_sugar') ?? 50.0;
-      
+
       _totalQuestsCompleted = prefs.getInt('lote_total_quests_completed') ?? 0;
       _equippedFrame = prefs.getString('lote_equipped_frame') ?? 'None';
       _equippedTitle = prefs.getString('lote_equipped_title') ?? 'None';
       _equippedAura = prefs.getString('lote_equipped_aura') ?? 'None';
-      _equippedBackground = prefs.getString('lote_equipped_background') ?? 'None';
+      _equippedBackground =
+          prefs.getString('lote_equipped_background') ?? 'None';
       _equippedAccessory = prefs.getString('lote_equipped_accessory') ?? 'None';
 
       _todayWaterIntake = prefs.getDouble('lote_today_water_intake') ?? 0.0;
@@ -701,11 +1066,17 @@ class UserProfileManager extends ChangeNotifier {
       if (prsJson != null) {
         try {
           final Map<String, dynamic> raw = jsonDecode(prsJson);
-          _personalRecords = raw.map((k, v) => MapEntry(k, (v as num).toDouble()));
-          if (!_personalRecords.containsKey("Bench Press")) _personalRecords["Bench Press"] = 135.0;
-          if (!_personalRecords.containsKey("Deadlift")) _personalRecords["Deadlift"] = 185.0;
-          if (!_personalRecords.containsKey("Barbell Squat")) _personalRecords["Barbell Squat"] = 155.0;
-          if (!_personalRecords.containsKey("Overhead Press")) _personalRecords["Overhead Press"] = 95.0;
+          _personalRecords = raw.map(
+            (k, v) => MapEntry(k, (v as num).toDouble()),
+          );
+          if (!_personalRecords.containsKey("Bench Press"))
+            _personalRecords["Bench Press"] = 135.0;
+          if (!_personalRecords.containsKey("Deadlift"))
+            _personalRecords["Deadlift"] = 185.0;
+          if (!_personalRecords.containsKey("Barbell Squat"))
+            _personalRecords["Barbell Squat"] = 155.0;
+          if (!_personalRecords.containsKey("Overhead Press"))
+            _personalRecords["Overhead Press"] = 95.0;
         } catch (_) {}
       }
 
@@ -713,11 +1084,14 @@ class UserProfileManager extends ChangeNotifier {
       if (prHistoryJson != null) {
         try {
           final Map<String, dynamic> raw = jsonDecode(prHistoryJson);
-          _prHistory = raw.map((k, v) => MapEntry(
+          _prHistory = raw.map(
+            (k, v) => MapEntry(
               k,
               (v as List<dynamic>)
                   .map((e) => PREntry.fromJson(e as Map<String, dynamic>))
-                  .toList()));
+                  .toList(),
+            ),
+          );
         } catch (_) {}
       } else {
         final daysAgo = DateTime.now().subtract(const Duration(days: 3));
@@ -739,15 +1113,21 @@ class UserProfileManager extends ChangeNotifier {
       if (sessionsJson != null) {
         try {
           final List<dynamic> raw = jsonDecode(sessionsJson);
-          _loggedWorkoutSessions = raw.map((s) => WorkoutSession.fromJson(s)).toList();
+          _loggedWorkoutSessions = raw
+              .map((s) => WorkoutSession.fromJson(s))
+              .toList();
         } catch (_) {}
       }
 
-      final measurementHistoryJson = prefs.getString('lote_measurement_history');
+      final measurementHistoryJson = prefs.getString(
+        'lote_measurement_history',
+      );
       if (measurementHistoryJson != null) {
         try {
           final List<dynamic> raw = jsonDecode(measurementHistoryJson);
-          _measurementHistory = raw.map((m) => BodyMeasurementEntry.fromJson(m)).toList();
+          _measurementHistory = raw
+              .map((m) => BodyMeasurementEntry.fromJson(m))
+              .toList();
         } catch (_) {
           _measurementHistory = [];
         }
@@ -762,11 +1142,19 @@ class UserProfileManager extends ChangeNotifier {
           _dailyQuests = raw.map((q) => LotEQuest.fromJson(q)).toList();
         } catch (_) {
           final elementName = availableElements[_selectedElementIndex].name;
-          _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily);
+          _dailyQuests = generateQuests(
+            elementName,
+            _selectedFocuses,
+            QuestCadence.daily,
+          );
         }
       } else {
         final elementName = availableElements[_selectedElementIndex].name;
-        _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily);
+        _dailyQuests = generateQuests(
+          elementName,
+          _selectedFocuses,
+          QuestCadence.daily,
+        );
       }
 
       final monthlyQuestsJson = prefs.getString('lote_monthly_quests');
@@ -776,11 +1164,19 @@ class UserProfileManager extends ChangeNotifier {
           _monthlyQuests = raw.map((q) => LotEQuest.fromJson(q)).toList();
         } catch (_) {
           final elementName = availableElements[_selectedElementIndex].name;
-          _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly);
+          _monthlyQuests = generateQuests(
+            elementName,
+            _selectedFocuses,
+            QuestCadence.monthly,
+          );
         }
       } else {
         final elementName = availableElements[_selectedElementIndex].name;
-        _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly);
+        _monthlyQuests = generateQuests(
+          elementName,
+          _selectedFocuses,
+          QuestCadence.monthly,
+        );
       }
 
       final yearlyQuestsJson = prefs.getString('lote_yearly_quests');
@@ -790,16 +1186,26 @@ class UserProfileManager extends ChangeNotifier {
           _yearlyQuests = raw.map((q) => LotEQuest.fromJson(q)).toList();
         } catch (_) {
           final elementName = availableElements[_selectedElementIndex].name;
-          _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly);
+          _yearlyQuests = generateQuests(
+            elementName,
+            _selectedFocuses,
+            QuestCadence.yearly,
+          );
         }
       } else {
         final elementName = availableElements[_selectedElementIndex].name;
-        _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly);
+        _yearlyQuests = generateQuests(
+          elementName,
+          _selectedFocuses,
+          QuestCadence.yearly,
+        );
       }
 
       _streak = prefs.getInt('lote_streak') ?? 0;
-      _notificationFrequency = prefs.getString('lote_notification_frequency') ?? 'Medium';
-      _monthlyChallengeProgress = prefs.getDouble('lote_monthly_challenge_progress') ?? 0.0;
+      _notificationFrequency =
+          prefs.getString('lote_notification_frequency') ?? 'Medium';
+      _monthlyChallengeProgress =
+          prefs.getDouble('lote_monthly_challenge_progress') ?? 0.0;
       _previousStreak = prefs.getInt('lote_previous_streak') ?? 0;
 
       final dateMs = prefs.getInt('lote_last_active_ms');
@@ -815,8 +1221,12 @@ class UserProfileManager extends ChangeNotifier {
         _lastRefreshDate = null;
       }
 
-      _shortTermGoal = prefs.getString('lote_short_goal') ?? 'Complete at least one Cardio Patrol this week.';
-      _longTermGoal = prefs.getString('lote_long_goal') ?? 'Reach Krenpowen Apprentice tier rank.';
+      _shortTermGoal =
+          prefs.getString('lote_short_goal') ??
+          'Complete at least one Cardio Patrol this week.';
+      _longTermGoal =
+          prefs.getString('lote_long_goal') ??
+          'Reach Krenpowen Apprentice tier rank.';
       _hasCompletedInitialQuiz = prefs.getBool('lote_has_quiz') ?? false;
       _healthyMealsLoggedToday = prefs.getInt('lote_meals_today') ?? 0;
       final mealsJson = prefs.getString('lote_logged_meals');
@@ -830,7 +1240,8 @@ class UserProfileManager extends ChangeNotifier {
       } else {
         _loggedMeals = [];
       }
-      final defaultPlanet = availableElements[_selectedElementIndex].planetOfOrigin;
+      final defaultPlanet =
+          availableElements[_selectedElementIndex].planetOfOrigin;
       _homePlanet = prefs.getString('lote_home_planet') ?? defaultPlanet;
 
       checkNewDayRefresh();
@@ -848,27 +1259,45 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setString('lote_char_name', _characterName);
       await prefs.setInt('lote_selected_element_idx', _selectedElementIndex);
       await prefs.setString('lote_expression_style', _expressionStyle.name);
-      await prefs.setString('lote_cognitive_profile', _cognitiveProfile?.name ?? '');
+      await prefs.setString(
+        'lote_cognitive_profile',
+        _cognitiveProfile?.name ?? '',
+      );
       await prefs.setInt('lote_current_xp', _currentXP);
       await prefs.setInt('lote_current_level', _currentLevel);
       await prefs.setInt('lote_crystals', _crystals);
       await prefs.setInt('lote_streak', _streak);
       if (_lastActiveDate != null) {
-        await prefs.setInt('lote_last_active_ms', _lastActiveDate!.millisecondsSinceEpoch);
+        await prefs.setInt(
+          'lote_last_active_ms',
+          _lastActiveDate!.millisecondsSinceEpoch,
+        );
       }
       if (_lastRefreshDate != null) {
-        await prefs.setInt('lote_last_refresh_ms', _lastRefreshDate!.millisecondsSinceEpoch);
+        await prefs.setInt(
+          'lote_last_refresh_ms',
+          _lastRefreshDate!.millisecondsSinceEpoch,
+        );
       }
       await prefs.setString('lote_short_goal', _shortTermGoal);
       await prefs.setString('lote_long_goal', _longTermGoal);
       await prefs.setBool('lote_has_quiz', _hasCompletedInitialQuiz);
       await prefs.setInt('lote_meals_today', _healthyMealsLoggedToday);
       await prefs.setString('lote_home_planet', _homePlanet);
-      await prefs.setString('lote_notification_frequency', _notificationFrequency);
-      await prefs.setDouble('lote_monthly_challenge_progress', _monthlyChallengeProgress);
+      await prefs.setString(
+        'lote_notification_frequency',
+        _notificationFrequency,
+      );
+      await prefs.setDouble(
+        'lote_monthly_challenge_progress',
+        _monthlyChallengeProgress,
+      );
       await prefs.setInt('lote_previous_streak', _previousStreak);
-      await prefs.setString('lote_logged_meals', jsonEncode(_loggedMeals.map((m) => m.toJson()).toList()));
-      
+      await prefs.setString(
+        'lote_logged_meals',
+        jsonEncode(_loggedMeals.map((m) => m.toJson()).toList()),
+      );
+
       await prefs.setDouble('lote_body_height', _height);
       await prefs.setDouble('lote_body_weight', _weight);
       await prefs.setDouble('lote_body_chest', _chest);
@@ -892,30 +1321,70 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setString('lote_equipped_aura', _equippedAura);
       await prefs.setString('lote_equipped_background', _equippedBackground);
       await prefs.setString('lote_equipped_accessory', _equippedAccessory);
-      await prefs.setString('lote_measurement_history', jsonEncode(_measurementHistory.map((m) => m.toJson()).toList()));
-      await prefs.setString('lote_selected_focuses', jsonEncode(_selectedFocuses.map((f) => f.name).toList()));
+      await prefs.setString(
+        'lote_measurement_history',
+        jsonEncode(_measurementHistory.map((m) => m.toJson()).toList()),
+      );
+      await prefs.setString(
+        'lote_selected_focuses',
+        jsonEncode(_selectedFocuses.map((f) => f.name).toList()),
+      );
 
       await prefs.setDouble('lote_today_water_intake', _todayWaterIntake);
       await prefs.setDouble('lote_water_intake_goal', _waterIntakeGoal);
       await prefs.setBool('lote_use_imperial_units', _useImperialUnits);
-      await prefs.setString('lote_personal_records', jsonEncode(_personalRecords));
-      await prefs.setString('lote_pr_history', jsonEncode(_prHistory.map((k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()))));
-      await prefs.setString('lote_logged_workout_sessions', jsonEncode(_loggedWorkoutSessions.map((s) => s.toJson()).toList()));
+      await prefs.setString(
+        'lote_personal_records',
+        jsonEncode(_personalRecords),
+      );
+      await prefs.setString(
+        'lote_pr_history',
+        jsonEncode(
+          _prHistory.map(
+            (k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()),
+          ),
+        ),
+      );
+      await prefs.setString(
+        'lote_logged_workout_sessions',
+        jsonEncode(_loggedWorkoutSessions.map((s) => s.toJson()).toList()),
+      );
 
       await prefs.setDouble('lote_start_weight', _startWeight);
       await prefs.setDouble('lote_goal_weight', _goalWeight);
       await prefs.setDouble('lote_distance_goal', _distanceGoal);
-      await prefs.setBool('lote_claimed_weight_reward', _hasClaimedWeightGoalReward);
-      await prefs.setBool('lote_claimed_distance_reward', _hasClaimedDistanceGoalReward);
+      await prefs.setBool(
+        'lote_claimed_weight_reward',
+        _hasClaimedWeightGoalReward,
+      );
+      await prefs.setBool(
+        'lote_claimed_distance_reward',
+        _hasClaimedDistanceGoalReward,
+      );
       await prefs.setStringList('lote_unlocked_shop_items', _unlockedShopItems);
       await prefs.setStringList('lote_unlocked_badges', _unlockedBadges);
-      await prefs.setString('lote_weight_history', jsonEncode(_weightHistory.map((w) => w.toJson()).toList()));
-      await prefs.setString('lote_monthly_quests', jsonEncode(_monthlyQuests.map((q) => q.toJson()).toList()));
-      await prefs.setString('lote_yearly_quests', jsonEncode(_yearlyQuests.map((q) => q.toJson()).toList()));
+      await prefs.setString(
+        'lote_weight_history',
+        jsonEncode(_weightHistory.map((w) => w.toJson()).toList()),
+      );
+      await prefs.setString(
+        'lote_monthly_quests',
+        jsonEncode(_monthlyQuests.map((q) => q.toJson()).toList()),
+      );
+      await prefs.setString(
+        'lote_yearly_quests',
+        jsonEncode(_yearlyQuests.map((q) => q.toJson()).toList()),
+      );
 
       await prefs.setString('lote_dnd_stats', jsonEncode(_stats.toJson()));
-      await prefs.setString('lote_character_sprite', jsonEncode(_sprite.toJson()));
-      await prefs.setString('lote_daily_quests', jsonEncode(_dailyQuests.map((q) => q.toJson()).toList()));
+      await prefs.setString(
+        'lote_character_sprite',
+        jsonEncode(_sprite.toJson()),
+      );
+      await prefs.setString(
+        'lote_daily_quests',
+        jsonEncode(_dailyQuests.map((q) => q.toJson()).toList()),
+      );
     } catch (_) {}
   }
 
@@ -1061,7 +1530,7 @@ class UserProfileManager extends ChangeNotifier {
     if (_hasCompletedInitialQuiz) {
       unlockBadge("Lore Scholar");
     }
-    
+
     // Check daily distance target goal progress
     checkDistanceGoalProgress(healthManager.todaySteps);
   }
@@ -1116,10 +1585,12 @@ class UserProfileManager extends ChangeNotifier {
     final today = DateTime(now.year, now.month, now.day);
 
     // Record in history, replacing today's entry if already present
-    _weightHistory.removeWhere((entry) =>
-        entry.date.year == today.year &&
-        entry.date.month == today.month &&
-        entry.date.day == today.day);
+    _weightHistory.removeWhere(
+      (entry) =>
+          entry.date.year == today.year &&
+          entry.date.month == today.month &&
+          entry.date.day == today.day,
+    );
     _weightHistory.add(WeightEntry(date: now, weight: _weight));
 
     // Auto reward check
@@ -1132,7 +1603,8 @@ class UserProfileManager extends ChangeNotifier {
           _hasClaimedWeightGoalReward = true;
           unlockBadge("Weight Target Achieved");
         }
-      } else { // Bulking
+      } else {
+        // Bulking
         if (_weight >= _goalWeight) {
           addXP(2000);
           earnCrystals(1000);
@@ -1197,7 +1669,8 @@ class UserProfileManager extends ChangeNotifier {
         : (isMonthly ? _monthlyQuests[foundIndex] : _yearlyQuests[foundIndex]);
 
     if (questToComplete.isCompleted) return false;
-    if (questToComplete.progressCount < questToComplete.targetCount) return false;
+    if (questToComplete.progressCount < questToComplete.targetCount)
+      return false;
 
     if (isDaily) {
       _dailyQuests[foundIndex].isCompleted = true;
@@ -1207,7 +1680,8 @@ class UserProfileManager extends ChangeNotifier {
       final challenge = activeMonthlyChallenge;
       if (challenge.targetMetric == "quests") {
         advanceMonthlyChallenge(1.0);
-      } else if (activeCat != null && questToComplete.workoutType == activeCat) {
+      } else if (activeCat != null &&
+          questToComplete.workoutType == activeCat) {
         double amount;
         if (challenge.targetMetric == "reps") {
           amount = 50.0;
@@ -1215,12 +1689,15 @@ class UserProfileManager extends ChangeNotifier {
           amount = 3.0;
         } else if (challenge.targetMetric == "miles") {
           amount = 2.0;
-        } else if (challenge.targetMetric == "workouts" || challenge.targetMetric == "sessions") {
+        } else if (challenge.targetMetric == "workouts" ||
+            challenge.targetMetric == "sessions") {
           amount = 1.0;
         } else if (challenge.targetMetric == "steps") {
           amount = 5000.0;
         } else {
-          amount = questToComplete.requiredMinutes > 0 ? questToComplete.requiredMinutes.toDouble() : 15.0;
+          amount = questToComplete.requiredMinutes > 0
+              ? questToComplete.requiredMinutes.toDouble()
+              : 15.0;
         }
         advanceMonthlyChallenge(amount);
       }
@@ -1251,29 +1728,52 @@ class UserProfileManager extends ChangeNotifier {
 
   void _incrementMonthlyAndYearlyProgress(WorkoutCategory category) {
     for (int i = 0; i < _monthlyQuests.length; i++) {
-      if (_monthlyQuests[i].workoutType == category && !_monthlyQuests[i].isCompleted) {
-        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1).clamp(0, _monthlyQuests[i].targetCount);
+      if (_monthlyQuests[i].workoutType == category &&
+          !_monthlyQuests[i].isCompleted) {
+        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1)
+            .clamp(0, _monthlyQuests[i].targetCount);
       }
     }
     for (int i = 0; i < _yearlyQuests.length; i++) {
-      if (_yearlyQuests[i].workoutType == category && !_yearlyQuests[i].isCompleted) {
-        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1).clamp(0, _yearlyQuests[i].targetCount);
+      if (_yearlyQuests[i].workoutType == category &&
+          !_yearlyQuests[i].isCompleted) {
+        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1)
+            .clamp(0, _yearlyQuests[i].targetCount);
       }
     }
   }
 
   void evaluateQuestsCompletion() {
     final now = DateTime.now();
-    final todaySessions = _loggedWorkoutSessions.where((s) =>
-        s.date.year == now.year && s.date.month == now.month && s.date.day == now.day).toList();
-    
-    final strengthSessions = todaySessions.where((s) => s.type.contains("Strength"));
-    final cardioSessions = todaySessions.where((s) => s.type.contains("Cardio") || s.type.contains("Running"));
+    final todaySessions = _loggedWorkoutSessions
+        .where(
+          (s) =>
+              s.date.year == now.year &&
+              s.date.month == now.month &&
+              s.date.day == now.day,
+        )
+        .toList();
+
+    final strengthSessions = todaySessions.where(
+      (s) => s.type.contains("Strength"),
+    );
+    final cardioSessions = todaySessions.where(
+      (s) => s.type.contains("Cardio") || s.type.contains("Running"),
+    );
     final yogaSessions = todaySessions.where((s) => s.type.contains("Yoga"));
 
-    final strengthDuration = strengthSessions.fold(0.0, (sum, s) => sum + s.durationMinutes);
-    final cardioDuration = cardioSessions.fold(0.0, (sum, s) => sum + s.durationMinutes);
-    final yogaDuration = yogaSessions.fold(0.0, (sum, s) => sum + s.durationMinutes);
+    final strengthDuration = strengthSessions.fold(
+      0.0,
+      (sum, s) => sum + s.durationMinutes,
+    );
+    final cardioDuration = cardioSessions.fold(
+      0.0,
+      (sum, s) => sum + s.durationMinutes,
+    );
+    final yogaDuration = yogaSessions.fold(
+      0.0,
+      (sum, s) => sum + s.durationMinutes,
+    );
 
     for (int i = 0; i < _dailyQuests.length; i++) {
       final q = _dailyQuests[i];
@@ -1281,12 +1781,14 @@ class UserProfileManager extends ChangeNotifier {
 
       switch (q.workoutType) {
         case WorkoutCategory.strength:
-          if (strengthDuration >= q.requiredMinutes || strengthSessions.isNotEmpty) {
+          if (strengthDuration >= q.requiredMinutes ||
+              strengthSessions.isNotEmpty) {
             _dailyQuests[i].progressCount = q.targetCount;
           }
           break;
         case WorkoutCategory.cardio:
-          if (cardioDuration >= q.requiredMinutes || cardioSessions.isNotEmpty) {
+          if (cardioDuration >= q.requiredMinutes ||
+              cardioSessions.isNotEmpty) {
             _dailyQuests[i].progressCount = q.targetCount;
           }
           break;
@@ -1296,8 +1798,10 @@ class UserProfileManager extends ChangeNotifier {
           }
           break;
         case WorkoutCategory.nutrition:
-          if (q.title.toLowerCase().contains("water") || q.title.toLowerCase().contains("hydration") ||
-              q.questDescription.toLowerCase().contains("water") || q.questDescription.toLowerCase().contains("hydration")) {
+          if (q.title.toLowerCase().contains("water") ||
+              q.title.toLowerCase().contains("hydration") ||
+              q.questDescription.toLowerCase().contains("water") ||
+              q.questDescription.toLowerCase().contains("hydration")) {
             if (_todayWaterIntake >= _waterIntakeGoal) {
               _dailyQuests[i].progressCount = q.targetCount;
             }
@@ -1316,11 +1820,21 @@ class UserProfileManager extends ChangeNotifier {
   void logWorkout(WorkoutCategory category, {double durationMinutes = 15.0}) {
     final String type;
     switch (category) {
-      case WorkoutCategory.strength: type = "Strength"; break;
-      case WorkoutCategory.cardio: type = "Cardio"; break;
-      case WorkoutCategory.flexibility: type = "Yoga"; break;
-      case WorkoutCategory.nutrition: type = "Nutrition"; break;
-      default: type = "Cardio"; break;
+      case WorkoutCategory.strength:
+        type = "Strength";
+        break;
+      case WorkoutCategory.cardio:
+        type = "Cardio";
+        break;
+      case WorkoutCategory.flexibility:
+        type = "Yoga";
+        break;
+      case WorkoutCategory.nutrition:
+        type = "Nutrition";
+        break;
+      default:
+        type = "Cardio";
+        break;
     }
 
     final session = WorkoutSession(
@@ -1334,13 +1848,17 @@ class UserProfileManager extends ChangeNotifier {
     evaluateQuestsCompletion();
 
     for (int i = 0; i < _monthlyQuests.length; i++) {
-      if (_monthlyQuests[i].workoutType == category && !_monthlyQuests[i].isCompleted) {
-        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1).clamp(0, _monthlyQuests[i].targetCount);
+      if (_monthlyQuests[i].workoutType == category &&
+          !_monthlyQuests[i].isCompleted) {
+        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1)
+            .clamp(0, _monthlyQuests[i].targetCount);
       }
     }
     for (int i = 0; i < _yearlyQuests.length; i++) {
-      if (_yearlyQuests[i].workoutType == category && !_yearlyQuests[i].isCompleted) {
-        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1).clamp(0, _yearlyQuests[i].targetCount);
+      if (_yearlyQuests[i].workoutType == category &&
+          !_yearlyQuests[i].isCompleted) {
+        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1)
+            .clamp(0, _yearlyQuests[i].targetCount);
       }
     }
     _save();
@@ -1357,11 +1875,21 @@ class UserProfileManager extends ChangeNotifier {
   }) {
     final String baseType;
     switch (category) {
-      case WorkoutCategory.strength: baseType = "Strength"; break;
-      case WorkoutCategory.cardio: baseType = "Cardio"; break;
-      case WorkoutCategory.flexibility: baseType = "Yoga"; break;
-      case WorkoutCategory.nutrition: baseType = "Nutrition"; break;
-      default: baseType = "Strength"; break;
+      case WorkoutCategory.strength:
+        baseType = "Strength";
+        break;
+      case WorkoutCategory.cardio:
+        baseType = "Cardio";
+        break;
+      case WorkoutCategory.flexibility:
+        baseType = "Yoga";
+        break;
+      case WorkoutCategory.nutrition:
+        baseType = "Nutrition";
+        break;
+      default:
+        baseType = "Strength";
+        break;
     }
 
     final session = WorkoutSession(
@@ -1403,19 +1931,22 @@ class UserProfileManager extends ChangeNotifier {
     evaluateQuestsCompletion();
 
     for (int i = 0; i < _monthlyQuests.length; i++) {
-      if (_monthlyQuests[i].workoutType == category && !_monthlyQuests[i].isCompleted) {
-        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1).clamp(0, _monthlyQuests[i].targetCount);
+      if (_monthlyQuests[i].workoutType == category &&
+          !_monthlyQuests[i].isCompleted) {
+        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1)
+            .clamp(0, _monthlyQuests[i].targetCount);
       }
     }
     for (int i = 0; i < _yearlyQuests.length; i++) {
-      if (_yearlyQuests[i].workoutType == category && !_yearlyQuests[i].isCompleted) {
-        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1).clamp(0, _yearlyQuests[i].targetCount);
+      if (_yearlyQuests[i].workoutType == category &&
+          !_yearlyQuests[i].isCompleted) {
+        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1)
+            .clamp(0, _yearlyQuests[i].targetCount);
       }
     }
     _save();
     notifyListeners();
   }
-
 
   void logDetailedMeal({
     required String name,
@@ -1445,36 +1976,52 @@ class UserProfileManager extends ChangeNotifier {
   void deleteDetailedMeal(String id) {
     final mealIndex = _loggedMeals.indexWhere((m) => m.id == id);
     if (mealIndex == -1) return;
-    
+
     final meal = _loggedMeals[mealIndex];
     final now = DateTime.now();
-    if (meal.date.year == now.year && meal.date.month == now.month && meal.date.day == now.day) {
+    if (meal.date.year == now.year &&
+        meal.date.month == now.month &&
+        meal.date.day == now.day) {
       if (_healthyMealsLoggedToday > 0) _healthyMealsLoggedToday -= 1;
-      
-      final sessionIndex = _loggedWorkoutSessions.lastIndexWhere((s) => 
-        s.type == "Nutrition" && 
-        s.date.year == now.year && s.date.month == now.month && s.date.day == now.day);
+
+      final sessionIndex = _loggedWorkoutSessions.lastIndexWhere(
+        (s) =>
+            s.type == "Nutrition" &&
+            s.date.year == now.year &&
+            s.date.month == now.month &&
+            s.date.day == now.day,
+      );
       if (sessionIndex != -1) {
         _loggedWorkoutSessions.removeAt(sessionIndex);
       }
 
       // Roll back monthly/yearly nutrition quest progress to prevent farming
       for (int i = 0; i < _monthlyQuests.length; i++) {
-        if (_monthlyQuests[i].workoutType == WorkoutCategory.nutrition && !_monthlyQuests[i].isCompleted && _monthlyQuests[i].progressCount > 0) {
+        if (_monthlyQuests[i].workoutType == WorkoutCategory.nutrition &&
+            !_monthlyQuests[i].isCompleted &&
+            _monthlyQuests[i].progressCount > 0) {
           _monthlyQuests[i].progressCount -= 1;
         }
       }
       for (int i = 0; i < _yearlyQuests.length; i++) {
-        if (_yearlyQuests[i].workoutType == WorkoutCategory.nutrition && !_yearlyQuests[i].isCompleted && _yearlyQuests[i].progressCount > 0) {
+        if (_yearlyQuests[i].workoutType == WorkoutCategory.nutrition &&
+            !_yearlyQuests[i].isCompleted &&
+            _yearlyQuests[i].progressCount > 0) {
           _yearlyQuests[i].progressCount -= 1;
         }
       }
 
       // Reverse daily nutrition quest completion if condition no longer met
       // This prevents the log→complete→delete→repeat farming exploit
-      final remainingNutritionSessions = _loggedWorkoutSessions.where((s) =>
-          s.type == "Nutrition" &&
-          s.date.year == now.year && s.date.month == now.month && s.date.day == now.day).length;
+      final remainingNutritionSessions = _loggedWorkoutSessions
+          .where(
+            (s) =>
+                s.type == "Nutrition" &&
+                s.date.year == now.year &&
+                s.date.month == now.month &&
+                s.date.day == now.day,
+          )
+          .length;
 
       for (int i = 0; i < _dailyQuests.length; i++) {
         final q = _dailyQuests[i];
@@ -1482,7 +2029,8 @@ class UserProfileManager extends ChangeNotifier {
         if (!q.isCompleted) continue;
 
         // Skip hydration quests — they aren't meal-based
-        final isHydration = q.title.toLowerCase().contains("water") ||
+        final isHydration =
+            q.title.toLowerCase().contains("water") ||
             q.title.toLowerCase().contains("hydration") ||
             q.questDescription.toLowerCase().contains("water") ||
             q.questDescription.toLowerCase().contains("hydration");
@@ -1500,7 +2048,7 @@ class UserProfileManager extends ChangeNotifier {
         }
       }
     }
-    
+
     _loggedMeals.removeAt(mealIndex);
     _save();
     notifyListeners();
@@ -1509,7 +2057,12 @@ class UserProfileManager extends ChangeNotifier {
   double get todaySugar {
     final now = DateTime.now();
     return _loggedMeals
-        .where((m) => m.date.year == now.year && m.date.month == now.month && m.date.day == now.day)
+        .where(
+          (m) =>
+              m.date.year == now.year &&
+              m.date.month == now.month &&
+              m.date.day == now.day,
+        )
         .fold(0.0, (sum, m) => sum + m.sugar);
   }
 
@@ -1532,7 +2085,7 @@ class UserProfileManager extends ChangeNotifier {
       legs: legs,
     );
     _measurementHistory.add(entry);
-    
+
     _weight = weight;
     _chest = chest;
     _arms = arms;
@@ -1552,7 +2105,7 @@ class UserProfileManager extends ChangeNotifier {
 
   void toggleEquipItem(ShopItem item) {
     if (!_unlockedShopItems.contains(item.name)) return;
-    
+
     switch (item.type) {
       case 'frame':
         _equippedFrame = (_equippedFrame == item.name) ? 'None' : item.name;
@@ -1564,10 +2117,14 @@ class UserProfileManager extends ChangeNotifier {
         _equippedAura = (_equippedAura == item.name) ? 'None' : item.name;
         break;
       case 'background':
-        _equippedBackground = (_equippedBackground == item.name) ? 'None' : item.name;
+        _equippedBackground = (_equippedBackground == item.name)
+            ? 'None'
+            : item.name;
         break;
       case 'accessory':
-        _equippedAccessory = (_equippedAccessory == item.name) ? 'None' : item.name;
+        _equippedAccessory = (_equippedAccessory == item.name)
+            ? 'None'
+            : item.name;
         break;
     }
     _save();
@@ -1582,18 +2139,25 @@ class UserProfileManager extends ChangeNotifier {
     final now = DateTime.now();
     for (final hw in recentWorkouts) {
       final DateTime? startDate = DateTime.tryParse(hw['startDate'] ?? '');
-      if (startDate != null && startDate.year == now.year && startDate.month == now.month && startDate.day == now.day) {
+      if (startDate != null &&
+          startDate.year == now.year &&
+          startDate.month == now.month &&
+          startDate.day == now.day) {
         final activityType = hw['activityType'] ?? '';
         final String type;
-        
+
         // Determine mapped type. A walking workout is mapped to 'Walking', which is excluded from Strength/Yoga sync.
-        if (activityType == 'functionalStrengthTraining' || activityType == 'traditionalStrengthTraining' || activityType == 'coreTraining') {
+        if (activityType == 'functionalStrengthTraining' ||
+            activityType == 'traditionalStrengthTraining' ||
+            activityType == 'coreTraining') {
           type = "Strength";
         } else if (activityType == 'walking') {
           type = "Walking";
         } else if (activityType == 'running') {
           type = "Running";
-        } else if (activityType == 'cycling' || activityType == 'rowing' || activityType == 'stairClimbing') {
+        } else if (activityType == 'cycling' ||
+            activityType == 'rowing' ||
+            activityType == 'stairClimbing') {
           type = "Cardio";
         } else if (activityType == 'yoga' || activityType == 'flexibility') {
           type = "Yoga";
@@ -1604,20 +2168,24 @@ class UserProfileManager extends ChangeNotifier {
         final double durationMins = (hw['duration'] as num?)?.toDouble() ?? 0.0;
 
         // Check if session is already present
-        final exists = _loggedWorkoutSessions.any((s) =>
-            s.date.year == startDate.year &&
-            s.date.month == startDate.month &&
-            s.date.day == startDate.day &&
-            s.type == type &&
-            (s.durationMinutes - durationMins).abs() < 0.1);
+        final exists = _loggedWorkoutSessions.any(
+          (s) =>
+              s.date.year == startDate.year &&
+              s.date.month == startDate.month &&
+              s.date.day == startDate.day &&
+              s.type == type &&
+              (s.durationMinutes - durationMins).abs() < 0.1,
+        );
 
         if (!exists) {
-          _loggedWorkoutSessions.add(WorkoutSession(
-            id: UniqueKey().toString(),
-            type: type,
-            durationMinutes: durationMins,
-            date: startDate,
-          ));
+          _loggedWorkoutSessions.add(
+            WorkoutSession(
+              id: UniqueKey().toString(),
+              type: type,
+              durationMinutes: durationMins,
+              date: startDate,
+            ),
+          );
         }
       }
     }
@@ -1674,7 +2242,7 @@ class UserProfileManager extends ChangeNotifier {
       "Barbell Squat": 155.0,
       "Overhead Press": 95.0,
     };
-    
+
     final daysAgo = DateTime.now().subtract(const Duration(days: 3));
     _prHistory = {
       "Pullups": [PREntry(date: daysAgo, value: 5.0)],
@@ -1688,7 +2256,7 @@ class UserProfileManager extends ChangeNotifier {
       "Barbell Squat": [PREntry(date: daysAgo, value: 155.0)],
       "Overhead Press": [PREntry(date: daysAgo, value: 95.0)],
     };
-    
+
     regenerateDailyQuests();
     _save();
     notifyListeners();
@@ -1700,31 +2268,59 @@ class UserProfileManager extends ChangeNotifier {
     final today = DateTime(now.year, now.month, now.day);
 
     if (_lastRefreshDate != null) {
-      final lastRefreshDay = DateTime(_lastRefreshDate!.year, _lastRefreshDate!.month, _lastRefreshDate!.day);
-      
+      final lastRefreshDay = DateTime(
+        _lastRefreshDate!.year,
+        _lastRefreshDate!.month,
+        _lastRefreshDate!.day,
+      );
+
       if (today.difference(lastRefreshDay).inDays > 0) {
         _healthyMealsLoggedToday = 0;
         _todayWaterIntake = 0.0;
         _hasClaimedDistanceGoalReward = false;
-        final elementName = availableElements[_normalizedElementIndex(_selectedElementIndex)].name;
-        _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily, prs: _personalRecords, waterGoal: _waterIntakeGoal);
-        
+        final elementName =
+            availableElements[_normalizedElementIndex(_selectedElementIndex)]
+                .name;
+        _dailyQuests = generateQuests(
+          elementName,
+          _selectedFocuses,
+          QuestCadence.daily,
+          prs: _personalRecords,
+          waterGoal: _waterIntakeGoal,
+        );
+
         if (_lastRefreshDate!.month != now.month) {
           _monthlyChallengeProgress = 0.0;
-          _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
+          _monthlyQuests = generateQuests(
+            elementName,
+            _selectedFocuses,
+            QuestCadence.monthly,
+            prs: _personalRecords,
+            waterGoal: _waterIntakeGoal,
+          );
         }
         if (_lastRefreshDate!.year != now.year) {
-          _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
+          _yearlyQuests = generateQuests(
+            elementName,
+            _selectedFocuses,
+            QuestCadence.yearly,
+            prs: _personalRecords,
+            waterGoal: _waterIntakeGoal,
+          );
         }
 
         if (_lastActiveDate != null) {
-          final lastActiveDay = DateTime(_lastActiveDate!.year, _lastActiveDate!.month, _lastActiveDate!.day);
+          final lastActiveDay = DateTime(
+            _lastActiveDate!.year,
+            _lastActiveDate!.month,
+            _lastActiveDate!.day,
+          );
           if (today.difference(lastActiveDay).inDays > 1) {
             _previousStreak = _streak;
             _streak = 0;
           }
         }
-        
+
         _lastRefreshDate = now;
         _save();
       }
@@ -1739,7 +2335,11 @@ class UserProfileManager extends ChangeNotifier {
     final today = DateTime(now.year, now.month, now.day);
 
     if (_lastActiveDate != null) {
-      final lastDay = DateTime(_lastActiveDate!.year, _lastActiveDate!.month, _lastActiveDate!.day);
+      final lastDay = DateTime(
+        _lastActiveDate!.year,
+        _lastActiveDate!.month,
+        _lastActiveDate!.day,
+      );
       final diff = today.difference(lastDay).inDays;
 
       if (diff == 1) {
@@ -1765,10 +2365,29 @@ class UserProfileManager extends ChangeNotifier {
   }
 
   void regenerateDailyQuests() {
-    final elementName = availableElements[_normalizedElementIndex(_selectedElementIndex)].name;
-    _dailyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.daily, prs: _personalRecords, waterGoal: _waterIntakeGoal);
-    _monthlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.monthly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
-    _yearlyQuests = generateQuests(elementName, _selectedFocuses, QuestCadence.yearly, prs: _personalRecords, waterGoal: _waterIntakeGoal);
+    final elementName =
+        availableElements[_normalizedElementIndex(_selectedElementIndex)].name;
+    _dailyQuests = generateQuests(
+      elementName,
+      _selectedFocuses,
+      QuestCadence.daily,
+      prs: _personalRecords,
+      waterGoal: _waterIntakeGoal,
+    );
+    _monthlyQuests = generateQuests(
+      elementName,
+      _selectedFocuses,
+      QuestCadence.monthly,
+      prs: _personalRecords,
+      waterGoal: _waterIntakeGoal,
+    );
+    _yearlyQuests = generateQuests(
+      elementName,
+      _selectedFocuses,
+      QuestCadence.yearly,
+      prs: _personalRecords,
+      waterGoal: _waterIntakeGoal,
+    );
     _save();
     notifyListeners();
   }
@@ -1797,88 +2416,100 @@ class UserProfileManager extends ChangeNotifier {
     switch (month) {
       case 1:
         return MonthlyChallenge(
-            monthName: "January",
-            targetDescription: "Do 1,000 Pushups",
-            targetMetric: "reps",
-            targetAmount: 1000.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "January",
+          targetDescription: "Do 1,000 Pushups",
+          targetMetric: "reps",
+          targetAmount: 1000.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       case 2:
         return MonthlyChallenge(
-            monthName: "February",
-            targetDescription: "Perform 300 minutes of Cardio",
-            targetMetric: "mins",
-            targetAmount: 300.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "February",
+          targetDescription: "Perform 300 minutes of Cardio",
+          targetMetric: "mins",
+          targetAmount: 300.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       case 3:
         return MonthlyChallenge(
-            monthName: "March",
-            targetDescription: "Perform 120 minutes of Yoga/Flexibility",
-            targetMetric: "mins",
-            targetAmount: 120.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "March",
+          targetDescription: "Perform 120 minutes of Yoga/Flexibility",
+          targetMetric: "mins",
+          targetAmount: 120.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       case 4:
         return MonthlyChallenge(
-            monthName: "April",
-            targetDescription: "Drink 90 Liters of water",
-            targetMetric: "Liters",
-            targetAmount: 90.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "April",
+          targetDescription: "Drink 90 Liters of water",
+          targetMetric: "Liters",
+          targetAmount: 90.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       case 5:
         return MonthlyChallenge(
-            monthName: "May",
-            targetDescription: "Walk 50 miles",
-            targetMetric: "miles",
-            targetAmount: 50.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "May",
+          targetDescription: "Walk 50 miles",
+          targetMetric: "miles",
+          targetAmount: 50.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       case 6:
         return MonthlyChallenge(
-            monthName: "June",
-            targetDescription: "Complete 20 Strength Forge workouts",
-            targetMetric: "workouts",
-            targetAmount: 20.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "June",
+          targetDescription: "Complete 20 Strength Forge workouts",
+          targetMetric: "workouts",
+          targetAmount: 20.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       case 7:
         return MonthlyChallenge(
-            monthName: "July",
-            targetDescription: "Perform 150 minutes of Meditation",
-            targetMetric: "mins",
-            targetAmount: 150.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "July",
+          targetDescription: "Perform 150 minutes of Meditation",
+          targetMetric: "mins",
+          targetAmount: 150.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       case 8:
         return MonthlyChallenge(
-            monthName: "August",
-            targetDescription: "Drink 100 Liters of water",
-            targetMetric: "Liters",
-            targetAmount: 100.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "August",
+          targetDescription: "Drink 100 Liters of water",
+          targetMetric: "Liters",
+          targetAmount: 100.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       case 9:
         return MonthlyChallenge(
-            monthName: "September",
-            targetDescription: "Log 150,000 steps",
-            targetMetric: "steps",
-            targetAmount: 150000.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "September",
+          targetDescription: "Log 150,000 steps",
+          targetMetric: "steps",
+          targetAmount: 150000.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       case 10:
         return MonthlyChallenge(
-            monthName: "October",
-            targetDescription: "Do 1,200 Squats",
-            targetMetric: "reps",
-            targetAmount: 1200.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "October",
+          targetDescription: "Do 1,200 Squats",
+          targetMetric: "reps",
+          targetAmount: 1200.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       case 11:
         return MonthlyChallenge(
-            monthName: "November",
-            targetDescription: "Complete 15 Flexibility sessions",
-            targetMetric: "sessions",
-            targetAmount: 15.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "November",
+          targetDescription: "Complete 15 Flexibility sessions",
+          targetMetric: "sessions",
+          targetAmount: 15.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
       default:
         return MonthlyChallenge(
-            monthName: "December",
-            targetDescription: "Complete 40 Daily Quests",
-            targetMetric: "quests",
-            targetAmount: 40.0,
-            currentAmount: _monthlyChallengeProgress);
+          monthName: "December",
+          targetDescription: "Complete 40 Daily Quests",
+          targetMetric: "quests",
+          targetAmount: 40.0,
+          currentAmount: _monthlyChallengeProgress,
+        );
     }
   }
 
@@ -1904,7 +2535,7 @@ class UserProfileManager extends ChangeNotifier {
         "September": "September Steps Badge",
         "October": "October Squats Badge",
         "November": "November Flexibility Badge",
-        "December": "December Quests Badge"
+        "December": "December Quests Badge",
       };
       final specificBadge = badgeMap[challenge.monthName];
       if (specificBadge != null) {

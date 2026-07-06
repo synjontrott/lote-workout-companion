@@ -23,7 +23,8 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
     _localExpression = profile.expressionStyle;
   }
 
-  LotEElement get _activeElement => UserProfileManager.availableElements[_localElementIndex];
+  LotEElement get _activeElement =>
+      UserProfileManager.availableElements[_localElementIndex];
 
   void _saveSelection(UserProfileManager profile) {
     profile.selectedElementIndex = _localElementIndex;
@@ -78,10 +79,7 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                     const SizedBox(height: 6),
                     Text(
                       "Choose your elemental theme and stance",
-                      style: GoogleFonts.exo2(
-                        fontSize: 13,
-                        color: Colors.grey,
-                      ),
+                      style: GoogleFonts.exo2(fontSize: 13, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -114,16 +112,22 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                             alignment: Alignment.center,
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             decoration: BoxDecoration(
-                              color: isSelected ? elem.primaryColor : Colors.white.withValues(alpha: 0.03),
+                              color: isSelected
+                                  ? elem.primaryColor
+                                  : Colors.white.withValues(alpha: 0.03),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
-                                color: isSelected ? elem.accentColor : Colors.white.withValues(alpha: 0.1),
+                                color: isSelected
+                                    ? elem.accentColor
+                                    : Colors.white.withValues(alpha: 0.1),
                                 width: 1,
                               ),
                               boxShadow: isSelected
                                   ? [
                                       BoxShadow(
-                                        color: elem.primaryColor.withValues(alpha: 0.4),
+                                        color: elem.primaryColor.withValues(
+                                          alpha: 0.4,
+                                        ),
                                         blurRadius: 6,
                                       ),
                                     ]
@@ -166,11 +170,15 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                         Row(
                           children: ExpressionStyle.values.map((style) {
                             final isSel = _localExpression == style;
-                            final isDisabled = _activeElement.inherentDark && style != ExpressionStyle.corrupt;
+                            final isDisabled =
+                                _activeElement.inherentDark &&
+                                style != ExpressionStyle.corrupt;
 
                             return Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
                                 child: InkWell(
                                   onTap: isDisabled
                                       ? null
@@ -182,16 +190,22 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                                   borderRadius: BorderRadius.circular(8),
                                   child: Container(
                                     alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: isSel
                                           ? _activeElement.primaryColor
-                                          : Colors.white.withValues(alpha: 0.02),
+                                          : Colors.white.withValues(
+                                              alpha: 0.02,
+                                            ),
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
                                         color: isSel
                                             ? _activeElement.accentColor
-                                            : Colors.white.withValues(alpha: 0.08),
+                                            : Colors.white.withValues(
+                                                alpha: 0.08,
+                                              ),
                                         width: 1,
                                       ),
                                     ),
@@ -202,7 +216,11 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                                         fontWeight: FontWeight.bold,
                                         color: isSel
                                             ? Colors.white
-                                            : (isDisabled ? Colors.white.withValues(alpha: 0.15) : Colors.grey),
+                                            : (isDisabled
+                                                  ? Colors.white.withValues(
+                                                      alpha: 0.15,
+                                                    )
+                                                  : Colors.grey),
                                       ),
                                     ),
                                   ),
@@ -230,7 +248,9 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                             color: Colors.white.withValues(alpha: 0.02),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: _activeElement.primaryColor.withValues(alpha: 0.3),
+                              color: _activeElement.primaryColor.withValues(
+                                alpha: 0.3,
+                              ),
                               width: 1.5,
                             ),
                           ),
@@ -238,10 +258,13 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    _activeElement.displayName(_localExpression).toUpperCase(),
+                                    _activeElement
+                                        .displayName(_localExpression)
+                                        .toUpperCase(),
                                     style: GoogleFonts.orbitron(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -250,20 +273,26 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                                     ),
                                   ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 4,
+                                    ),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.05),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
-                                      _activeElement.planetOfOrigin.toUpperCase(),
+                                      _activeElement.planetOfOrigin
+                                          .toUpperCase(),
                                       style: GoogleFonts.orbitron(
                                         fontSize: 9,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.grey,
                                       ),
                                     ),
-                                  )
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 15),
@@ -290,21 +319,26 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                               const SizedBox(height: 8),
                               Builder(
                                 builder: (context) {
-                                  final stanceText = _localExpression == ExpressionStyle.standard
+                                  final stanceText =
+                                      _localExpression ==
+                                          ExpressionStyle.standard
                                       ? _activeElement.standardDetails
-                                      : _localExpression == ExpressionStyle.corrupt
-                                          ? _activeElement.corruptDetails
-                                          : _activeElement.balancedDetails;
+                                      : _localExpression ==
+                                            ExpressionStyle.corrupt
+                                      ? _activeElement.corruptDetails
+                                      : _activeElement.balancedDetails;
                                   return Text(
                                     stanceText,
                                     style: GoogleFonts.exo2(
                                       fontSize: 13,
-                                      color: Colors.white.withValues(alpha: 0.8),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.8,
+                                      ),
                                       height: 1.5,
                                     ),
                                   );
                                 },
-                              )
+                              ),
                             ],
                           ),
                         ),
@@ -322,7 +356,8 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               elevation: 6,
-                              shadowColor: _activeElement.primaryColor.withValues(alpha: 0.4),
+                              shadowColor: _activeElement.primaryColor
+                                  .withValues(alpha: 0.4),
                             ),
                             child: Text(
                               "CONFIRM ELEMENT THEME",
@@ -339,10 +374,10 @@ class _ElementSelectionViewState extends State<ElementSelectionView> {
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

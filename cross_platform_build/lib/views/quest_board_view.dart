@@ -32,15 +32,20 @@ class _QuestBoardViewState extends State<QuestBoardView> {
   // Custom workout log states
   bool _showingCustomWorkoutLog = false;
   bool _customWorkoutIsTimeBased = true;
-  final TextEditingController _customWorkoutNameController = TextEditingController();
-  final TextEditingController _customWorkoutRepsController = TextEditingController();
-  final TextEditingController _customWorkoutSetsController = TextEditingController();
-  final TextEditingController _customWorkoutDurationController = TextEditingController();
+  final TextEditingController _customWorkoutNameController =
+      TextEditingController();
+  final TextEditingController _customWorkoutRepsController =
+      TextEditingController();
+  final TextEditingController _customWorkoutSetsController =
+      TextEditingController();
+  final TextEditingController _customWorkoutDurationController =
+      TextEditingController();
   String _customWorkoutDifficulty = "Medium";
   WorkoutCategory _customWorkoutCategory = WorkoutCategory.strength;
 
   // Suggested Workout Search states
-  final TextEditingController _workoutSearchController = TextEditingController();
+  final TextEditingController _workoutSearchController =
+      TextEditingController();
   String _workoutSearchQuery = "";
 
   String _tailGender = "Male";
@@ -80,63 +85,151 @@ class _QuestBoardViewState extends State<QuestBoardView> {
   List<Map<String, dynamic>> _tailoredDopamineMenu(UserProfileManager profile) {
     List<Map<String, dynamic>> menu = [];
     final element = profile.currentElement.name;
-    
+
     String adj;
     switch (element) {
-      case "Fire": adj = "Flame"; break;
-      case "Water": adj = "Tidal"; break;
-      case "Earth": adj = "Terra"; break;
-      case "Air": adj = "Zephyr"; break;
-      case "Lightning": adj = "Volt"; break;
-      case "Metal": adj = "Iron"; break;
-      case "Ice": adj = "Frost"; break;
-      case "Bone": adj = "Marrow"; break;
-      case "Gas": adj = "Vapor"; break;
-      case "Laser": adj = "Photon"; break;
-      case "Zero Space": adj = "Void"; break;
-      case "Darki": adj = "Umbral"; break;
-      case "Death": adj = "Decay"; break;
-      case "Knife": adj = "Razor"; break;
-      case "Poison": adj = "Toxic"; break;
-      case "Shadow": adj = "Phantom"; break;
-      default: adj = "Astral";
+      case "Fire":
+        adj = "Flame";
+        break;
+      case "Water":
+        adj = "Tidal";
+        break;
+      case "Earth":
+        adj = "Terra";
+        break;
+      case "Air":
+        adj = "Zephyr";
+        break;
+      case "Lightning":
+        adj = "Volt";
+        break;
+      case "Metal":
+        adj = "Iron";
+        break;
+      case "Ice":
+        adj = "Frost";
+        break;
+      case "Bone":
+        adj = "Marrow";
+        break;
+      case "Gas":
+        adj = "Vapor";
+        break;
+      case "Laser":
+        adj = "Photon";
+        break;
+      case "Zero Space":
+        adj = "Void";
+        break;
+      case "Darki":
+        adj = "Umbral";
+        break;
+      case "Death":
+        adj = "Decay";
+        break;
+      case "Knife":
+        adj = "Razor";
+        break;
+      case "Poison":
+        adj = "Toxic";
+        break;
+      case "Shadow":
+        adj = "Phantom";
+        break;
+      default:
+        adj = "Astral";
     }
-    
+
     final focuses = profile.selectedFocuses.isEmpty
         ? [TrainingFocus.calisthenics, TrainingFocus.cardio]
         : profile.selectedFocuses;
-        
+
     for (var focus in focuses) {
       switch (focus) {
         case TrainingFocus.calisthenics:
-          menu.add({"name": "$adj Defiance (10 Pushups)", "icon": Icons.directions_run, "xp": 15, "crystals": 5});
-          menu.add({"name": "$adj Lever (15s hollow hold)", "icon": Icons.shield, "xp": 15, "crystals": 5});
+          menu.add({
+            "name": "$adj Defiance (10 Pushups)",
+            "icon": Icons.directions_run,
+            "xp": 15,
+            "crystals": 5,
+          });
+          menu.add({
+            "name": "$adj Lever (15s hollow hold)",
+            "icon": Icons.shield,
+            "xp": 15,
+            "crystals": 5,
+          });
           break;
         case TrainingFocus.lifting:
-          menu.add({"name": "$adj Load (15 body squats)", "icon": Icons.fitness_center, "xp": 15, "crystals": 5});
-          menu.add({"name": "$adj Press (10 overhead raises)", "icon": Icons.fitness_center, "xp": 15, "crystals": 5});
+          menu.add({
+            "name": "$adj Load (15 body squats)",
+            "icon": Icons.fitness_center,
+            "xp": 15,
+            "crystals": 5,
+          });
+          menu.add({
+            "name": "$adj Press (10 overhead raises)",
+            "icon": Icons.fitness_center,
+            "xp": 15,
+            "crystals": 5,
+          });
           break;
         case TrainingFocus.cardio:
-          menu.add({"name": "$adj Dash (30 High knees)", "icon": Icons.flash_on, "xp": 15, "crystals": 5});
-          menu.add({"name": "$adj Jog (1 Min walk in place)", "icon": Icons.directions_run, "xp": 20, "crystals": 6});
+          menu.add({
+            "name": "$adj Dash (30 High knees)",
+            "icon": Icons.flash_on,
+            "xp": 15,
+            "crystals": 5,
+          });
+          menu.add({
+            "name": "$adj Jog (1 Min walk in place)",
+            "icon": Icons.directions_run,
+            "xp": 20,
+            "crystals": 6,
+          });
           break;
         case TrainingFocus.flexibility:
-          menu.add({"name": "$adj Alignment (30s toe stretch)", "icon": Icons.accessibility_new, "xp": 15, "crystals": 5});
-          menu.add({"name": "$adj Flow (1 Min ankle mobility)", "icon": Icons.accessibility_new, "xp": 10, "crystals": 3});
+          menu.add({
+            "name": "$adj Alignment (30s toe stretch)",
+            "icon": Icons.accessibility_new,
+            "xp": 15,
+            "crystals": 5,
+          });
+          menu.add({
+            "name": "$adj Flow (1 Min ankle mobility)",
+            "icon": Icons.accessibility_new,
+            "xp": 10,
+            "crystals": 3,
+          });
           break;
         case TrainingFocus.cutting:
-          menu.add({"name": "$adj Cleanse (Drink cold water)", "icon": Icons.opacity, "xp": 10, "crystals": 3});
+          menu.add({
+            "name": "$adj Cleanse (Drink cold water)",
+            "icon": Icons.opacity,
+            "xp": 10,
+            "crystals": 3,
+          });
           break;
         case TrainingFocus.bulking:
-          menu.add({"name": "$adj Nourish (Protein snack log)", "icon": Icons.restaurant_menu, "xp": 10, "crystals": 3});
+          menu.add({
+            "name": "$adj Nourish (Protein snack log)",
+            "icon": Icons.restaurant_menu,
+            "xp": 10,
+            "crystals": 3,
+          });
           break;
       }
     }
-    
+
     if (menu.isEmpty) {
-      menu.add({"name": "$adj Focus (30s deep breathing)", "icon": Icons.self_improvement, "xp": 10, "crystals": 3});
+      menu.add({
+        "name": "$adj Focus (30s deep breathing)",
+        "icon": Icons.self_improvement,
+        "xp": 10,
+        "crystals": 3,
+      });
     }
-    
+
     return menu.take(5).toList();
   }
 
@@ -169,7 +262,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
           backgroundColor: const Color(0xFF0C0C0C),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
-            side: BorderSide(color: themeColor.withValues(alpha: 0.4), width: 1.5),
+            side: BorderSide(
+              color: themeColor.withValues(alpha: 0.4),
+              width: 1.5,
+            ),
           ),
           title: Text(
             title,
@@ -218,7 +314,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
     );
   }
 
-  int _getQuestIndex(UserProfileManager profile, String id, QuestCadence cadence) {
+  int _getQuestIndex(
+    UserProfileManager profile,
+    String id,
+    QuestCadence cadence,
+  ) {
     if (cadence == QuestCadence.daily) {
       return profile.dailyQuests.indexWhere((q) => q.id == id);
     } else if (cadence == QuestCadence.monthly) {
@@ -228,7 +328,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
     }
   }
 
-  LotEQuest _getQuestAt(UserProfileManager profile, int index, QuestCadence cadence) {
+  LotEQuest _getQuestAt(
+    UserProfileManager profile,
+    int index,
+    QuestCadence cadence,
+  ) {
     if (cadence == QuestCadence.daily) {
       return profile.dailyQuests[index];
     } else if (cadence == QuestCadence.monthly) {
@@ -246,468 +350,449 @@ class _QuestBoardViewState extends State<QuestBoardView> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: const Color(0xFF050505),
-      body: Stack(
-        children: [
-          // Scrollable board contents
-          SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header Title
-                Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        "GUILD QUEST BOARD",
-                        style: GoogleFonts.orbitron(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 4,
-                          color: Colors.white,
+        body: Stack(
+          children: [
+            // Scrollable board contents
+            SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header Title
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          "GUILD QUEST BOARD",
+                          style: GoogleFonts.orbitron(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 4,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        "Complete quests to forge stats and levels",
-                        style: GoogleFonts.exo2(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey,
+                        const SizedBox(height: 6),
+                        Text(
+                          "Complete quests to forge stats and levels",
+                          style: GoogleFonts.exo2(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 25),
+                  const SizedBox(height: 25),
 
-                // Segmented picker for Quest Cadence
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: QuestCadence.values.map((cadence) {
-                      final isSelected = _selectedCadence == cadence;
-                      final cadenceName = cadence.name[0].toUpperCase() + cadence.name.substring(1);
-                      return Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: ChoiceChip(
-                            label: Container(
-                              alignment: Alignment.center,
-                              child: Text(
-                                cadenceName,
-                                style: GoogleFonts.orbitron(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  color: isSelected ? Colors.white : Colors.grey,
+                  // Segmented picker for Quest Cadence
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: QuestCadence.values.map((cadence) {
+                        final isSelected = _selectedCadence == cadence;
+                        final cadenceName =
+                            cadence.name[0].toUpperCase() +
+                            cadence.name.substring(1);
+                        return Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: ChoiceChip(
+                              label: Container(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  cadenceName,
+                                  style: GoogleFonts.orbitron(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Colors.grey,
+                                  ),
                                 ),
                               ),
+                              selected: isSelected,
+                              selectedColor:
+                                  profile.currentElement.primaryColor,
+                              backgroundColor: Colors.white.withValues(
+                                alpha: 0.04,
+                              ),
+                              onSelected: (val) {
+                                if (val) {
+                                  setState(() {
+                                    _selectedCadence = cadence;
+                                  });
+                                }
+                              },
                             ),
-                            selected: isSelected,
-                            selectedColor: profile.currentElement.primaryColor,
-                            backgroundColor: Colors.white.withValues(alpha: 0.04),
-                            onSelected: (val) {
-                              if (val) {
-                                setState(() {
-                                  _selectedCadence = cadence;
-                                });
-                              }
-                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+
+                  // ADHD / AuDHD Dopamine Menu Section
+                  if (profile.cognitiveProfile == CognitiveProfile.adhd ||
+                      profile.cognitiveProfile == CognitiveProfile.audhd) ...[
+                    _buildDopamineQuickMenu(profile),
+                    const SizedBox(height: 25),
+                  ],
+
+                  // Campaigns Section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "${_selectedCadence.name.toUpperCase()} WARRIOR CAMPAIGNS",
+                          style: GoogleFonts.orbitron(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                            letterSpacing: 2,
                           ),
                         ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                const SizedBox(height: 25),
-
-                // ADHD / AuDHD Dopamine Menu Section
-                if (profile.cognitiveProfile == CognitiveProfile.adhd ||
-                    profile.cognitiveProfile == CognitiveProfile.audhd) ...[
-                  _buildDopamineQuickMenu(profile),
-                  const SizedBox(height: 25),
-                ],
-
-                // Campaigns Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "${_selectedCadence.name.toUpperCase()} WARRIOR CAMPAIGNS",
-                        style: GoogleFonts.orbitron(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                      if (_selectedCadence == QuestCadence.daily)
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            profile.logRestDay();
-                            _showOutcomeDialog(
-                              title: "REST DAY LOGGED",
-                              message: "Rest Day logged successfully! Your consecutive workout streak has been preserved and your muscles recovered.",
-                              themeColor: Colors.cyan,
-                            );
-                          },
-                          icon: const Icon(Icons.king_bed, size: 14, color: Colors.cyan),
-                          label: Text(
-                            "REST DAY",
-                            style: GoogleFonts.orbitron(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
+                        if (_selectedCadence == QuestCadence.daily)
+                          ElevatedButton.icon(
+                            onPressed: () {
+                              profile.logRestDay();
+                              _showOutcomeDialog(
+                                title: "REST DAY LOGGED",
+                                message:
+                                    "Rest Day logged successfully! Your consecutive workout streak has been preserved and your muscles recovered.",
+                                themeColor: Colors.cyan,
+                              );
+                            },
+                            icon: const Icon(
+                              Icons.king_bed,
+                              size: 14,
                               color: Colors.cyan,
                             ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.cyan.withValues(alpha: 0.15),
-                            shadowColor: Colors.transparent,
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
+                            label: Text(
+                              "REST DAY",
+                              style: GoogleFonts.orbitron(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.cyan,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.cyan.withValues(
+                                alpha: 0.15,
+                              ),
+                              shadowColor: Colors.transparent,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 14),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Builder(
-                    builder: (context) {
-                      final currentQuests = _selectedCadence == QuestCadence.daily
-                          ? profile.dailyQuests
-                          : (_selectedCadence == QuestCadence.monthly
-                              ? profile.monthlyQuests
-                              : profile.yearlyQuests);
-                      final activeQuests = currentQuests.where((q) => !q.isCompleted).toList();
+                  const SizedBox(height: 14),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Builder(
+                      builder: (context) {
+                        final currentQuests =
+                            _selectedCadence == QuestCadence.daily
+                            ? profile.dailyQuests
+                            : (_selectedCadence == QuestCadence.monthly
+                                  ? profile.monthlyQuests
+                                  : profile.yearlyQuests);
+                        final activeQuests = currentQuests
+                            .where((q) => !q.isCompleted)
+                            .toList();
 
-                      if (activeQuests.isEmpty) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(32.0),
-                            child: Column(
-                              children: [
-                                const Icon(Icons.check_circle_outline, color: Colors.green, size: 48),
-                                const SizedBox(height: 12),
-                                Text(
-                                  "ALL QUESTS COMPLETED",
-                                  style: GoogleFonts.orbitron(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 14),
+                        if (activeQuests.isEmpty) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(32.0),
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.green,
+                                    size: 48,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    "ALL QUESTS COMPLETED",
+                                    style: GoogleFonts.orbitron(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    "Return later for new quests.",
+                                    style: GoogleFonts.exo2(
+                                      color: Colors.grey,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Column(
+                          children: activeQuests.map((quest) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedQuest = quest;
+                                  });
+                                },
+                                borderRadius: BorderRadius.circular(12),
+                                child: Container(
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.02),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: quest.isCompleted
+                                          ? Colors.green.withValues(alpha: 0.3)
+                                          : Colors.white.withValues(
+                                              alpha: 0.08,
+                                            ),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      // Icon
+                                      Container(
+                                        width: 44,
+                                        height: 44,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: quest.isCompleted
+                                              ? Colors.green.withValues(
+                                                  alpha: 0.2,
+                                                )
+                                              : profile
+                                                    .currentElement
+                                                    .primaryColor
+                                                    .withValues(alpha: 0.1),
+                                        ),
+                                        child: Icon(
+                                          _iconForWorkoutCategory(
+                                            quest.workoutType,
+                                          ),
+                                          color: quest.isCompleted
+                                              ? Colors.green
+                                              : profile
+                                                    .currentElement
+                                                    .primaryColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 14),
+                                      // Title / Desc
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              quest.title,
+                                              style: GoogleFonts.exo2(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                decoration: quest.isCompleted
+                                                    ? TextDecoration.lineThrough
+                                                    : null,
+                                                decorationColor: Colors.grey,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              quest.questDescription,
+                                              style: GoogleFonts.exo2(
+                                                fontSize: 11,
+                                                color: Colors.grey,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      // Progress status
+                                      if (quest.isCompleted)
+                                        const Icon(
+                                          Icons.check_circle,
+                                          color: Colors.green,
+                                        )
+                                      else
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 6,
+                                                    vertical: 2,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.orange.withValues(
+                                                  alpha: 0.15,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(4),
+                                              ),
+                                              child: Text(
+                                                "${quest.progressCount}/${quest.targetCount}",
+                                                style: GoogleFonts.orbitron(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.orange,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              "+${quest.rewardXP} XP",
+                                              style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(height: 6),
+                              ),
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // Custom Workout Logger Section
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      "CUSTOM TRAINING TELEMETRY",
+                      style: GoogleFonts.orbitron(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.02),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.08),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  "Return later for new quests.",
-                                  style: GoogleFonts.exo2(color: Colors.grey, fontSize: 12),
+                                  "Log a custom workout",
+                                  style: GoogleFonts.exo2(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  "Record custom sets, reps, and difficulty for XP/Gems.",
+                                  style: GoogleFonts.exo2(
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                        );
-                      }
-
-                      return Column(
-                        children: activeQuests.map((quest) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _selectedQuest = quest;
-                                });
-                              },
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.02),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: quest.isCompleted
-                                        ? Colors.green.withValues(alpha: 0.3)
-                                        : Colors.white.withValues(alpha: 0.08),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    // Icon
-                                    Container(
-                                      width: 44,
-                                      height: 44,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: quest.isCompleted
-                                            ? Colors.green.withValues(alpha: 0.2)
-                                            : profile.currentElement.primaryColor.withValues(alpha: 0.1),
-                                      ),
-                                      child: Icon(
-                                        _iconForWorkoutCategory(quest.workoutType),
-                                        color: quest.isCompleted
-                                            ? Colors.green
-                                            : profile.currentElement.primaryColor,
-                                        size: 20,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 14),
-                                    // Title / Desc
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            quest.title,
-                                            style: GoogleFonts.exo2(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              decoration: quest.isCompleted
-                                                  ? TextDecoration.lineThrough
-                                                  : null,
-                                              decorationColor: Colors.grey,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            quest.questDescription,
-                                            style: GoogleFonts.exo2(
-                                              fontSize: 11,
-                                              color: Colors.grey,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    // Progress status
-                                    if (quest.isCompleted)
-                                      const Icon(Icons.check_circle, color: Colors.green)
-                                    else
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                            decoration: BoxDecoration(
-                                              color: Colors.orange.withValues(alpha: 0.15),
-                                              borderRadius: BorderRadius.circular(4),
-                                            ),
-                                            child: Text(
-                                              "${quest.progressCount}/${quest.targetCount}",
-                                              style: GoogleFonts.orbitron(
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.orange,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            "+${quest.rewardXP} XP",
-                                            style: const TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.grey,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                  ],
-                                ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _showingCustomWorkoutLog = true;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  profile.currentElement.primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                          );
-                        }).toList(),
-                      );
-                    }
-                  ),
-                ),
-                const SizedBox(height: 25),
-
-                // Healthy Food Inventory Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    "HEALTHY FOOD INVENTORY",
-                    style: GoogleFonts.orbitron(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.02),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Nourish your Elsaither energy",
-                                style: GoogleFonts.exo2(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
+                            child: Text(
+                              "LOG WORKOUT",
+                              style: GoogleFonts.orbitron(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "Log a healthy meal to build CON and crystals.",
-                                style: GoogleFonts.exo2(
-                                  fontSize: 11,
-                                  color: Colors.grey,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _showingMealLog = true;
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: profile.currentElement.primaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: Text(
-                            "LOG MEAL",
-                            style: GoogleFonts.orbitron(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 25),
-                const SizedBox(height: 25),
+                  const SizedBox(height: 25),
 
-                // Custom Workout Logger Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    "CUSTOM TRAINING TELEMETRY",
-                    style: GoogleFonts.orbitron(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.02),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Log a custom workout",
-                                style: GoogleFonts.exo2(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "Record custom sets, reps, and difficulty for XP/Gems.",
-                                style: GoogleFonts.exo2(
-                                  fontSize: 11,
-                                  color: Colors.grey,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() {
-                              _showingCustomWorkoutLog = true;
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: profile.currentElement.primaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            "LOG WORKOUT",
-                            style: GoogleFonts.orbitron(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 25),
-
-                _buildSuggestedWorkoutsSection(profile),
-              ],
+                  _buildSuggestedWorkoutsSection(profile),
+                ],
+              ),
             ),
-          ),
 
-          // Quest detail overlay
-          if (_selectedQuest != null)
-            _buildQuestDetailOverlay(profile, _selectedQuest!),
+            // Quest detail overlay
+            if (_selectedQuest != null)
+              _buildQuestDetailOverlay(profile, _selectedQuest!),
 
-          // Dopamine confirmation overlay
-          if (_selectedDopamineItem != null)
-            _buildDopamineConfirmationOverlay(profile, _selectedDopamineItem!),
+            // Dopamine confirmation overlay
+            if (_selectedDopamineItem != null)
+              _buildDopamineConfirmationOverlay(
+                profile,
+                _selectedDopamineItem!,
+              ),
 
-          // Meal Log Overlay
-          if (_showingMealLog)
-            _buildMealLogOverlay(profile),
+            // Meal Log Overlay
+            if (_showingMealLog) _buildMealLogOverlay(profile),
 
-          // Custom Workout Log Overlay
-          if (_showingCustomWorkoutLog)
-            _buildCustomWorkoutLogOverlay(profile),
-        ],
+            // Custom Workout Log Overlay
+            if (_showingCustomWorkoutLog)
+              _buildCustomWorkoutLogOverlay(profile),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildDopamineQuickMenu(UserProfileManager profile) {
     final menuItems = _tailoredDopamineMenu(profile);
@@ -773,7 +858,9 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         color: Colors.white.withValues(alpha: 0.04),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: profile.currentElement.primaryColor.withValues(alpha: 0.3),
+                          color: profile.currentElement.primaryColor.withValues(
+                            alpha: 0.3,
+                          ),
                           width: 1,
                         ),
                       ),
@@ -807,7 +894,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                               color: Colors.orange,
                               fontWeight: FontWeight.bold,
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -815,7 +902,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 );
               },
             ),
-          )
+          ),
         ],
       ),
     );
@@ -836,9 +923,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 _selectedQuest = null;
               });
             },
-            child: Container(
-              color: Colors.black.withValues(alpha: 0.8),
-            ),
+            child: Container(color: Colors.black.withValues(alpha: 0.8)),
           ),
           // Dialog card
           Container(
@@ -868,10 +953,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 const SizedBox(height: 12),
                 Text(
                   quest.questDescription,
-                  style: GoogleFonts.exo2(
-                    fontSize: 13,
-                    color: Colors.grey,
-                  ),
+                  style: GoogleFonts.exo2(fontSize: 13, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
@@ -884,7 +966,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       children: [
                         Text(
                           "Progress:",
-                          style: GoogleFonts.exo2(fontSize: 12, color: Colors.grey),
+                          style: GoogleFonts.exo2(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
                         Text(
                           "${quest.progressCount} / ${quest.targetCount}",
@@ -900,7 +985,9 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
-                        value: quest.targetCount > 0 ? (quest.progressCount / quest.targetCount) : 0,
+                        value: quest.targetCount > 0
+                            ? (quest.progressCount / quest.targetCount)
+                            : 0,
                         backgroundColor: Colors.white.withValues(alpha: 0.08),
                         valueColor: AlwaysStoppedAnimation<Color>(themeColor),
                         minHeight: 8,
@@ -922,7 +1009,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                     children: [
                       Column(
                         children: [
-                          const Text("XP", style: TextStyle(fontSize: 10, color: Colors.grey)),
+                          const Text(
+                            "XP",
+                            style: TextStyle(fontSize: 10, color: Colors.grey),
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             "+${quest.rewardXP}",
@@ -936,7 +1026,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       ),
                       Column(
                         children: [
-                          const Text("Crystals", style: TextStyle(fontSize: 10, color: Colors.grey)),
+                          const Text(
+                            "Crystals",
+                            style: TextStyle(fontSize: 10, color: Colors.grey),
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             "+${quest.rewardCrystals}",
@@ -950,7 +1043,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       ),
                       Column(
                         children: [
-                          const Text("Attribute", style: TextStyle(fontSize: 10, color: Colors.grey)),
+                          const Text(
+                            "Attribute",
+                            style: TextStyle(fontSize: 10, color: Colors.grey),
+                          ),
                           const SizedBox(height: 4),
                           Text(
                             "+${quest.statValue} ${quest.statReward.name.toUpperCase().substring(0, min(3, quest.statReward.name.length))}",
@@ -983,7 +1079,8 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       if (success) {
                         _showOutcomeDialog(
                           title: "QUEST SUCCESS! 🎉",
-                          message: "You successfully cleared ${quest.title}! Earning ${quest.rewardXP} XP, ${quest.rewardCrystals} Crystals, and +${quest.statValue} to ${quest.statReward.displayName}!",
+                          message:
+                              "You successfully cleared ${quest.title}! Earning ${quest.rewardXP} XP, ${quest.rewardCrystals} Crystals, and +${quest.statValue} to ${quest.statReward.displayName}!",
                           themeColor: Colors.green,
                           onDismiss: () {
                             setState(() {
@@ -999,7 +1096,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -1023,9 +1123,17 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             profile.logWorkout(quest.workoutType);
                             // Refresh our local quest reference
                             setState(() {
-                              final idx = _getQuestIndex(profile, quest.id, quest.cadence);
+                              final idx = _getQuestIndex(
+                                profile,
+                                quest.id,
+                                quest.cadence,
+                              );
                               if (idx != -1) {
-                                _selectedQuest = _getQuestAt(profile, idx, quest.cadence);
+                                _selectedQuest = _getQuestAt(
+                                  profile,
+                                  idx,
+                                  quest.cadence,
+                                );
                               }
                             });
                           },
@@ -1051,7 +1159,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         width: double.infinity,
                         child: OutlinedButton.icon(
                           onPressed: () {
-                            final health = Provider.of<HealthManager>(context, listen: false);
+                            final health = Provider.of<HealthManager>(
+                              context,
+                              listen: false,
+                            );
                             health.requestAuthorization().then((_) {
                               if (health.isAuthorized) {
                                 health.fetchTodayData().then((_) {
@@ -1060,9 +1171,17 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                     activeMinutes: health.activeMinutes,
                                   );
                                   setState(() {
-                                    final idx = _getQuestIndex(profile, quest.id, quest.cadence);
+                                    final idx = _getQuestIndex(
+                                      profile,
+                                      quest.id,
+                                      quest.cadence,
+                                    );
                                     if (idx != -1) {
-                                      _selectedQuest = _getQuestAt(profile, idx, quest.cadence);
+                                      _selectedQuest = _getQuestAt(
+                                        profile,
+                                        idx,
+                                        quest.cadence,
+                                      );
                                     }
                                   });
                                 });
@@ -1096,7 +1215,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
     );
   }
 
-  Widget _buildDopamineConfirmationOverlay(UserProfileManager profile, Map<String, dynamic> item) {
+  Widget _buildDopamineConfirmationOverlay(
+    UserProfileManager profile,
+    Map<String, dynamic> item,
+  ) {
     final themeColor = profile.currentElement.primaryColor;
 
     return Positioned.fill(
@@ -1109,9 +1231,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 _selectedDopamineItem = null;
               });
             },
-            child: Container(
-              color: Colors.black.withValues(alpha: 0.8),
-            ),
+            child: Container(color: Colors.black.withValues(alpha: 0.8)),
           ),
           Container(
             width: 310,
@@ -1196,7 +1316,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         ),
                         child: Text(
                           "Cancel",
-                          style: GoogleFonts.orbitron(color: Colors.grey, fontSize: 11),
+                          style: GoogleFonts.orbitron(
+                            color: Colors.grey,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                     ),
@@ -1213,7 +1336,8 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                           });
                           _showOutcomeDialog(
                             title: "MOMENTUM GAINED! ⚡",
-                            message: "You earned $xp XP and $crystals Crystals instantly. Keep it up!",
+                            message:
+                                "You earned $xp XP and $crystals Crystals instantly. Keep it up!",
                             themeColor: Colors.orange,
                           );
                         },
@@ -1225,12 +1349,15 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         ),
                         child: Text(
                           "I DID IT!",
-                          style: GoogleFonts.orbitron(color: Colors.white, fontSize: 11),
+                          style: GoogleFonts.orbitron(
+                            color: Colors.white,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -1252,9 +1379,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 _showingMealLog = false;
               });
             },
-            child: Container(
-              color: Colors.black.withValues(alpha: 0.8),
-            ),
+            child: Container(color: Colors.black.withValues(alpha: 0.8)),
           ),
           Container(
             width: 310,
@@ -1286,7 +1411,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
 
                 Text(
                   "RATION NAME",
-                  style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.exo2(
+                    fontSize: 10,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 TextField(
@@ -1294,13 +1423,21 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                   style: const TextStyle(color: Colors.white, fontSize: 14),
                   decoration: InputDecoration(
                     hintText: "e.g. Chicken breast & broccoli",
-                    hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+                    hintStyle: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 13,
+                    ),
                     filled: true,
                     fillColor: Colors.white.withValues(alpha: 0.04),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                      borderSide: BorderSide(
+                        color: Colors.white.withValues(alpha: 0.1),
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -1318,30 +1455,52 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         children: [
                           Text(
                             "CALORIES",
-                            style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.exo2(
+                              fontSize: 10,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           TextField(
                             controller: _mealCaloriesController,
                             keyboardType: TextInputType.number,
-                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
                             decoration: InputDecoration(
                               hintText: "kcal",
-                              hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+                              hintStyle: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
                               filled: true,
                               fillColor: Colors.white.withValues(alpha: 0.04),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 8,
+                              ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                                borderSide: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(color: themeColor),
                               ),
                               suffixIcon: IconButton(
-                                icon: const Icon(Icons.check_circle_outline, color: Colors.grey, size: 16),
-                                onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                icon: const Icon(
+                                  Icons.check_circle_outline,
+                                  color: Colors.grey,
+                                  size: 16,
+                                ),
+                                onPressed: () => FocusManager
+                                    .instance
+                                    .primaryFocus
+                                    ?.unfocus(),
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
                               ),
@@ -1357,30 +1516,52 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         children: [
                           Text(
                             "PROTEIN",
-                            style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.exo2(
+                              fontSize: 10,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           TextField(
                             controller: _mealProteinController,
                             keyboardType: TextInputType.number,
-                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
                             decoration: InputDecoration(
                               hintText: "grams",
-                              hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+                              hintStyle: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
                               filled: true,
                               fillColor: Colors.white.withValues(alpha: 0.04),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 8,
+                              ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                                borderSide: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(color: themeColor),
                               ),
                               suffixIcon: IconButton(
-                                icon: const Icon(Icons.check_circle_outline, color: Colors.grey, size: 16),
-                                onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                icon: const Icon(
+                                  Icons.check_circle_outline,
+                                  color: Colors.grey,
+                                  size: 16,
+                                ),
+                                onPressed: () => FocusManager
+                                    .instance
+                                    .primaryFocus
+                                    ?.unfocus(),
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
                               ),
@@ -1401,30 +1582,52 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         children: [
                           Text(
                             "CARBS",
-                            style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.exo2(
+                              fontSize: 10,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           TextField(
                             controller: _mealCarbsController,
                             keyboardType: TextInputType.number,
-                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
                             decoration: InputDecoration(
                               hintText: "grams",
-                              hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+                              hintStyle: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
                               filled: true,
                               fillColor: Colors.white.withValues(alpha: 0.04),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 8,
+                              ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                                borderSide: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(color: themeColor),
                               ),
                               suffixIcon: IconButton(
-                                icon: const Icon(Icons.check_circle_outline, color: Colors.grey, size: 16),
-                                onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                icon: const Icon(
+                                  Icons.check_circle_outline,
+                                  color: Colors.grey,
+                                  size: 16,
+                                ),
+                                onPressed: () => FocusManager
+                                    .instance
+                                    .primaryFocus
+                                    ?.unfocus(),
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
                               ),
@@ -1440,30 +1643,52 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         children: [
                           Text(
                             "FATS",
-                            style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.exo2(
+                              fontSize: 10,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           TextField(
                             controller: _mealFatsController,
                             keyboardType: TextInputType.number,
-                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
                             decoration: InputDecoration(
                               hintText: "grams",
-                              hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+                              hintStyle: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
                               filled: true,
                               fillColor: Colors.white.withValues(alpha: 0.04),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 8,
+                              ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                                borderSide: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(color: themeColor),
                               ),
                               suffixIcon: IconButton(
-                                icon: const Icon(Icons.check_circle_outline, color: Colors.grey, size: 16),
-                                onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                icon: const Icon(
+                                  Icons.check_circle_outline,
+                                  color: Colors.grey,
+                                  size: 16,
+                                ),
+                                onPressed: () => FocusManager
+                                    .instance
+                                    .primaryFocus
+                                    ?.unfocus(),
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
                               ),
@@ -1483,30 +1708,52 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         children: [
                           Text(
                             "SUGAR",
-                            style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.exo2(
+                              fontSize: 10,
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           TextField(
                             controller: _mealSugarController,
                             keyboardType: TextInputType.number,
-                            style: const TextStyle(color: Colors.white, fontSize: 14),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            ),
                             decoration: InputDecoration(
                               hintText: "grams",
-                              hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+                              hintStyle: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 13,
+                              ),
                               filled: true,
                               fillColor: Colors.white.withValues(alpha: 0.04),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 8,
+                              ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                                borderSide: BorderSide(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: BorderSide(color: themeColor),
                               ),
                               suffixIcon: IconButton(
-                                icon: const Icon(Icons.check_circle_outline, color: Colors.grey, size: 16),
-                                onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                icon: const Icon(
+                                  Icons.check_circle_outline,
+                                  color: Colors.grey,
+                                  size: 16,
+                                ),
+                                onPressed: () => FocusManager
+                                    .instance
+                                    .primaryFocus
+                                    ?.unfocus(),
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
                               ),
@@ -1538,7 +1785,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         ),
                         child: Text(
                           "Cancel",
-                          style: GoogleFonts.orbitron(color: Colors.grey, fontSize: 11),
+                          style: GoogleFonts.orbitron(
+                            color: Colors.grey,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                     ),
@@ -1546,11 +1796,18 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
-                          final cal = double.tryParse(_mealCaloriesController.text) ?? 0.0;
-                          final prot = double.tryParse(_mealProteinController.text) ?? 0.0;
-                          final carb = double.tryParse(_mealCarbsController.text) ?? 0.0;
-                          final fat = double.tryParse(_mealFatsController.text) ?? 0.0;
-                          final sug = double.tryParse(_mealSugarController.text) ?? 0.0;
+                          final cal =
+                              double.tryParse(_mealCaloriesController.text) ??
+                              0.0;
+                          final prot =
+                              double.tryParse(_mealProteinController.text) ??
+                              0.0;
+                          final carb =
+                              double.tryParse(_mealCarbsController.text) ?? 0.0;
+                          final fat =
+                              double.tryParse(_mealFatsController.text) ?? 0.0;
+                          final sug =
+                              double.tryParse(_mealSugarController.text) ?? 0.0;
 
                           profile.logDetailedMeal(
                             name: _mealNameController.text.isEmpty
@@ -1576,7 +1833,8 @@ class _QuestBoardViewState extends State<QuestBoardView> {
 
                           _showOutcomeDialog(
                             title: "RATIONS LOGGED! 🍏",
-                            message: "Logged healthy rations! +15 XP, +10 Crystals, and +1 Constitution gained from nutrition sync.",
+                            message:
+                                "Logged healthy rations! +15 XP, +10 Crystals, and +1 Constitution gained from nutrition sync.",
                             themeColor: themeColor,
                           );
                         },
@@ -1588,12 +1846,15 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         ),
                         child: Text(
                           "LOG RATION",
-                          style: GoogleFonts.orbitron(color: Colors.white, fontSize: 11),
+                          style: GoogleFonts.orbitron(
+                            color: Colors.white,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -1604,9 +1865,13 @@ class _QuestBoardViewState extends State<QuestBoardView> {
 
   Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {
     final today = DateTime.now();
-    final todaySessions = profile.loggedWorkoutSessions.where((s) => 
-        s.date.year == today.year && s.date.month == today.month && s.date.day == today.day);
-    
+    final todaySessions = profile.loggedWorkoutSessions.where(
+      (s) =>
+          s.date.year == today.year &&
+          s.date.month == today.month &&
+          s.date.day == today.day,
+    );
+
     bool isWorkoutCompletedToday(SuggestedWorkout w) {
       return todaySessions.any((s) => s.type.contains(w.name));
     }
@@ -1623,9 +1888,14 @@ class _QuestBoardViewState extends State<QuestBoardView> {
         : SuggestedWorkout.allWorkouts.where((w) {
             if (isWorkoutCompletedToday(w)) return false;
             final isMuscleGroupMatch = w.muscleGroup == _tailMuscleGroup;
-            final isDifficultyMatch = w.difficulty.toLowerCase() == _tailDifficulty.toLowerCase();
-            final isEquipmentMatch = _tailEquipment == "Full Gym" || 
-                w.equipment.toLowerCase().replaceAll('-', '').contains(_tailEquipment.toLowerCase().replaceAll('-', ''));
+            final isDifficultyMatch =
+                w.difficulty.toLowerCase() == _tailDifficulty.toLowerCase();
+            final isEquipmentMatch =
+                _tailEquipment == "Full Gym" ||
+                w.equipment
+                    .toLowerCase()
+                    .replaceAll('-', '')
+                    .contains(_tailEquipment.toLowerCase().replaceAll('-', ''));
             return isMuscleGroupMatch && isDifficultyMatch && isEquipmentMatch;
           }).toList();
 
@@ -1655,10 +1925,18 @@ class _QuestBoardViewState extends State<QuestBoardView> {
               decoration: InputDecoration(
                 hintText: "Search workout library by name, keyword...",
                 hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
-                prefixIcon: const Icon(Icons.search, color: Colors.grey, size: 18),
+                prefixIcon: const Icon(
+                  Icons.search,
+                  color: Colors.grey,
+                  size: 18,
+                ),
                 suffixIcon: _workoutSearchQuery.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, color: Colors.grey, size: 16),
+                        icon: const Icon(
+                          Icons.clear,
+                          color: Colors.grey,
+                          size: 16,
+                        ),
                         onPressed: () {
                           setState(() {
                             _workoutSearchController.clear();
@@ -1672,11 +1950,17 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 contentPadding: const EdgeInsets.symmetric(vertical: 8),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                  borderSide: BorderSide(
+                    color: Colors.white.withValues(alpha: 0.1),
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: profile.currentElement.primaryColor.withValues(alpha: 0.5)),
+                  borderSide: BorderSide(
+                    color: profile.currentElement.primaryColor.withValues(
+                      alpha: 0.5,
+                    ),
+                  ),
                 ),
               ),
               onChanged: (val) {
@@ -1697,7 +1981,9 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.02),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.08),
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1718,23 +2004,54 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("GENDER", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                const Text(
+                                  "GENDER",
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
                                 Theme(
-                                  data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
+                                  data: Theme.of(context).copyWith(
+                                    canvasColor: const Color(0xFF0F0F0F),
+                                  ),
                                   child: DropdownButtonFormField<String>(
                                     initialValue: _tailGender,
                                     isDense: true,
                                     decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: Colors.white.withValues(alpha: 0.04),
-                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
+                                      fillColor: Colors.white.withValues(
+                                        alpha: 0.04,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 6,
+                                          ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                        borderSide: BorderSide.none,
+                                      ),
                                     ),
-                                    style: const TextStyle(color: Colors.white, fontSize: 11),
-                                    items: ["Male", "Female", "Other"].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                    ),
+                                    items: ["Male", "Female"]
+                                        .map(
+                                          (g) => DropdownMenuItem(
+                                            value: g,
+                                            child: Text(g),
+                                          ),
+                                        )
+                                        .toList(),
                                     onChanged: (val) {
-                                      if (val != null) setState(() { _tailGender = val; });
+                                      if (val != null)
+                                        setState(() {
+                                          _tailGender = val;
+                                        });
                                     },
                                   ),
                                 ),
@@ -1746,26 +2063,53 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("AGE", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                const Text(
+                                  "AGE",
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
                                 TextField(
                                   keyboardType: TextInputType.number,
-                                  style: const TextStyle(color: Colors.white, fontSize: 11),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                  ),
                                   decoration: InputDecoration(
                                     isDense: true,
                                     filled: true,
-                                    fillColor: Colors.white.withValues(alpha: 0.04),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
+                                    fillColor: Colors.white.withValues(
+                                      alpha: 0.04,
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 8,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                      borderSide: BorderSide.none,
+                                    ),
                                     suffixIcon: IconButton(
-                                      icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 16),
-                                      onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                      icon: const Icon(
+                                        Icons.check_circle_outline,
+                                        color: Colors.blueAccent,
+                                        size: 16,
+                                      ),
+                                      onPressed: () => FocusManager
+                                          .instance
+                                          .primaryFocus
+                                          ?.unfocus(),
                                       padding: EdgeInsets.zero,
                                       constraints: const BoxConstraints(),
                                     ),
                                   ),
                                   onChanged: (val) {
-                                    setState(() { _tailAge = val; });
+                                    setState(() {
+                                      _tailAge = val;
+                                    });
                                   },
                                   controller: _tailAgeController,
                                 ),
@@ -1777,26 +2121,53 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("WEIGHT (LBS)", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                const Text(
+                                  "WEIGHT (LBS)",
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
                                 TextField(
                                   keyboardType: TextInputType.number,
-                                  style: const TextStyle(color: Colors.white, fontSize: 11),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                  ),
                                   decoration: InputDecoration(
                                     isDense: true,
                                     filled: true,
-                                    fillColor: Colors.white.withValues(alpha: 0.04),
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
+                                    fillColor: Colors.white.withValues(
+                                      alpha: 0.04,
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 8,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                      borderSide: BorderSide.none,
+                                    ),
                                     suffixIcon: IconButton(
-                                      icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 16),
-                                      onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                      icon: const Icon(
+                                        Icons.check_circle_outline,
+                                        color: Colors.blueAccent,
+                                        size: 16,
+                                      ),
+                                      onPressed: () => FocusManager
+                                          .instance
+                                          .primaryFocus
+                                          ?.unfocus(),
                                       padding: EdgeInsets.zero,
                                       constraints: const BoxConstraints(),
                                     ),
                                   ),
                                   onChanged: (val) {
-                                    setState(() { _tailWeight = val; });
+                                    setState(() {
+                                      _tailWeight = val;
+                                    });
                                   },
                                   controller: _tailWeightController,
                                 ),
@@ -1812,24 +2183,60 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("EQUIPMENT", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                const Text(
+                                  "EQUIPMENT",
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
                                 Theme(
-                                  data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
+                                  data: Theme.of(context).copyWith(
+                                    canvasColor: const Color(0xFF0F0F0F),
+                                  ),
                                   child: DropdownButtonFormField<String>(
                                     initialValue: _tailEquipment,
                                     isDense: true,
                                     decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: Colors.white.withValues(alpha: 0.04),
-                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
+                                      fillColor: Colors.white.withValues(
+                                        alpha: 0.04,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 6,
+                                          ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                        borderSide: BorderSide.none,
+                                      ),
                                     ),
-                                    style: const TextStyle(color: Colors.white, fontSize: 11),
-                                    items: ["Bodyweight Only", "Dumbbells", "Pull-up Bar", "Full Gym"]
-                                        .map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                    ),
+                                    items:
+                                        [
+                                              "Bodyweight Only",
+                                              "Dumbbells",
+                                              "Pull-up Bar",
+                                              "Full Gym",
+                                            ]
+                                            .map(
+                                              (e) => DropdownMenuItem(
+                                                value: e,
+                                                child: Text(e),
+                                              ),
+                                            )
+                                            .toList(),
                                     onChanged: (val) {
-                                      if (val != null) setState(() { _tailEquipment = val; });
+                                      if (val != null)
+                                        setState(() {
+                                          _tailEquipment = val;
+                                        });
                                     },
                                   ),
                                 ),
@@ -1845,24 +2252,61 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("DIFFICULTY", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                const Text(
+                                  "DIFFICULTY",
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
                                 Theme(
-                                  data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
+                                  data: Theme.of(context).copyWith(
+                                    canvasColor: const Color(0xFF0F0F0F),
+                                  ),
                                   child: DropdownButtonFormField<String>(
                                     initialValue: _tailDifficulty,
                                     isDense: true,
                                     decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: Colors.white.withValues(alpha: 0.04),
-                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
+                                      fillColor: Colors.white.withValues(
+                                        alpha: 0.04,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 6,
+                                          ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                        borderSide: BorderSide.none,
+                                      ),
                                     ),
-                                    style: const TextStyle(color: Colors.white, fontSize: 11),
-                                    items: ["Easy", "Medium", "Hard", "Legend", "Master"]
-                                        .map((d) => DropdownMenuItem(value: d, child: Text(d))).toList(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                    ),
+                                    items:
+                                        [
+                                              "Easy",
+                                              "Medium",
+                                              "Hard",
+                                              "Legend",
+                                              "Master",
+                                            ]
+                                            .map(
+                                              (d) => DropdownMenuItem(
+                                                value: d,
+                                                child: Text(d),
+                                              ),
+                                            )
+                                            .toList(),
                                     onChanged: (val) {
-                                      if (val != null) setState(() { _tailDifficulty = val; });
+                                      if (val != null)
+                                        setState(() {
+                                          _tailDifficulty = val;
+                                        });
                                     },
                                   ),
                                 ),
@@ -1874,24 +2318,54 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text("MUSCLE GROUP", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey)),
+                                const Text(
+                                  "MUSCLE GROUP",
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                                 const SizedBox(height: 4),
                                 Theme(
-                                  data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
+                                  data: Theme.of(context).copyWith(
+                                    canvasColor: const Color(0xFF0F0F0F),
+                                  ),
                                   child: DropdownButtonFormField<MuscleGroup>(
                                     initialValue: _tailMuscleGroup,
                                     isDense: true,
                                     decoration: InputDecoration(
                                       filled: true,
-                                      fillColor: Colors.white.withValues(alpha: 0.04),
-                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide.none),
+                                      fillColor: Colors.white.withValues(
+                                        alpha: 0.04,
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 6,
+                                          ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(6),
+                                        borderSide: BorderSide.none,
+                                      ),
                                     ),
-                                    style: const TextStyle(color: Colors.white, fontSize: 11),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                    ),
                                     items: MuscleGroup.values
-                                        .map((mg) => DropdownMenuItem(value: mg, child: Text(mg.displayName))).toList(),
+                                        .map(
+                                          (mg) => DropdownMenuItem(
+                                            value: mg,
+                                            child: Text(mg.displayName),
+                                          ),
+                                        )
+                                        .toList(),
                                     onChanged: (val) {
-                                      if (val != null) setState(() { _tailMuscleGroup = val; });
+                                      if (val != null)
+                                        setState(() {
+                                          _tailMuscleGroup = val;
+                                        });
                                     },
                                   ),
                                 ),
@@ -1907,233 +2381,328 @@ class _QuestBoardViewState extends State<QuestBoardView> {
 
                 // Workouts list
                 ...(filtered.isEmpty
-                        ? [_generateDynamicSuggestedWorkout(_tailMuscleGroup, _tailDifficulty, _tailEquipment)]
+                        ? [
+                            _generateDynamicSuggestedWorkout(
+                              _tailMuscleGroup,
+                              _tailDifficulty,
+                              _tailEquipment,
+                            ),
+                          ]
                         : filtered)
                     .map((workout) {
-                    final tailored = _tailorWorkout(workout);
-                    return Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.02),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                workout.name,
-                                style: GoogleFonts.exo2(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                      final tailored = _tailorWorkout(workout);
+                      return Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.02),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.08),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  workout.name,
+                                  style: GoogleFonts.exo2(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
                                 ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: profile.currentElement.primaryColor
+                                        .withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    workout.difficulty.toUpperCase(),
+                                    style: GoogleFonts.orbitron(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                      color:
+                                          profile.currentElement.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              workout.description,
+                              style: GoogleFonts.exo2(
+                                fontSize: 11,
+                                color: Colors.white.withValues(alpha: 0.75),
                               ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: profile.currentElement.primaryColor.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(4),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.repeat,
+                                  size: 12,
+                                  color: Colors.orange,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "${tailored.sets} Sets",
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                const Icon(
+                                  Icons.directions_run,
+                                  size: 12,
+                                  color: Colors.orange,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  tailored.reps,
+                                  style: const TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.orange,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            const Text(
+                              "INSTRUCTIONS:",
+                              style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            ...workout.instructions.map((inst) {
+                              if (inst.startsWith("TARGET MUSCLES:")) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Icon(
+                                        Icons.fitness_center,
+                                        size: 10,
+                                        color: Colors.orange,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          inst,
+                                          style: GoogleFonts.exo2(
+                                            fontSize: 10,
+                                            color: Colors.orange,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else if (inst.startsWith("SETUP & WIDTH:")) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Icon(
+                                        Icons.straighten,
+                                        size: 10,
+                                        color: Colors.cyan,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          inst,
+                                          style: GoogleFonts.exo2(
+                                            fontSize: 10,
+                                            color: Colors.cyan,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else if (inst.startsWith("DIFFICULTY KEY:")) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 4,
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Icon(
+                                        Icons.speed,
+                                        size: 10,
+                                        color: Colors.yellow,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          inst,
+                                          style: GoogleFonts.exo2(
+                                            fontSize: 10,
+                                            color: Colors.yellow,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 2),
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "• ",
+                                        style: TextStyle(
+                                          color: profile
+                                              .currentElement
+                                              .primaryColor,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          inst,
+                                          style: GoogleFonts.exo2(
+                                            fontSize: 10,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            }),
+                            const SizedBox(height: 14),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        backgroundColor: const Color(
+                                          0xFF0F0F0F,
+                                        ),
+                                        title: Text(
+                                          "COMPLETE WORKOUT?",
+                                          style: GoogleFonts.orbitron(
+                                            color: profile
+                                                .currentElement
+                                                .primaryColor,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        content: Text(
+                                          "Are you sure you have completed '${workout.name}'? You will earn XP and Crystals based on difficulty.",
+                                          style: GoogleFonts.exo2(
+                                            color: Colors.white70,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text(
+                                              "CANCEL",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                              profile.logCustomWorkout(
+                                                name: workout.name,
+                                                category: workout.category,
+                                                sets: workout.sets,
+                                                reps: workout.reps,
+                                                difficulty: workout.difficulty,
+                                                durationMinutes: 15.0,
+                                              );
+                                              _showOutcomeDialog(
+                                                title: "WORKOUT CONQUERED! 💪",
+                                                message:
+                                                    "Workout complete! You conquered ${workout.name} and gained XP, Crystals, and forged your character attributes.",
+                                                themeColor: profile
+                                                    .currentElement
+                                                    .primaryColor,
+                                              );
+                                            },
+                                            child: Text(
+                                              "YES, LOG IT",
+                                              style: TextStyle(
+                                                color: profile
+                                                    .currentElement
+                                                    .primaryColor,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      profile.currentElement.primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
                                 ),
                                 child: Text(
-                                  workout.difficulty.toUpperCase(),
+                                  "COMPLETE WORKOUT",
                                   style: GoogleFonts.orbitron(
-                                    fontSize: 9,
+                                    fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: profile.currentElement.primaryColor,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            workout.description,
-                            style: GoogleFonts.exo2(
-                              fontSize: 11,
-                              color: Colors.white.withValues(alpha: 0.75),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              const Icon(Icons.repeat, size: 12, color: Colors.orange),
-                              const SizedBox(width: 4),
-                              Text(
-                                "${tailored.sets} Sets",
-                                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.orange),
-                              ),
-                              const SizedBox(width: 16),
-                              const Icon(Icons.directions_run, size: 12, color: Colors.orange),
-                              const SizedBox(width: 4),
-                              Text(
-                                tailored.reps,
-                                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.orange),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            "INSTRUCTIONS:",
-                            style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.grey),
-                          ),
-                          const SizedBox(height: 4),
-                          ...workout.instructions.map((inst) {
-                            if (inst.startsWith("TARGET MUSCLES:")) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Icon(Icons.fitness_center, size: 10, color: Colors.orange),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        inst,
-                                        style: GoogleFonts.exo2(fontSize: 10, color: Colors.orange, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else if (inst.startsWith("SETUP & WIDTH:")) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Icon(Icons.straighten, size: 10, color: Colors.cyan),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        inst,
-                                        style: GoogleFonts.exo2(fontSize: 10, color: Colors.cyan, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else if (inst.startsWith("DIFFICULTY KEY:")) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Icon(Icons.speed, size: 10, color: Colors.yellow),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        inst,
-                                        style: GoogleFonts.exo2(fontSize: 10, color: Colors.yellow, fontWeight: FontWeight.bold),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 2),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("• ", style: TextStyle(color: profile.currentElement.primaryColor)),
-                                    Expanded(
-                                      child: Text(
-                                        inst,
-                                        style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          }),
-                          const SizedBox(height: 14),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      backgroundColor: const Color(0xFF0F0F0F),
-                                      title: Text(
-                                        "COMPLETE WORKOUT?",
-                                        style: GoogleFonts.orbitron(
-                                          color: profile.currentElement.primaryColor,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      content: Text(
-                                        "Are you sure you have completed '${workout.name}'? You will earn XP and Crystals based on difficulty.",
-                                        style: GoogleFonts.exo2(
-                                          color: Colors.white70,
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () => Navigator.of(context).pop(),
-                                          child: const Text("CANCEL", style: TextStyle(color: Colors.grey)),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            profile.logCustomWorkout(
-                                              name: workout.name,
-                                              category: workout.category,
-                                              sets: workout.sets,
-                                              reps: workout.reps,
-                                              difficulty: workout.difficulty,
-                                              durationMinutes: 15.0,
-                                            );
-                                            _showOutcomeDialog(
-                                              title: "WORKOUT CONQUERED! 💪",
-                                              message: "Workout complete! You conquered ${workout.name} and gained XP, Crystals, and forged your character attributes.",
-                                              themeColor: profile.currentElement.primaryColor,
-                                            );
-                                          },
-                                          child: Text(
-                                            "YES, LOG IT",
-                                            style: TextStyle(
-                                              color: profile.currentElement.primaryColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: profile.currentElement.primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 8),
-                              ),
-                              child: Text(
-                                "COMPLETE WORKOUT",
-                                style: GoogleFonts.orbitron(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
+                          ],
+                        ),
+                      );
+                    }),
               ],
             ),
           ),
@@ -2183,17 +2752,30 @@ class _QuestBoardViewState extends State<QuestBoardView> {
     return (sets: finalSets, reps: finalReps);
   }
 
-  SuggestedWorkout _generateDynamicSuggestedWorkout(MuscleGroup muscleGroup, String difficulty, String equipment) {
+  SuggestedWorkout _generateDynamicSuggestedWorkout(
+    MuscleGroup muscleGroup,
+    String difficulty,
+    String equipment,
+  ) {
     String name = "$difficulty Custom ${muscleGroup.displayName} Builder";
-    String description = "Target the ${muscleGroup.displayName} using $equipment.";
+    String description =
+        "Target the ${muscleGroup.displayName} using $equipment.";
     List<String> instructions = [
       "Perform dynamic warm up.",
       "Perform compound sets targeting ${muscleGroup.displayName}.",
       "Adjust weight or resistance based on $equipment.",
-      "Rest 60-90 seconds between sets."
+      "Rest 60-90 seconds between sets.",
     ];
-    String reps = difficulty == "Easy" ? "8-10 reps" : difficulty == "Medium" ? "10-12 reps" : "12-15 reps";
-    int sets = difficulty == "Easy" ? 3 : difficulty == "Medium" ? 4 : 5;
+    String reps = difficulty == "Easy"
+        ? "8-10 reps"
+        : difficulty == "Medium"
+        ? "10-12 reps"
+        : "12-15 reps";
+    int sets = difficulty == "Easy"
+        ? 3
+        : difficulty == "Medium"
+        ? 4
+        : 5;
 
     return SuggestedWorkout(
       id: "dynamic_${muscleGroup.name}_${difficulty.toLowerCase()}",
@@ -2221,9 +2803,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 _showingCustomWorkoutLog = false;
               });
             },
-            child: Container(
-              color: Colors.black.withValues(alpha: 0.8),
-            ),
+            child: Container(color: Colors.black.withValues(alpha: 0.8)),
           ),
           Container(
             width: 320,
@@ -2256,7 +2836,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
 
                   Text(
                     "WORKOUT NAME",
-                    style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.exo2(
+                      fontSize: 10,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   TextField(
@@ -2264,13 +2848,21 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                     style: const TextStyle(color: Colors.white, fontSize: 13),
                     decoration: InputDecoration(
                       hintText: "e.g. Custom Pushups & Pullups",
-                      hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                      hintStyle: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
                       filled: true,
                       fillColor: Colors.white.withValues(alpha: 0.04),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                        borderSide: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.1),
+                        ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -2288,28 +2880,50 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                           children: [
                             Text(
                               "SETS",
-                              style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.exo2(
+                                fontSize: 10,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             TextField(
                               controller: _customWorkoutSetsController,
                               keyboardType: TextInputType.number,
-                              style: const TextStyle(color: Colors.white, fontSize: 13),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                              ),
                               decoration: InputDecoration(
                                 hintText: "e.g. 3",
-                                hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                                hintStyle: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
                                 filled: true,
                                 fillColor: Colors.white.withValues(alpha: 0.04),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 8,
+                                ),
                                 suffixIcon: IconButton(
-                                  icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
-                                  onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                  icon: const Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.blueAccent,
+                                    size: 18,
+                                  ),
+                                  onPressed: () => FocusManager
+                                      .instance
+                                      .primaryFocus
+                                      ?.unfocus(),
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                                  borderSide: BorderSide(
+                                    color: Colors.white.withValues(alpha: 0.1),
+                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
@@ -2327,21 +2941,36 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                           children: [
                             Text(
                               "REPS / DETAILS",
-                              style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.exo2(
+                                fontSize: 10,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             TextField(
                               controller: _customWorkoutRepsController,
-                              style: const TextStyle(color: Colors.white, fontSize: 13),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                              ),
                               decoration: InputDecoration(
                                 hintText: "e.g. 10 reps / 30s",
-                                hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                                hintStyle: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
                                 filled: true,
                                 fillColor: Colors.white.withValues(alpha: 0.04),
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 8,
+                                ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
-                                  borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                                  borderSide: BorderSide(
+                                    color: Colors.white.withValues(alpha: 0.1),
+                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
@@ -2364,29 +2993,59 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                           children: [
                             Text(
                               "CATEGORY",
-                              style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.exo2(
+                                fontSize: 10,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Theme(
-                              data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
+                              data: Theme.of(
+                                context,
+                              ).copyWith(canvasColor: const Color(0xFF0F0F0F)),
                               child: DropdownButtonFormField<WorkoutCategory>(
                                 initialValue: _customWorkoutCategory,
                                 isDense: true,
-                                style: const TextStyle(color: Colors.white, fontSize: 13),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                ),
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Colors.white.withValues(alpha: 0.04),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                                  fillColor: Colors.white.withValues(
+                                    alpha: 0.04,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
                                 ),
-                                items: [WorkoutCategory.strength, WorkoutCategory.cardio, WorkoutCategory.flexibility]
-                                    .map((cat) => DropdownMenuItem(
-                                          value: cat,
-                                          child: Text(cat == WorkoutCategory.strength
-                                              ? "Strength"
-                                              : (cat == WorkoutCategory.cardio ? "Cardio" : "Yoga/Flex")),
-                                        ))
-                                    .toList(),
+                                items:
+                                    [
+                                          WorkoutCategory.strength,
+                                          WorkoutCategory.cardio,
+                                          WorkoutCategory.flexibility,
+                                        ]
+                                        .map(
+                                          (cat) => DropdownMenuItem(
+                                            value: cat,
+                                            child: Text(
+                                              cat == WorkoutCategory.strength
+                                                  ? "Strength"
+                                                  : (cat ==
+                                                            WorkoutCategory
+                                                                .cardio
+                                                        ? "Cardio"
+                                                        : "Yoga/Flex"),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
                                 onChanged: (val) {
                                   if (val != null) {
                                     setState(() {
@@ -2406,27 +3065,53 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                           children: [
                             Text(
                               "DIFFICULTY",
-                              style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.exo2(
+                                fontSize: 10,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Theme(
-                              data: Theme.of(context).copyWith(canvasColor: const Color(0xFF0F0F0F)),
+                              data: Theme.of(
+                                context,
+                              ).copyWith(canvasColor: const Color(0xFF0F0F0F)),
                               child: DropdownButtonFormField<String>(
                                 initialValue: _customWorkoutDifficulty,
                                 isDense: true,
-                                style: const TextStyle(color: Colors.white, fontSize: 13),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                ),
                                 decoration: InputDecoration(
                                   filled: true,
-                                  fillColor: Colors.white.withValues(alpha: 0.04),
-                                  contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                                  fillColor: Colors.white.withValues(
+                                    alpha: 0.04,
+                                  ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 8,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
                                 ),
-                                items: ["Easy", "Medium", "Hard", "Legend", "Master"]
-                                    .map((diff) => DropdownMenuItem(
-                                          value: diff,
-                                          child: Text(diff),
-                                        ))
-                                    .toList(),
+                                items:
+                                    [
+                                          "Easy",
+                                          "Medium",
+                                          "Hard",
+                                          "Legend",
+                                          "Master",
+                                        ]
+                                        .map(
+                                          (diff) => DropdownMenuItem(
+                                            value: diff,
+                                            child: Text(diff),
+                                          ),
+                                        )
+                                        .toList(),
                                 onChanged: (val) {
                                   if (val != null) {
                                     setState(() {
@@ -2448,7 +3133,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                     children: [
                       Text(
                         "TIME BASED WORKOUT?",
-                        style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.exo2(
+                          fontSize: 10,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Switch(
                         value: _customWorkoutIsTimeBased,
@@ -2465,28 +3154,47 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                     const SizedBox(height: 12),
                     Text(
                       "DURATION (MINUTES)",
-                      style: GoogleFonts.exo2(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.exo2(
+                        fontSize: 10,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     TextField(
                       controller: _customWorkoutDurationController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       style: const TextStyle(color: Colors.white, fontSize: 13),
                       decoration: InputDecoration(
                         hintText: "e.g. 15.0 or 0.33 for 20s",
-                        hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                         filled: true,
                         fillColor: Colors.white.withValues(alpha: 0.04),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
                         suffixIcon: IconButton(
-                          icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
-                          onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                          icon: const Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.blueAccent,
+                            size: 18,
+                          ),
+                          onPressed: () =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                          borderSide: BorderSide(
+                            color: Colors.white.withValues(alpha: 0.1),
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -2514,7 +3222,10 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                           ),
                           child: Text(
                             "Cancel",
-                            style: GoogleFonts.orbitron(color: Colors.grey, fontSize: 11),
+                            style: GoogleFonts.orbitron(
+                              color: Colors.grey,
+                              fontSize: 11,
+                            ),
                           ),
                         ),
                       ),
@@ -2522,14 +3233,25 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            final name = _customWorkoutNameController.text.isEmpty
+                            final name =
+                                _customWorkoutNameController.text.isEmpty
                                 ? "Custom Workout"
                                 : _customWorkoutNameController.text;
-                            final sets = int.tryParse(_customWorkoutSetsController.text) ?? 1;
-                            final reps = _customWorkoutRepsController.text.isEmpty
+                            final sets =
+                                int.tryParse(
+                                  _customWorkoutSetsController.text,
+                                ) ??
+                                1;
+                            final reps =
+                                _customWorkoutRepsController.text.isEmpty
                                 ? "10 reps"
                                 : _customWorkoutRepsController.text;
-                            final dur = _customWorkoutIsTimeBased ? (double.tryParse(_customWorkoutDurationController.text) ?? 15.0) : 0.0;
+                            final dur = _customWorkoutIsTimeBased
+                                ? (double.tryParse(
+                                        _customWorkoutDurationController.text,
+                                      ) ??
+                                      15.0)
+                                : 0.0;
 
                             profile.logCustomWorkout(
                               name: name,
@@ -2552,16 +3274,32 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             int xp = 25;
                             int crystals = 10;
                             switch (_customWorkoutDifficulty.toLowerCase()) {
-                              case 'easy': xp = 15; crystals = 5; break;
-                              case 'medium': xp = 25; crystals = 10; break;
-                              case 'hard': xp = 40; crystals = 15; break;
-                              case 'legend': xp = 60; crystals = 25; break;
-                              case 'master': xp = 80; crystals = 35; break;
+                              case 'easy':
+                                xp = 15;
+                                crystals = 5;
+                                break;
+                              case 'medium':
+                                xp = 25;
+                                crystals = 10;
+                                break;
+                              case 'hard':
+                                xp = 40;
+                                crystals = 15;
+                                break;
+                              case 'legend':
+                                xp = 60;
+                                crystals = 25;
+                                break;
+                              case 'master':
+                                xp = 80;
+                                crystals = 35;
+                                break;
                             }
 
                             _showOutcomeDialog(
                               title: "WORKOUT RECORDED! 💪",
-                              message: "Custom workout '$name' logged! You earned +$xp XP, +$crystals Crystals, and advanced your elemental goals.",
+                              message:
+                                  "Custom workout '$name' logged! You earned +$xp XP, +$crystals Crystals, and advanced your elemental goals.",
                               themeColor: themeColor,
                             );
                           },
@@ -2573,12 +3311,15 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                           ),
                           child: Text(
                             "RECORD",
-                            style: GoogleFonts.orbitron(color: Colors.white, fontSize: 11),
+                            style: GoogleFonts.orbitron(
+                              color: Colors.white,
+                              fontSize: 11,
+                            ),
                           ),
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

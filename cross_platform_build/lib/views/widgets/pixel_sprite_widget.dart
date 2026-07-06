@@ -86,12 +86,7 @@ class _PixelSpritePainter extends CustomPainter {
         if (val != 0) {
           paint.color = _colorForValue(val);
           canvas.drawRect(
-            Rect.fromLTWH(
-              c * pixelSize,
-              r * pixelSize,
-              pixelSize,
-              pixelSize,
-            ),
+            Rect.fromLTWH(c * pixelSize, r * pixelSize, pixelSize, pixelSize),
             paint,
           );
         }

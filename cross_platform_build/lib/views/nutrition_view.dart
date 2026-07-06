@@ -12,7 +12,7 @@ class NutritionView extends StatefulWidget {
 
 class _NutritionViewState extends State<NutritionView> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Dialog logging fields
   String _mealName = "";
   String _mealCalories = "";
@@ -25,29 +25,37 @@ class _NutritionViewState extends State<NutritionView> {
   Widget build(BuildContext context) {
     final profile = Provider.of<UserProfileManager>(context);
     final themeColor = profile.currentElement.primaryColor;
-    
+
     final double calorieTarget = profile.targetCalories;
     final double proteinTarget = profile.targetProtein;
     final double carbsTarget = profile.targetCarbs;
     final double fatsTarget = profile.targetFats;
     final double sugarLimit = profile.targetSugar;
-    
+
     // Filter meals for today
     final now = DateTime.now();
     final todayMeals = profile.loggedMeals.where((m) {
       return m.date.year == now.year &&
-             m.date.month == now.month &&
-             m.date.day == now.day;
+          m.date.month == now.month &&
+          m.date.day == now.day;
     }).toList();
 
     // Sums
-    final totalCalories = todayMeals.fold<double>(0, (sum, m) => sum + m.calories);
-    final totalProtein = todayMeals.fold<double>(0, (sum, m) => sum + m.protein);
+    final totalCalories = todayMeals.fold<double>(
+      0,
+      (sum, m) => sum + m.calories,
+    );
+    final totalProtein = todayMeals.fold<double>(
+      0,
+      (sum, m) => sum + m.protein,
+    );
     final totalCarbs = todayMeals.fold<double>(0, (sum, m) => sum + m.carbs);
     final totalFats = todayMeals.fold<double>(0, (sum, m) => sum + m.fats);
     final totalSugar = todayMeals.fold<double>(0, (sum, m) => sum + m.sugar);
 
-    final progressPct = calorieTarget > 0 ? (totalCalories / calorieTarget).clamp(0.0, 1.0) : 0.0;
+    final progressPct = calorieTarget > 0
+        ? (totalCalories / calorieTarget).clamp(0.0, 1.0)
+        : 0.0;
 
     return Scaffold(
       backgroundColor: const Color(0xFF020408),
@@ -73,10 +81,7 @@ class _NutritionViewState extends State<NutritionView> {
                     const SizedBox(height: 4),
                     Text(
                       "Monitor caloric input and metabolic fuel ratios",
-                      style: GoogleFonts.exo2(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
+                      style: GoogleFonts.exo2(fontSize: 14, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -152,7 +157,9 @@ class _NutritionViewState extends State<NutritionView> {
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.02),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.05),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,7 +225,9 @@ class _NutritionViewState extends State<NutritionView> {
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.02),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.05),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,7 +288,8 @@ class _NutritionViewState extends State<NutritionView> {
                                 if (profile.useImperialUnits) {
                                   final currentGoal = profile.waterIntakeGoalOz;
                                   if (currentGoal > 8.0) {
-                                    profile.waterIntakeGoalOz = currentGoal - 8.0;
+                                    profile.waterIntakeGoalOz =
+                                        currentGoal - 8.0;
                                   }
                                 } else {
                                   final currentGoal = profile.waterIntakeGoal;
@@ -288,25 +298,39 @@ class _NutritionViewState extends State<NutritionView> {
                                   }
                                 }
                               },
-                              icon: const Icon(Icons.remove_circle_outline, color: Colors.grey, size: 18),
+                              icon: const Icon(
+                                Icons.remove_circle_outline,
+                                color: Colors.grey,
+                                size: 18,
+                              ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                             ),
                             const SizedBox(width: 8),
                             Text(
                               "Goal",
-                              style: GoogleFonts.orbitron(fontSize: 13, color: Colors.white, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.orbitron(
+                                fontSize: 13,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(width: 8),
                             IconButton(
                               onPressed: () {
                                 if (profile.useImperialUnits) {
-                                  profile.waterIntakeGoalOz = profile.waterIntakeGoalOz + 8.0;
+                                  profile.waterIntakeGoalOz =
+                                      profile.waterIntakeGoalOz + 8.0;
                                 } else {
-                                  profile.waterIntakeGoal = profile.waterIntakeGoal + 0.5;
+                                  profile.waterIntakeGoal =
+                                      profile.waterIntakeGoal + 0.5;
                                 }
                               },
-                              icon: const Icon(Icons.add_circle_outline, color: Colors.grey, size: 18),
+                              icon: const Icon(
+                                Icons.add_circle_outline,
+                                color: Colors.grey,
+                                size: 18,
+                              ),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                             ),
@@ -319,10 +343,16 @@ class _NutritionViewState extends State<NutritionView> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
-                        value: profile.waterIntakeGoal > 0 ? (profile.todayWaterIntake / profile.waterIntakeGoal).clamp(0.0, 1.0) : 0.0,
+                        value: profile.waterIntakeGoal > 0
+                            ? (profile.todayWaterIntake /
+                                      profile.waterIntakeGoal)
+                                  .clamp(0.0, 1.0)
+                            : 0.0,
                         minHeight: 8,
                         backgroundColor: Colors.white.withValues(alpha: 0.04),
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          Colors.blueAccent,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -339,14 +369,27 @@ class _NutritionViewState extends State<NutritionView> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red.withValues(alpha: 0.12),
+                              backgroundColor: Colors.red.withValues(
+                                alpha: 0.12,
+                              ),
                               foregroundColor: Colors.redAccent,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
                               minimumSize: Size.zero,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
-                            child: const Text("-8 oz", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                            child: const Text(
+                              "-8 oz",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                           ElevatedButton(
                             onPressed: () {
@@ -354,14 +397,27 @@ class _NutritionViewState extends State<NutritionView> {
                               profile.evaluateQuestsCompletion();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent.withValues(alpha: 0.12),
+                              backgroundColor: Colors.blueAccent.withValues(
+                                alpha: 0.12,
+                              ),
                               foregroundColor: Colors.blueAccent,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
                               minimumSize: Size.zero,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
-                            child: const Text("+8 oz", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                            child: const Text(
+                              "+8 oz",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                           ElevatedButton(
                             onPressed: () {
@@ -369,14 +425,27 @@ class _NutritionViewState extends State<NutritionView> {
                               profile.evaluateQuestsCompletion();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent.withValues(alpha: 0.12),
+                              backgroundColor: Colors.blueAccent.withValues(
+                                alpha: 0.12,
+                              ),
                               foregroundColor: Colors.blueAccent,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
                               minimumSize: Size.zero,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
-                            child: const Text("+16 oz", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                            child: const Text(
+                              "+16 oz",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ] else ...[
                           ElevatedButton(
@@ -387,14 +456,27 @@ class _NutritionViewState extends State<NutritionView> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red.withValues(alpha: 0.12),
+                              backgroundColor: Colors.red.withValues(
+                                alpha: 0.12,
+                              ),
                               foregroundColor: Colors.redAccent,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
                               minimumSize: Size.zero,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
-                            child: const Text("-0.25 L", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                            child: const Text(
+                              "-0.25 L",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                           ElevatedButton(
                             onPressed: () {
@@ -402,14 +484,27 @@ class _NutritionViewState extends State<NutritionView> {
                               profile.evaluateQuestsCompletion();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent.withValues(alpha: 0.12),
+                              backgroundColor: Colors.blueAccent.withValues(
+                                alpha: 0.12,
+                              ),
                               foregroundColor: Colors.blueAccent,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
                               minimumSize: Size.zero,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
-                            child: const Text("+0.25 L", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                            child: const Text(
+                              "+0.25 L",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                           ElevatedButton(
                             onPressed: () {
@@ -417,14 +512,27 @@ class _NutritionViewState extends State<NutritionView> {
                               profile.evaluateQuestsCompletion();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blueAccent.withValues(alpha: 0.12),
+                              backgroundColor: Colors.blueAccent.withValues(
+                                alpha: 0.12,
+                              ),
                               foregroundColor: Colors.blueAccent,
                               elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
                               minimumSize: Size.zero,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
                             ),
-                            child: const Text("+0.50 L", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                            child: const Text(
+                              "+0.50 L",
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ],
                       ],
@@ -439,7 +547,11 @@ class _NutritionViewState extends State<NutritionView> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: ElevatedButton.icon(
                   onPressed: () => _showMealLogDialog(context, profile),
-                  icon: const Icon(Icons.add_circle, color: Colors.black, size: 18),
+                  icon: const Icon(
+                    Icons.add_circle,
+                    color: Colors.black,
+                    size: 18,
+                  ),
                   label: Text(
                     "LOG HEALTHY RATIONS",
                     style: GoogleFonts.orbitron(
@@ -476,7 +588,10 @@ class _NutritionViewState extends State<NutritionView> {
               if (todayMeals.isEmpty)
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 16),
-                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 30,
+                    horizontal: 16,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.01),
                     borderRadius: BorderRadius.circular(12),
@@ -504,61 +619,72 @@ class _NutritionViewState extends State<NutritionView> {
                   ),
                 )
               else
-                ...todayMeals.map((meal) => Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.02),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.04)),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              meal.name.toUpperCase(),
-                              style: GoogleFonts.exo2(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                ...todayMeals.map(
+                  (meal) => Container(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.02),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.04),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                meal.name.toUpperCase(),
+                                style: GoogleFonts.exo2(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 2),
-                            Row(
-                              children: [
-                                Text(
-                                  "${meal.calories.toInt()} kcal",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: themeColor,
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  Text(
+                                    "${meal.calories.toInt()} kcal",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: themeColor,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  "P: ${meal.protein.toInt()}g  C: ${meal.carbs.toInt()}g  F: ${meal.fats.toInt()}g",
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey,
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    "P: ${meal.protein.toInt()}g  C: ${meal.carbs.toInt()}g  F: ${meal.fats.toInt()}g",
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          profile.deleteDetailedMeal(meal.id);
-                        },
-                        icon: const Icon(Icons.cancel, color: Colors.redAccent, size: 18),
-                      ),
-                    ],
+                        IconButton(
+                          onPressed: () {
+                            profile.deleteDetailedMeal(meal.id);
+                          },
+                          icon: const Icon(
+                            Icons.cancel,
+                            color: Colors.redAccent,
+                            size: 18,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )),
+                ),
             ],
           ),
         ),
@@ -631,7 +757,12 @@ class _NutritionViewState extends State<NutritionView> {
               backgroundColor: const Color(0xFF0C0C0C),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
-                side: BorderSide(color: profile.currentElement.primaryColor.withValues(alpha: 0.4), width: 1.5),
+                side: BorderSide(
+                  color: profile.currentElement.primaryColor.withValues(
+                    alpha: 0.4,
+                  ),
+                  width: 1.5,
+                ),
               ),
               title: Center(
                 child: Text(
@@ -653,11 +784,21 @@ class _NutritionViewState extends State<NutritionView> {
                       TextFormField(
                         decoration: const InputDecoration(
                           labelText: "RATION NAME",
-                          labelStyle: TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                          labelStyle: TextStyle(
+                            fontSize: 9,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                          ),
                           hintText: "e.g. Chicken breast and broccoli",
-                          hintStyle: TextStyle(fontSize: 11, color: Colors.white24),
+                          hintStyle: TextStyle(
+                            fontSize: 11,
+                            color: Colors.white24,
+                          ),
                         ),
-                        style: const TextStyle(color: Colors.white, fontSize: 13),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
                         onChanged: (val) => _mealName = val,
                       ),
                       const SizedBox(height: 10),
@@ -665,19 +806,36 @@ class _NutritionViewState extends State<NutritionView> {
                         children: [
                           Expanded(
                             child: TextFormField(
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
                               decoration: InputDecoration(
                                 labelText: "CALORIES",
-                                labelStyle: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                                labelStyle: const TextStyle(
+                                  fontSize: 9,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                ),
                                 hintText: "kcal",
                                 suffixIcon: IconButton(
-                                  icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
-                                  onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                  icon: const Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.blueAccent,
+                                    size: 18,
+                                  ),
+                                  onPressed: () => FocusManager
+                                      .instance
+                                      .primaryFocus
+                                      ?.unfocus(),
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
                                 ),
                               ),
-                              style: const TextStyle(color: Colors.white, fontSize: 13),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                              ),
                               onChanged: (val) => _mealCalories = val,
                               validator: (val) {
                                 final d = double.tryParse(val ?? '');
@@ -689,19 +847,36 @@ class _NutritionViewState extends State<NutritionView> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: TextFormField(
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
                               decoration: InputDecoration(
                                 labelText: "PROTEIN (g)",
-                                labelStyle: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                                labelStyle: const TextStyle(
+                                  fontSize: 9,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                ),
                                 hintText: "grams",
                                 suffixIcon: IconButton(
-                                  icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
-                                  onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                  icon: const Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.blueAccent,
+                                    size: 18,
+                                  ),
+                                  onPressed: () => FocusManager
+                                      .instance
+                                      .primaryFocus
+                                      ?.unfocus(),
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
                                 ),
                               ),
-                              style: const TextStyle(color: Colors.white, fontSize: 13),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                              ),
                               onChanged: (val) => _mealProtein = val,
                               validator: (val) {
                                 final d = double.tryParse(val ?? '');
@@ -717,19 +892,36 @@ class _NutritionViewState extends State<NutritionView> {
                         children: [
                           Expanded(
                             child: TextFormField(
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
                               decoration: InputDecoration(
                                 labelText: "CARBS (g)",
-                                labelStyle: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                                labelStyle: const TextStyle(
+                                  fontSize: 9,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                ),
                                 hintText: "grams",
                                 suffixIcon: IconButton(
-                                  icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
-                                  onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                  icon: const Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.blueAccent,
+                                    size: 18,
+                                  ),
+                                  onPressed: () => FocusManager
+                                      .instance
+                                      .primaryFocus
+                                      ?.unfocus(),
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
                                 ),
                               ),
-                              style: const TextStyle(color: Colors.white, fontSize: 13),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                              ),
                               onChanged: (val) => _mealCarbs = val,
                               validator: (val) {
                                 final d = double.tryParse(val ?? '');
@@ -741,19 +933,36 @@ class _NutritionViewState extends State<NutritionView> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: TextFormField(
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                  ),
                               decoration: InputDecoration(
                                 labelText: "FATS (g)",
-                                labelStyle: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                                labelStyle: const TextStyle(
+                                  fontSize: 9,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                ),
                                 hintText: "grams",
                                 suffixIcon: IconButton(
-                                  icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
-                                  onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                                  icon: const Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.blueAccent,
+                                    size: 18,
+                                  ),
+                                  onPressed: () => FocusManager
+                                      .instance
+                                      .primaryFocus
+                                      ?.unfocus(),
                                   padding: EdgeInsets.zero,
                                   constraints: const BoxConstraints(),
                                 ),
                               ),
-                              style: const TextStyle(color: Colors.white, fontSize: 13),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                              ),
                               onChanged: (val) => _mealFats = val,
                               validator: (val) {
                                 final d = double.tryParse(val ?? '');
@@ -766,19 +975,33 @@ class _NutritionViewState extends State<NutritionView> {
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                         decoration: InputDecoration(
                           labelText: "SUGAR (g)",
-                          labelStyle: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                          labelStyle: const TextStyle(
+                            fontSize: 9,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                          ),
                           hintText: "grams",
                           suffixIcon: IconButton(
-                            icon: const Icon(Icons.check_circle_outline, color: Colors.blueAccent, size: 18),
-                            onPressed: () => FocusManager.instance.primaryFocus?.unfocus(),
+                            icon: const Icon(
+                              Icons.check_circle_outline,
+                              color: Colors.blueAccent,
+                              size: 18,
+                            ),
+                            onPressed: () =>
+                                FocusManager.instance.primaryFocus?.unfocus(),
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
                           ),
                         ),
-                        style: const TextStyle(color: Colors.white, fontSize: 13),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                        ),
                         onChanged: (val) => _mealSugar = val,
                         validator: (val) {
                           final d = double.tryParse(val ?? '');
@@ -802,7 +1025,10 @@ class _NutritionViewState extends State<NutritionView> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child: const Text("Cancel", style: TextStyle(color: Colors.grey, fontSize: 11)),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.grey, fontSize: 11),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -816,7 +1042,9 @@ class _NutritionViewState extends State<NutritionView> {
                           final sug = double.tryParse(_mealSugar) ?? 0;
 
                           profile.logDetailedMeal(
-                            name: _mealName.isEmpty ? "Healthy Rations" : _mealName,
+                            name: _mealName.isEmpty
+                                ? "Healthy Rations"
+                                : _mealName,
                             calories: cal,
                             protein: prot,
                             carbs: carb,
@@ -843,7 +1071,11 @@ class _NutritionViewState extends State<NutritionView> {
                         ),
                         child: const Text(
                           "LOG RATION",
-                          style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),

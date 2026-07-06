@@ -16,22 +16,33 @@ void main() {
       expect(workouts.length, 160);
     });
 
-    test('every (muscleGroup, difficulty, equipment) combination is unique', () {
-      final combos = workouts
-          .map((w) => '${w.muscleGroup.name}|${w.difficulty}|${w.equipment}')
-          .toSet();
-      expect(combos.length, workouts.length,
-          reason: 'Duplicate workout combinations found');
-    });
+    test(
+      'every (muscleGroup, difficulty, equipment) combination is unique',
+      () {
+        final combos = workouts
+            .map((w) => '${w.muscleGroup.name}|${w.difficulty}|${w.equipment}')
+            .toSet();
+        expect(
+          combos.length,
+          workouts.length,
+          reason: 'Duplicate workout combinations found',
+        );
+      },
+    );
 
     test('covers every muscle group x difficulty x equipment exactly once', () {
       for (final mg in MuscleGroup.values) {
         for (final d in difficulties) {
           for (final e in equipment) {
-            final matches = workouts.where((w) =>
-                w.muscleGroup == mg && w.difficulty == d && w.equipment == e);
-            expect(matches.length, 1,
-                reason: 'Expected exactly one workout for ${mg.name}/$d/$e');
+            final matches = workouts.where(
+              (w) =>
+                  w.muscleGroup == mg && w.difficulty == d && w.equipment == e,
+            );
+            expect(
+              matches.length,
+              1,
+              reason: 'Expected exactly one workout for ${mg.name}/$d/$e',
+            );
           }
         }
       }

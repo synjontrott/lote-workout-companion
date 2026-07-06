@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +13,8 @@ class CharacterCreatorView extends StatefulWidget {
 }
 
 class _CharacterCreatorViewState extends State<CharacterCreatorView> {
-  int _selectedToolColor = 1; // Palette index: 1=Skin, 2=Hair, 3=Eyes, 4=Outfit, 5=Aura, 0=Eraser
+  int _selectedToolColor =
+      1; // Palette index: 1=Skin, 2=Hair, 3=Eyes, 4=Outfit, 5=Aura, 0=Eraser
   late List<List<int>> _pixelGrid;
 
   // Preset values
@@ -30,11 +30,16 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
     super.initState();
     final profile = Provider.of<UserProfileManager>(context, listen: false);
     // Deep copy pixel grid
-    _pixelGrid = List.generate(profile.sprite.pixelGrid.length, (r) => List.from(profile.sprite.pixelGrid[r]));
+    _pixelGrid = List.generate(
+      profile.sprite.pixelGrid.length,
+      (r) => List.from(profile.sprite.pixelGrid[r]),
+    );
 
     // Try to infer presets from loaded hex values
     _sexPreset = profile.sprite.sex;
-    _planetPreset = profile.sprite.outfitStyle.isEmpty ? profile.homePlanet : profile.sprite.outfitStyle;
+    _planetPreset = profile.sprite.outfitStyle.isEmpty
+        ? profile.homePlanet
+        : profile.sprite.outfitStyle;
     _skinPreset = _skinPresetFromHex(profile.sprite.skinColorHex);
     _hairStylePreset = profile.sprite.hairStyle;
     _hairColorPreset = _hairColorFromHex(profile.sprite.hairColorHex);
@@ -163,10 +168,10 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
     final int gridSize = _pixelGrid.length;
     if (gridSize == 0) return;
     final double pixelWidth = boxSize / gridSize;
-    
+
     final int col = (localPosition.dx / pixelWidth).floor();
     final int row = (localPosition.dy / pixelWidth).floor();
-    
+
     if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
       if (_pixelGrid[row][col] != _selectedToolColor) {
         setState(() {
@@ -241,10 +246,7 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
               const SizedBox(height: 6),
               Text(
                 "Design your Elsaither Warrior's pixel avatar",
-                style: GoogleFonts.exo2(
-                  fontSize: 13,
-                  color: Colors.grey,
-                ),
+                style: GoogleFonts.exo2(fontSize: 13, color: Colors.grey),
               ),
               const SizedBox(height: 25),
 
@@ -256,7 +258,9 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                     color: Colors.black.withValues(alpha: 0.6),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: profile.currentElement.primaryColor.withValues(alpha: 0.4),
+                      color: profile.currentElement.primaryColor.withValues(
+                        alpha: 0.4,
+                      ),
                       width: 1.5,
                     ),
                   ),
@@ -300,9 +304,17 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                 children: [
                   _buildBrushButton(1, "Skin", _activeSkinColor()),
                   _buildBrushButton(2, "Hair", _activeHairColor()),
-                  _buildBrushButton(3, "Eyes", profile.currentElement.primaryColor),
+                  _buildBrushButton(
+                    3,
+                    "Eyes",
+                    profile.currentElement.primaryColor,
+                  ),
                   _buildBrushButton(4, "Armor", _activeOutfitColor()),
-                  _buildBrushButton(5, "Aura", profile.currentElement.accentColor),
+                  _buildBrushButton(
+                    5,
+                    "Aura",
+                    profile.currentElement.accentColor,
+                  ),
                   _buildBrushButton(0, "Eraser", Colors.black, isEraser: true),
                 ],
               ),
@@ -314,7 +326,9 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.02),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.05),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -328,36 +342,90 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                         letterSpacing: 2,
                       ),
                     ),
-                    _buildPresetDropdown("Sex", _sexPreset, ["Male", "Female"], (val) {
-                      setState(() {
-                        _sexPreset = val!;
-                      });
-                    }, profile),
-                    _buildPresetDropdown("Planet Style", _planetPreset, ["Ninjonia", "Techno", "Warrion", "Battacaria"], (val) {
-                      setState(() {
-                        _planetPreset = val!;
-                      });
-                    }, profile),
-                    _buildPresetDropdown("Skin Tone", _skinPreset, ["Fair", "Tan", "Dark", "Celestial", "Golden", "Pale"], (val) {
-                      setState(() {
-                        _skinPreset = val!;
-                      });
-                    }, profile),
-                    _buildPresetDropdown("Hair Style", _hairStylePreset, ["Spiky", "Long", "Short", "Mohawk"], (val) {
-                      setState(() {
-                        _hairStylePreset = val!;
-                      });
-                    }, profile),
-                    _buildPresetDropdown("Hair Color", _hairColorPreset, ["Yellow", "Red", "Black", "Blue", "Silver", "Green", "Brown", "Orange"], (val) {
-                      setState(() {
-                        _hairColorPreset = val!;
-                      });
-                    }, profile),
-                    _buildPresetDropdown("Clothing Color", _outfitColorPreset, ["Gray", "Dark Blue", "Crimson", "Gold", "Purple", "Green", "Charcoal", "Steel"], (val) {
-                      setState(() {
-                        _outfitColorPreset = val!;
-                      });
-                    }, profile),
+                    _buildPresetDropdown(
+                      "Sex",
+                      _sexPreset,
+                      ["Male", "Female"],
+                      (val) {
+                        setState(() {
+                          _sexPreset = val!;
+                        });
+                      },
+                      profile,
+                    ),
+                    _buildPresetDropdown(
+                      "Planet Style",
+                      _planetPreset,
+                      ["Ninjonia", "Techno", "Warrion", "Battacaria"],
+                      (val) {
+                        setState(() {
+                          _planetPreset = val!;
+                        });
+                      },
+                      profile,
+                    ),
+                    _buildPresetDropdown(
+                      "Skin Tone",
+                      _skinPreset,
+                      ["Fair", "Tan", "Dark", "Celestial", "Golden", "Pale"],
+                      (val) {
+                        setState(() {
+                          _skinPreset = val!;
+                        });
+                      },
+                      profile,
+                    ),
+                    _buildPresetDropdown(
+                      "Hair Style",
+                      _hairStylePreset,
+                      ["Spiky", "Long", "Short", "Mohawk"],
+                      (val) {
+                        setState(() {
+                          _hairStylePreset = val!;
+                        });
+                      },
+                      profile,
+                    ),
+                    _buildPresetDropdown(
+                      "Hair Color",
+                      _hairColorPreset,
+                      [
+                        "Yellow",
+                        "Red",
+                        "Black",
+                        "Blue",
+                        "Silver",
+                        "Green",
+                        "Brown",
+                        "Orange",
+                      ],
+                      (val) {
+                        setState(() {
+                          _hairColorPreset = val!;
+                        });
+                      },
+                      profile,
+                    ),
+                    _buildPresetDropdown(
+                      "Clothing Color",
+                      _outfitColorPreset,
+                      [
+                        "Gray",
+                        "Dark Blue",
+                        "Crimson",
+                        "Gold",
+                        "Purple",
+                        "Green",
+                        "Charcoal",
+                        "Steel",
+                      ],
+                      (val) {
+                        setState(() {
+                          _outfitColorPreset = val!;
+                        });
+                      },
+                      profile,
+                    ),
                     const SizedBox(height: 16),
                     Row(
                       children: [
@@ -365,8 +433,13 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                           child: ElevatedButton(
                             onPressed: _generateBaseFromPresets,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: profile.currentElement.primaryColor.withValues(alpha: 0.2),
-                              side: BorderSide(color: profile.currentElement.primaryColor),
+                              backgroundColor: profile
+                                  .currentElement
+                                  .primaryColor
+                                  .withValues(alpha: 0.2),
+                              side: BorderSide(
+                                color: profile.currentElement.primaryColor,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -386,7 +459,9 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                           child: OutlinedButton(
                             onPressed: _clearCanvas,
                             style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: Colors.grey.withValues(alpha: 0.5)),
+                              side: BorderSide(
+                                color: Colors.grey.withValues(alpha: 0.5),
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -400,9 +475,9 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                               ),
                             ),
                           ),
-                        )
+                        ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -420,7 +495,9 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     elevation: 6,
-                    shadowColor: profile.currentElement.primaryColor.withValues(alpha: 0.4),
+                    shadowColor: profile.currentElement.primaryColor.withValues(
+                      alpha: 0.4,
+                    ),
                   ),
                   child: Text(
                     "FORGE ARTIFACT",
@@ -441,7 +518,12 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
     );
   }
 
-  Widget _buildBrushButton(int val, String label, Color color, {bool isEraser = false}) {
+  Widget _buildBrushButton(
+    int val,
+    String label,
+    Color color, {
+    bool isEraser = false,
+  }) {
     final isSelected = _selectedToolColor == val;
     return GestureDetector(
       onTap: () {
@@ -462,7 +544,11 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
                   : Border.all(color: Colors.transparent, width: 2),
             ),
             child: isEraser
-                ? const Icon(Icons.cleaning_services_rounded, color: Colors.white, size: 18)
+                ? const Icon(
+                    Icons.cleaning_services_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  )
                 : null,
           ),
           const SizedBox(height: 4),
@@ -472,7 +558,7 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
               fontSize: 10,
               color: isSelected ? Colors.white : Colors.grey,
             ),
-          )
+          ),
         ],
       ),
     );
@@ -505,17 +591,14 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
               items: options.map((opt) {
                 return DropdownMenuItem<String>(
                   value: opt,
-                  child: Text(
-                    opt,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  child: Text(opt, style: const TextStyle(color: Colors.white)),
                 );
               }).toList(),
               onChanged: onChanged,
               dropdownColor: const Color(0xFF0F0F0F),
               underline: const SizedBox(),
               iconEnabledColor: profile.currentElement.primaryColor,
-            )
+            ),
           ],
         ),
       ),
