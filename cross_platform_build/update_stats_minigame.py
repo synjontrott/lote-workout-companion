@@ -1,12 +1,3 @@
-import re
-
-with open('lib/views/character_stats_view.dart', 'r') as f:
-    with open("lib/views/character_stats_view.dart", "r") as f3:\
-    content = f3.read()
-
-# 1. Update the tabs to include "Trials"
-content = content.replace('["Stats", "Badges"]', '["Stats", "Badges", "Trials"]')
-
 # 2. Add the Trials section build method and trial logic
 trials_logic = """
   Widget _buildTrialsSection(UserProfileManager profile, Color themeColor) {
@@ -41,7 +32,7 @@ trials_logic = """
             children: trials.map((t) {
               final String statName = t["stat"] as String;
               final int dc = t["dc"] as int;
-              
+
               int statValue = 10;
               switch (statName) {
                 case "Strength": statValue = profile.stats.strength; break;
@@ -234,32 +225,37 @@ trials_logic = """
   }
 """
 
-content = content.replace('  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {', trials_logic + '\n  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {')
-
-# 3. Import dart:math if not present
-if "import 'dart:math'" not in content:
-    content = "import 'dart:math' as import_math;\n" + content
-else:
-    content = content.replace("import 'dart:math';", "import 'dart:math' as import_math;")
-
 # 4. Insert else if (_selectedTab == "Trials")
 tabs_insertion = """                  ] else if (_selectedTab == "Trials") ...[
                     _buildTrialsSection(profile, themeColor),
                   ],"""
 
-content = content.replace('                  ],', '                  ]' + '\n' + tabs_insertion, 1)
 
-# Be careful, I replaced the first `],` after `_buildBadgesSection`. It's safer to target the exact block.
-# Let's fix the substitution.
-with open("lib/views/character_stats_view.dart", "r") as f3:\
-    content = f3.read()
+def transform(content: str) -> str:
+    original = content
 
-content = content.replace('["Stats", "Badges"]', '["Stats", "Badges", "Trials"]')
-content = content.replace('  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {', trials_logic + '\n  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {')
+    # First pass (mirrors the original script; its result is discarded by the
+    # re-read below, exactly as in the original one-shot script).
+    content = content.replace('["Stats", "Badges"]', '["Stats", "Badges", "Trials"]')
+    content = content.replace('  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {', trials_logic + '\n  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {')
 
-content = "import 'dart:math' as import_math;\n" + content
+    # 3. Import dart:math if not present
+    if "import 'dart:math'" not in content:
+        content = "import 'dart:math' as import_math;\n" + content
+    else:
+        content = content.replace("import 'dart:math';", "import 'dart:math' as import_math;")
 
-content = content.replace("""                  ] else if (_selectedTab == "Badges") ...[
+    content = content.replace('                  ],', '                  ]' + '\n' + tabs_insertion, 1)
+
+    # The original script re-reads the source file here, discarding the first pass.
+    content = original
+
+    content = content.replace('["Stats", "Badges"]', '["Stats", "Badges", "Trials"]')
+    content = content.replace('  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {', trials_logic + '\n  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {')
+
+    content = "import 'dart:math' as import_math;\n" + content
+
+    content = content.replace("""                  ] else if (_selectedTab == "Badges") ...[
                     _buildBadgesSection(profile, themeColor),
                   ],""", """                  ] else if (_selectedTab == "Badges") ...[
                     _buildBadgesSection(profile, themeColor),
@@ -267,5 +263,17 @@ content = content.replace("""                  ] else if (_selectedTab == "Badge
                     _buildTrialsSection(profile, themeColor),
                   ],""")
 
-with open('lib/views/character_stats_view.dart', 'w') as f2:
-    f2.write(content)
+    return content
+
+
+def main() -> None:
+    path = "lib/views/character_stats_view.dart"
+    with open(path) as f:
+        content = f.read()
+    content = transform(content)
+    with open(path, "w") as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

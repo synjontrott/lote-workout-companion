@@ -1,26 +1,25 @@
 import re
 
-with open('lib/views/quest_board_view.dart', 'r') as f:
-    content = f.read()
 
-# Add Controller
-content = content.replace(
-    '  final TextEditingController _customWorkoutDurationController =\n      TextEditingController();',
-    '  final TextEditingController _customWorkoutDurationController =\n      TextEditingController();\n  final TextEditingController _customWorkoutWeightVestController =\n      TextEditingController();'
-)
+def transform(content: str) -> str:
+    # Add Controller
+    content = content.replace(
+        '  final TextEditingController _customWorkoutDurationController =\n      TextEditingController();',
+        '  final TextEditingController _customWorkoutDurationController =\n      TextEditingController();\n  final TextEditingController _customWorkoutWeightVestController =\n      TextEditingController();'
+    )
 
-# Add UI block right after Duration block
-# Search for the end of the duration block:
-# focusedBorder: OutlineInputBorder(
-#   borderRadius: BorderRadius.circular(8),
-#   borderSide: BorderSide(color: themeColor),
-# ),
-# ),
-# ),
-# ],
-# const SizedBox(height: 20),
+    # Add UI block right after Duration block
+    # Search for the end of the duration block:
+    # focusedBorder: OutlineInputBorder(
+    #   borderRadius: BorderRadius.circular(8),
+    #   borderSide: BorderSide(color: themeColor),
+    # ),
+    # ),
+    # ),
+    # ],
+    # const SizedBox(height: 20),
 
-ui_to_add = """
+    ui_to_add = """
                   const SizedBox(height: 12),
                   Text(
                     "WEIGHT VEST / BELT (LBS)",
@@ -59,19 +58,19 @@ ui_to_add = """
                   ),
 """
 
-content = content.replace(
-    '                  const SizedBox(height: 20),\n\n                  Row(\n                    children: [\n                      Expanded(\n                        child: OutlinedButton(',
-    ui_to_add + '                  const SizedBox(height: 20),\n\n                  Row(\n                    children: [\n                      Expanded(\n                        child: OutlinedButton('
-)
+    content = content.replace(
+        '                  const SizedBox(height: 20),\n\n                  Row(\n                    children: [\n                      Expanded(\n                        child: OutlinedButton(',
+        ui_to_add + '                  const SizedBox(height: 20),\n\n                  Row(\n                    children: [\n                      Expanded(\n                        child: OutlinedButton('
+    )
 
-# Add passing the vest weight to profile.logCustomWorkout
-content = content.replace(
-    '                              durationMinutes: dur,\n                            );',
-    '                              durationMinutes: dur,\n                              vestWeightLbs: double.tryParse(_customWorkoutWeightVestController.text) ?? 0.0,\n                            );'
-)
+    # Add passing the vest weight to profile.logCustomWorkout
+    content = content.replace(
+        '                              durationMinutes: dur,\n                            );',
+        '                              durationMinutes: dur,\n                              vestWeightLbs: double.tryParse(_customWorkoutWeightVestController.text) ?? 0.0,\n                            );'
+    )
 
-# Update UI string calculation for xp/crystals
-xp_calc = """
+    # Update UI string calculation for xp/crystals
+    xp_calc = """
                             int xp = 25;
                             int crystals = 10;
                             switch (_customWorkoutDifficulty.toLowerCase()) {
@@ -96,7 +95,7 @@ xp_calc = """
                                 crystals = 35;
                                 break;
                             }
-                            
+
                             final vestWeightLbs = double.tryParse(_customWorkoutWeightVestController.text) ?? 0.0;
                             if (vestWeightLbs > 0) {
                               double multiplier = 1.0 + (vestWeightLbs / 50.0);
@@ -105,17 +104,29 @@ xp_calc = """
                             }
 """
 
-content = re.sub(
-    r'                            int xp = 25;[\s\S]*?                                break;\n                            }',
-    xp_calc,
-    content
-)
+    content = re.sub(
+        r'                            int xp = 25;[\s\S]*?                                break;\n                            }',
+        xp_calc,
+        content
+    )
 
-# Clear controller
-content = content.replace(
-    '                            _customWorkoutDurationController.clear();',
-    '                            _customWorkoutDurationController.clear();\n                            _customWorkoutWeightVestController.clear();'
-)
+    # Clear controller
+    content = content.replace(
+        '                            _customWorkoutDurationController.clear();',
+        '                            _customWorkoutDurationController.clear();\n                            _customWorkoutWeightVestController.clear();'
+    )
 
-with open('lib/views/quest_board_view.dart', 'w') as f:
-    f.write(content)
+    return content
+
+
+def main() -> None:
+    path = 'lib/views/quest_board_view.dart'
+    with open(path, 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open(path, 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

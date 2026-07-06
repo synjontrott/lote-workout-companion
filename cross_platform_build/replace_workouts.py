@@ -1,9 +1,6 @@
 import re
 
-with open('lib/models/lote_models.dart', 'r') as f:
-    content = f.read()
-
-replacements = {
+REPLACEMENTS = {
     "bodyweight_inverted_rows": {
         "name": "Superman Holds",
         "description": "Engage the entire posterior chain with isometric holds.",
@@ -46,21 +43,35 @@ replacements = {
     }
 }
 
-for w_id, data in replacements.items():
-    pattern = r'(SuggestedWorkout\(\s*id:\s*"' + w_id + r'".*?instructions:\s*\[)(.*?)(\],\s*sets:.*?\),)'
-    
-    def replacer(match):
-        prefix = match.group(1)
-        suffix = match.group(3)
-        
-        prefix = re.sub(r'name:\s*"[^"]+"', f'name: "{data["name"]}"', prefix)
-        prefix = re.sub(r'description:[\s\S]*?(?=\s*instructions:)', f'description:\n          "{data["description"]}",\n      ', prefix)
-        
-        new_instructions = "\n".join([f'        "{inst}",' for inst in data["instructions"]]) + "\n      "
-        
-        return prefix + "\n" + new_instructions + suffix
-        
-    content = re.sub(pattern, replacer, content, flags=re.DOTALL)
 
-with open('lib/models/lote_models.dart', 'w') as f:
-    f.write(content)
+def transform(content: str) -> str:
+    for w_id, data in REPLACEMENTS.items():
+        pattern = r'(SuggestedWorkout\(\s*id:\s*"' + w_id + r'".*?instructions:\s*\[)(.*?)(\],\s*sets:.*?\),)'
+
+        def replacer(match, data=data):
+            prefix = match.group(1)
+            suffix = match.group(3)
+
+            prefix = re.sub(r'name:\s*"[^"]+"', f'name: "{data["name"]}"', prefix)
+            prefix = re.sub(r'description:[\s\S]*?(?=\s*instructions:)', f'description:\n          "{data["description"]}",\n      ', prefix)
+
+            new_instructions = "\n".join([f'        "{inst}",' for inst in data["instructions"]]) + "\n      "
+
+            return prefix + "\n" + new_instructions + suffix
+
+        content = re.sub(pattern, replacer, content, flags=re.DOTALL)
+    return content
+
+
+def main() -> None:
+    with open('lib/models/lote_models.dart', 'r') as f:
+        content = f.read()
+
+    content = transform(content)
+
+    with open('lib/models/lote_models.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

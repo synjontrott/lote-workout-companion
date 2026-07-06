@@ -1,9 +1,5 @@
-import re
-
-with open('lib/models/lote_models.dart', 'r') as f:
-    content = f.read()
-
-schedule_class = """
+def transform(content: str) -> str:
+    schedule_class = """
 class WorkoutSchedule {
   final Map<int, String> routinesByDay; // 1=Mon, 7=Sun, maps to Routine ID
   final Map<int, bool> restDays;
@@ -55,8 +51,18 @@ class WorkoutSchedule {
 }
 """
 
-if "class WorkoutSchedule" not in content:
-    content = content + "\n" + schedule_class
+    if "class WorkoutSchedule" not in content:
+        content = content + "\n" + schedule_class
+    return content
 
-with open('lib/models/lote_models.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    with open('lib/models/lote_models.dart', 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open('lib/models/lote_models.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

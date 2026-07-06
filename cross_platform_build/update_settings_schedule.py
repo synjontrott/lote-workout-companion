@@ -1,8 +1,3 @@
-import re
-
-with open('lib/views/settings_view.dart', 'r') as f:
-    content = f.read()
-
 schedule_ui = """
                           const SizedBox(height: 16),
                           // Flow/Time Scheduling
@@ -146,7 +141,24 @@ schedule_ui = """
                             ],
                           ),
 """
-content = content.replace("                          // Re-Forge Character Sprite Button", schedule_ui + "\n                          // Re-Forge Character Sprite Button")
 
-with open('lib/views/settings_view.dart', 'w') as f:
-    f.write(content)
+
+def transform(content: str) -> str:
+    content = content.replace(
+        "                          // Re-Forge Character Sprite Button",
+        schedule_ui + "\n                          // Re-Forge Character Sprite Button",
+    )
+    return content
+
+
+def main() -> None:
+    path = "lib/views/settings_view.dart"
+    with open(path) as f:
+        content = f.read()
+    content = transform(content)
+    with open(path, "w") as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,9 +1,5 @@
-import re
-
-with open('lib/models/lote_models.dart', 'r') as f:
-    content = f.read()
-
-models = """
+def transform(content: str) -> str:
+    models = """
 class RoutineExercise {
   final String workoutId;
   final int sets;
@@ -61,7 +57,17 @@ class WorkoutRoutine {
 
 class SuggestedWorkout {"""
 
-content = content.replace("class SuggestedWorkout {", models)
+    content = content.replace("class SuggestedWorkout {", models)
+    return content
 
-with open('lib/models/lote_models.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    with open('lib/models/lote_models.dart', 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open('lib/models/lote_models.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

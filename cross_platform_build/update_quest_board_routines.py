@@ -1,16 +1,12 @@
-import re
+def transform(content: str) -> str:
+    # 1. Call _buildCustomRoutinesSection before _buildSuggestedWorkoutsSection
+    content = content.replace(
+        '_buildSuggestedWorkoutsSection(profile),',
+        '_buildCustomRoutinesSection(profile),\n                  const SizedBox(height: 16),\n                  _buildSuggestedWorkoutsSection(profile),'
+    )
 
-with open('lib/views/quest_board_view.dart', 'r') as f:
-    content = f.read()
-
-# 1. Call _buildCustomRoutinesSection before _buildSuggestedWorkoutsSection
-content = content.replace(
-    '_buildSuggestedWorkoutsSection(profile),',
-    '_buildCustomRoutinesSection(profile),\n                  const SizedBox(height: 16),\n                  _buildSuggestedWorkoutsSection(profile),'
-)
-
-# 2. Add _buildCustomRoutinesSection
-routine_ui = """  Widget _buildCustomRoutinesSection(UserProfileManager profile) {
+    # 2. Add _buildCustomRoutinesSection
+    routine_ui = """  Widget _buildCustomRoutinesSection(UserProfileManager profile) {
     if (profile.customRoutines.isEmpty) return const SizedBox.shrink();
 
     return Padding(
@@ -139,10 +135,20 @@ routine_ui = """  Widget _buildCustomRoutinesSection(UserProfileManager profile)
 
 """
 
-content = content.replace(
-    '  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {',
-    routine_ui + '  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {'
-)
+    content = content.replace(
+        '  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {',
+        routine_ui + '  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {'
+    )
+    return content
 
-with open('lib/views/quest_board_view.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    with open('lib/views/quest_board_view.dart', 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open('lib/views/quest_board_view.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

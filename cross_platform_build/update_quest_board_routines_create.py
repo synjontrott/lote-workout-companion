@@ -1,8 +1,3 @@
-import re
-
-with open('lib/views/quest_board_view.dart', 'r') as f:
-    content = f.read()
-
 # 1. Update the buttons under the workout instructions.
 # Look for the ElevatedButton that completes the workout.
 # Wait, it's inside `_buildSuggestedWorkoutCard` which doesn't exist, it's just mapped in `filtered.map`.
@@ -27,8 +22,6 @@ new_buttons = """                            Row(
                                         context: context,
                                         builder: (BuildContext context) {
                                           return _SuggestedWorkoutLogDialog("""
-
-content = content.replace(old_button, new_buttons)
 
 old_button_end = """                                child: Text(
                                   "COMPLETE WORKOUT",
@@ -76,8 +69,6 @@ new_buttons_end = """                                  child: Text(
                             ],
                           ),"""
 
-content = content.replace(old_button_end, new_buttons_end)
-
 # 2. Add the dialog function
 add_to_routine_func = """
   void _showAddToRoutineDialog(BuildContext context, UserProfileManager profile, SuggestedWorkout workout) {
@@ -89,11 +80,6 @@ add_to_routine_func = """
     );
   }
 """
-
-content = content.replace(
-  '  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {',
-  add_to_routine_func + '\n  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {'
-)
 
 # 3. Define the dialog widget
 dialog_widget = """
@@ -113,11 +99,11 @@ class _AddToRoutineDialog extends StatefulWidget {
 
 class _AddToRoutineDialogState extends State<_AddToRoutineDialog> {
   String _newRoutineName = "";
-  
+
   @override
   Widget build(BuildContext context) {
     final themeColor = widget.profile.currentElement.primaryColor;
-    
+
     return AlertDialog(
       backgroundColor: const Color(0xFF0F0F0F),
       title: Text(
@@ -207,7 +193,26 @@ class _AddToRoutineDialogState extends State<_AddToRoutineDialog> {
 }
 """
 
-content = content + "\n" + dialog_widget
 
-with open('lib/views/quest_board_view.dart', 'w') as f:
-    f.write(content)
+def transform(content: str) -> str:
+    content = content.replace(old_button, new_buttons)
+    content = content.replace(old_button_end, new_buttons_end)
+    content = content.replace(
+        '  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {',
+        add_to_routine_func + '\n  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {',
+    )
+    content = content + "\n" + dialog_widget
+    return content
+
+
+def main() -> None:
+    path = "lib/views/quest_board_view.dart"
+    with open(path) as f:
+        content = f.read()
+    content = transform(content)
+    with open(path, "w") as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

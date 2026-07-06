@@ -1,8 +1,3 @@
-import re
-
-with open('lib/views/quest_board_view.dart', 'r') as f:
-    content = f.read()
-
 # 1. Define the StatefulWidget for the dialog
 dialog_class = """
 class _SuggestedWorkoutLogDialog extends StatefulWidget {
@@ -33,8 +28,7 @@ class _SuggestedWorkoutLogDialogState
     super.initState();
     _setsController = TextEditingController(text: widget.workout.sets.toString());
     _repsController = TextEditingController(text: widget.workout.reps.replaceAll(RegExp(r'[^0-9]'), ''));
-    
-    // Auto-populate weight with bodyweight if it's a bodyweight exercise, otherwise 0 or empty.
+""" + "    \n" + """    // Auto-populate weight with bodyweight if it's a bodyweight exercise, otherwise 0 or empty.
     final bool isBodyweight = widget.workout.equipment.toLowerCase().contains("bodyweight");
     _weightController = TextEditingController(
       text: isBodyweight ? widget.profile.weight.toString() : "",
@@ -160,8 +154,6 @@ class _SuggestedWorkoutLogDialogState
 }
 """
 
-content = content + "\n" + dialog_class
-
 # 2. Replace the showDialog call in _buildSuggestedWorkoutsSection
 old_dialog = """                                  showDialog(
                                     context: context,
@@ -260,7 +252,20 @@ new_dialog = """                                  showDialog(
                                     },
                                   );"""
 
-content = content.replace(old_dialog, new_dialog)
 
-with open('lib/views/quest_board_view.dart', 'w') as f:
-    f.write(content)
+def transform(content: str) -> str:
+    content = content + "\n" + dialog_class
+    content = content.replace(old_dialog, new_dialog)
+    return content
+
+
+def main() -> None:
+    with open('lib/views/quest_board_view.dart', 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open('lib/views/quest_board_view.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

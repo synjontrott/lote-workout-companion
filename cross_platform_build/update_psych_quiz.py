@@ -1,19 +1,15 @@
-import re
-
-with open('lib/views/psych_evaluation_view.dart', 'r') as f:
-    content = f.read()
-
-# 1. State variables
-state_vars = """
+def transform(content: str) -> str:
+    # 1. State variables
+    state_vars = """
   // Mindset Quiz states
   bool _showingMindsetQuiz = false;
   int _currentMindsetQuizQuestionIdx = 0;
   final List<int> _mindsetQuizAnswers = [];
 """
-content = content.replace('  // Mindset states', state_vars + '\n  // Mindset states')
+    content = content.replace('  // Mindset states', state_vars + '\n  // Mindset states')
 
-# 2. Add button in _buildMindsetScreen
-button_code = """
+    # 2. Add button in _buildMindsetScreen
+    button_code = """
         ElevatedButton.icon(
           onPressed: () {
             setState(() {
@@ -52,7 +48,7 @@ button_code = """
         ),
         const SizedBox(height: 10),
 """
-content = content.replace("""        Text(
+    content = content.replace("""        Text(
           "CHOOSE MOTIVATIONAL MINDSET",
           style: GoogleFonts.orbitron(
             fontSize: 11,
@@ -64,16 +60,16 @@ content = content.replace("""        Text(
         const SizedBox(height: 10),""", button_code)
 
 
-# 3. Add overlay to build
-overlay_code = """              if (_showingQuiz)
+    # 3. Add overlay to build
+    overlay_code = """              if (_showingQuiz)
                 Positioned.fill(child: _buildQuizOverlay(themeColor)),
               if (_showingMindsetQuiz)
                 Positioned.fill(child: _buildMindsetQuizOverlay(themeColor)),"""
-content = content.replace("""              if (_showingQuiz)
+    content = content.replace("""              if (_showingQuiz)
                 Positioned.fill(child: _buildQuizOverlay(themeColor)),""", overlay_code)
 
-# 4. Add Mindset quiz overlay and logic
-mindset_logic = r"""
+    # 4. Add Mindset quiz overlay and logic
+    mindset_logic = r"""
   Widget _buildMindsetQuizOverlay(Color themeColor) {
     final q = _mindsetQuizQuestions[_currentMindsetQuizQuestionIdx];
     return Container(
@@ -240,10 +236,10 @@ mindset_logic = r"""
   }
 """
 
-content = content.replace('  Widget _buildGoalsScreen(Color themeColor, UserProfileManager profile) {', mindset_logic + '\n  Widget _buildGoalsScreen(Color themeColor, UserProfileManager profile) {')
+    content = content.replace('  Widget _buildGoalsScreen(Color themeColor, UserProfileManager profile) {', mindset_logic + '\n  Widget _buildGoalsScreen(Color themeColor, UserProfileManager profile) {')
 
-# 5. Add Questions to bottom
-questions_code = """
+    # 5. Add Questions to bottom
+    questions_code = """
   static final List<QuizQuestion> _mindsetQuizQuestions = [
     QuizQuestion(
       questionText: "How do you prefer to handle your daily routine?",
@@ -274,7 +270,17 @@ questions_code = """
     ),
   ];
 """
-content = content.replace('  static final List<QuizQuestion> _quizQuestions = [', questions_code + '\n  static final List<QuizQuestion> _quizQuestions = [')
+    content = content.replace('  static final List<QuizQuestion> _quizQuestions = [', questions_code + '\n  static final List<QuizQuestion> _quizQuestions = [')
+    return content
 
-with open('lib/views/psych_evaluation_view.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    with open('lib/views/psych_evaluation_view.dart', 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open('lib/views/psych_evaluation_view.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,8 +1,3 @@
-import re
-
-with open('lib/views/quest_board_view.dart', 'r') as f:
-    content = f.read()
-
 injection = """          }).toList();
 
     if (profile.activeWorkoutGoal != AdvancedWorkoutGoal.none && _workoutSearchQuery.isEmpty) {
@@ -15,21 +10,30 @@ injection = """          }).toList();
         final prerequisiteWorkouts = SuggestedWorkout.allWorkouts.where(
           (w) => progression.prerequisiteWorkoutIds.contains(w.id) && !isWorkoutCompletedToday(w)
         ).toList();
-        
-        // Remove them from filtered if they are already there so we don't duplicate
+""" + "        \n" + """        // Remove them from filtered if they are already there so we don't duplicate
         filtered.removeWhere((w) => progression.prerequisiteWorkoutIds.contains(w.id));
-        
-        // Add them to the top
+""" + "        \n" + """        // Add them to the top
         filtered.insertAll(0, prerequisiteWorkouts);
       }
     }
 """
 
-content = content.replace(
-    '          }).toList();',
-    injection,
-    1 # only the first one which is inside _buildSuggestedWorkoutsSection
-)
+def transform(content: str) -> str:
+    content = content.replace(
+        '          }).toList();',
+        injection,
+        1,  # only the first one which is inside _buildSuggestedWorkoutsSection
+    )
+    return content
 
-with open('lib/views/quest_board_view.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    with open('lib/views/quest_board_view.dart', 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open('lib/views/quest_board_view.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

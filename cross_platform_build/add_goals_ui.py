@@ -1,9 +1,5 @@
-import re
-
-with open('lib/views/settings_view.dart', 'r') as f:
-    content = f.read()
-
-ui_to_add = """
+def transform(content: str) -> str:
+    ui_to_add = """
               const SizedBox(height: 20),
               Text(
                 "ADVANCED WORKOUT GOAL",
@@ -39,7 +35,7 @@ ui_to_add = """
                       if (goal == AdvancedWorkoutGoal.frontLever) label = "FRONT LEVER";
                       if (goal == AdvancedWorkoutGoal.pistolSquat) label = "PISTOL SQUAT";
                       if (goal == AdvancedWorkoutGoal.muscleUp) label = "MUSCLE UP";
-                      
+
                       return DropdownMenuItem(
                         value: goal,
                         child: Text(label),
@@ -55,11 +51,23 @@ ui_to_add = """
               ),
 """
 
-content = content.replace(
-    '              const SizedBox(height: 20),\n              Text(\n                \"TRAINING FOCUSES\",',
-    ui_to_add + '              const SizedBox(height: 20),\n              Text(\n                \"TRAINING FOCUSES\",',
-    1
-)
+    content = content.replace(
+        '              const SizedBox(height: 20),\n              Text(\n                \"TRAINING FOCUSES\",',
+        ui_to_add + '              const SizedBox(height: 20),\n              Text(\n                \"TRAINING FOCUSES\",',
+        1
+    )
 
-with open('lib/views/settings_view.dart', 'w') as f:
-    f.write(content)
+    return content
+
+
+def main() -> None:
+    path = 'lib/views/settings_view.dart'
+    with open(path, 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open(path, 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

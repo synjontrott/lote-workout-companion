@@ -1,8 +1,3 @@
-import re
-
-with open('lib/views/dashboard_view.dart', 'r') as f:
-    content = f.read()
-
 target = """                      // MARK: - Energy Activity Gauges
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -129,10 +124,22 @@ replacement = """                      // MARK: - Energy Activity Gauges
                         const SizedBox(height: 24),
                       ],"""
 
-if target in content:
-    content = content.replace(target, replacement)
-else:
-    print("TARGET NOT FOUND!")
+def transform(content: str) -> str:
+    return content.replace(target, replacement)
 
-with open('lib/views/dashboard_view.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    with open('lib/views/dashboard_view.dart', 'r') as f:
+        content = f.read()
+
+    if target not in content:
+        print("TARGET NOT FOUND!")
+
+    content = transform(content)
+
+    with open('lib/views/dashboard_view.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

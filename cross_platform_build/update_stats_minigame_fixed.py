@@ -1,11 +1,3 @@
-import re
-
-with open('lib/views/character_stats_view.dart', 'r') as f:
-    content = f.read()
-
-# 1. Update the tabs to include "Trials"
-content = content.replace('["Stats", "Badges"]', '["Stats", "Badges", "Trials"]')
-
 # 2. Add the Trials section build method and trial logic
 trials_logic = r"""
   Widget _buildTrialsSection(UserProfileManager profile, Color themeColor) {
@@ -40,7 +32,7 @@ trials_logic = r"""
             children: trials.map((t) {
               final String statName = t["stat"] as String;
               final int dc = t["dc"] as int;
-              
+
               int statValue = 10;
               switch (statName) {
                 case "Strength": statValue = profile.stats.strength; break;
@@ -233,17 +225,29 @@ trials_logic = r"""
   }
 """
 
-content = content.replace('  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {', trials_logic + '\n  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {')
 
-content = "import 'dart:math' as import_math;\n" + content
-
-content = content.replace("""                  ] else if (_selectedTab == "Badges") ...[
+def transform(content: str) -> str:
+    content = content.replace('["Stats", "Badges"]', '["Stats", "Badges", "Trials"]')
+    content = content.replace('  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {', trials_logic + '\n  Widget _buildBadgesSection(UserProfileManager profile, Color themeColor) {')
+    content = "import 'dart:math' as import_math;\n" + content
+    content = content.replace("""                  ] else if (_selectedTab == "Badges") ...[
                     _buildBadgesSection(profile, themeColor),
                   ],""", """                  ] else if (_selectedTab == "Badges") ...[
                     _buildBadgesSection(profile, themeColor),
                   ] else if (_selectedTab == "Trials") ...[
                     _buildTrialsSection(profile, themeColor),
                   ],""")
+    return content
 
-with open('lib/views/character_stats_view.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    path = "lib/views/character_stats_view.dart"
+    with open(path) as f:
+        content = f.read()
+    content = transform(content)
+    with open(path, "w") as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,16 +1,12 @@
-import re
+def transform(content: str) -> str:
+    # 1. Add `bool saveAsTemplate = false;` to `_showMealLogDialog`
+    content = content.replace(
+        'void _showMealLogDialog(BuildContext context, UserProfileManager profile) {',
+        'void _showMealLogDialog(BuildContext context, UserProfileManager profile) {\n    bool saveAsTemplate = false;'
+    )
 
-with open('lib/views/nutrition_view.dart', 'r') as f:
-    content = f.read()
-
-# 1. Add `bool saveAsTemplate = false;` to `_showMealLogDialog`
-content = content.replace(
-    'void _showMealLogDialog(BuildContext context, UserProfileManager profile) {',
-    'void _showMealLogDialog(BuildContext context, UserProfileManager profile) {\n    bool saveAsTemplate = false;'
-)
-
-# 2. Add quick log chip wrap before LOG HEALTHY RATIONS
-quick_log_ui = """
+    # 2. Add quick log chip wrap before LOG HEALTHY RATIONS
+    quick_log_ui = """
               if (profile.savedMeals.isNotEmpty) ...[
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -54,49 +50,30 @@ quick_log_ui = """
                 const SizedBox(height: 16),
               ],
 """
-content = content.replace(
-    '              // Action button to log food',
-    quick_log_ui + '              // Action button to log food'
-)
+    content = content.replace(
+        '              // Action button to log food',
+        quick_log_ui + '              // Action button to log food'
+    )
 
-# 3. Add checkbox inside form before actions
-checkbox_ui = """
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                CheckboxListTile(
-                  title: const Text("Save as Quick Meal template", style: TextStyle(color: Colors.white, fontSize: 11)),
-                  value: saveAsTemplate,
-                  activeColor: profile.currentElement.primaryColor,
-                  controlAffinity: ListTileControlAffinity.leading,
-                  contentPadding: EdgeInsets.zero,
-                  onChanged: (val) {
-                    if (val != null) {
-                      setDialogState(() => saveAsTemplate = val);
-                    }
-                  },
-                ),
-              ],
-"""
-# We replace the end of the `Column` inside `SingleChildScrollView` -> `Form` -> `Column`
-# Looking at the code:
-#   1012                      ],
-#   1013                    ),
-#   1014                  ),
-#   1015                ),
-#   1016                actions: [
-# wait, my `checkbox_ui` needs to replace:
-#   1012                      ],
-#   1013                    ),
-#   1014                  ),
-#   1015                ),
-target_end_form = """                      ],
+    # 3. Add checkbox inside form before actions
+    # We replace the end of the `Column` inside `SingleChildScrollView` -> `Form` -> `Column`
+    # Looking at the code:
+    #   1012                      ],
+    #   1013                    ),
+    #   1014                  ),
+    #   1015                ),
+    #   1016                actions: [
+    # wait, my `checkbox_ui` needs to replace:
+    #   1012                      ],
+    #   1013                    ),
+    #   1014                  ),
+    #   1015                ),
+    target_end_form = """                      ],
                     ),
                   ),
                 ),
               actions: ["""
-replacement_end_form = """                      ],
+    replacement_end_form = """                      ],
                     ),
                     const SizedBox(height: 12),
                     CheckboxListTile(
@@ -115,10 +92,10 @@ replacement_end_form = """                      ],
                 ),
               ),
               actions: ["""
-content = content.replace(target_end_form, replacement_end_form)
+    content = content.replace(target_end_form, replacement_end_form)
 
-# 4. Add save logic in the dialog submit
-submit_logic = """
+    # 4. Add save logic in the dialog submit
+    submit_logic = """
                           if (saveAsTemplate) {
                             profile.saveMealTemplate(
                               MealEntry(
@@ -133,13 +110,23 @@ submit_logic = """
                               )
                             );
                           }
-                          
+\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20
                           profile.logDetailedMeal("""
 
-content = content.replace(
-    '                          profile.logDetailedMeal(',
-    submit_logic
-)
+    content = content.replace(
+        '                          profile.logDetailedMeal(',
+        submit_logic
+    )
+    return content
 
-with open('lib/views/nutrition_view.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    with open('lib/views/nutrition_view.dart', 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open('lib/views/nutrition_view.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

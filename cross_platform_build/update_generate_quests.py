@@ -1,27 +1,23 @@
-import re
+def transform(content: str) -> str:
+    # 1. Update signature
+    content = content.replace(
+        '  double waterGoal = 3.0,\n}) {',
+        '  double waterGoal = 3.0,\n  AdvancedWorkoutGoal activeGoal = AdvancedWorkoutGoal.none,\n}) {'
+    )
 
-with open('lib/models/lote_models.dart', 'r') as f:
-    content = f.read()
-
-# 1. Update signature
-content = content.replace(
-    '  double waterGoal = 3.0,\n}) {',
-    '  double waterGoal = 3.0,\n  AdvancedWorkoutGoal activeGoal = AdvancedWorkoutGoal.none,\n}) {'
-)
-
-# 2. Inject goal logic
-goal_injection = """      );
+    # 2. Inject goal logic
+    goal_injection = """      );
     }
-    
+\x20\x20\x20\x20
     if (activeGoal != AdvancedWorkoutGoal.none && quests.isNotEmpty) {
       final progression = WorkoutProgression.all.firstWhere(
         (p) => p.goal == activeGoal,
         orElse: () => WorkoutProgression.all.first,
       );
       if (progression.goal == activeGoal) {
-        final workoutId = progression.prerequisiteWorkoutIds.first; 
+        final workoutId = progression.prerequisiteWorkoutIds.first;\x20
         final workout = SuggestedWorkout.allWorkouts.firstWhere((w) => w.id == workoutId, orElse: () => SuggestedWorkout.allWorkouts.first);
-        
+\x20\x20\x20\x20\x20\x20\x20\x20
         quests[0] = LotEQuest(
           id: UniqueKey().toString(),
           title: "Goal Training: ${workout.name}",
@@ -41,7 +37,17 @@ goal_injection = """      );
     }
   } else if (cadence == QuestCadence.monthly) {"""
 
-content = content.replace('      );\n    }\n  } else if (cadence == QuestCadence.monthly) {', goal_injection)
+    content = content.replace('      );\n    }\n  } else if (cadence == QuestCadence.monthly) {', goal_injection)
+    return content
 
-with open('lib/models/lote_models.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    with open('lib/models/lote_models.dart', 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open('lib/models/lote_models.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

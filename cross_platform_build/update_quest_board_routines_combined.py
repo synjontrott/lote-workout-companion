@@ -1,8 +1,5 @@
 import re
 
-with open('lib/views/quest_board_view.dart', 'r') as f:
-    content = f.read()
-
 # 1. Inject _buildCustomRoutinesSection into quest_board_view.dart
 routine_ui = """  Widget _buildCustomRoutinesSection(UserProfileManager profile) {
     if (profile.customRoutines.isEmpty) return const SizedBox.shrink();
@@ -132,15 +129,6 @@ routine_ui = """  Widget _buildCustomRoutinesSection(UserProfileManager profile)
   }
 """
 
-content = content.replace(
-    '  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {',
-    routine_ui + '\n  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {'
-)
-content = content.replace(
-    '_buildSuggestedWorkoutsSection(profile),',
-    '_buildCustomRoutinesSection(profile),\n                  const SizedBox(height: 16),\n                  _buildSuggestedWorkoutsSection(profile),'
-)
-
 # 2. Add the dialog widgets at the bottom of the file
 dialog_widgets = """
 class _SuggestedWorkoutLogDialog extends StatefulWidget {
@@ -171,7 +159,7 @@ class _SuggestedWorkoutLogDialogState
     super.initState();
     _setsController = TextEditingController(text: widget.workout.sets.toString());
     _repsController = TextEditingController(text: widget.workout.reps.replaceAll(RegExp(r'[^0-9]'), ''));
-    
+
     // Auto-populate weight with bodyweight if it's a bodyweight exercise, otherwise 0 or empty.
     final bool isBodyweight = widget.workout.equipment.toLowerCase().contains("bodyweight");
     _weightController = TextEditingController(
@@ -313,11 +301,11 @@ class _AddToRoutineDialog extends StatefulWidget {
 
 class _AddToRoutineDialogState extends State<_AddToRoutineDialog> {
   String _newRoutineName = "";
-  
+
   @override
   Widget build(BuildContext context) {
     final themeColor = widget.profile.currentElement.primaryColor;
-    
+
     return AlertDialog(
       backgroundColor: const Color(0xFF0F0F0F),
       title: Text(
@@ -407,10 +395,7 @@ class _AddToRoutineDialogState extends State<_AddToRoutineDialog> {
 }
 """
 
-content = content + "\n" + dialog_widgets
-
 # 3. Replace the old "COMPLETE WORKOUT" block. We'll use regex.
-import re
 pattern = re.compile(r'SizedBox\(\s*width:\s*double\.infinity,\s*child:\s*ElevatedButton\(\s*onPressed:\s*\(\)\s*\{.*?showDialog\(.*?context:\s*context,\s*builder:\s*\(BuildContext context\)\s*\{\s*return AlertDialog\(\s*backgroundColor:\s*const Color\(\s*0xFF0F0F0F,\s*\),.*?title:\s*Text\(\s*"COMPLETE WORKOUT\?",.*?actions:\s*\[.*?TextButton\(.*?onPressed:\s*\(\)\s*=>\s*Navigator\.of\(context\)\.pop\(\).*?TextButton\(.*?onPressed:\s*\(\)\s*\{.*?profile\.logCustomWorkout\(.*?_showOutcomeDialog\(.*?\}\,.*?child:\s*Text\(.*?"YES,\s*LOG\s*IT".*?\}\,.*?\)\;.*?\}\,.*?child:\s*Text\(\s*"COMPLETE WORKOUT".*?\),.*?\),.*?\),', re.DOTALL)
 
 new_buttons = """Row(
@@ -495,7 +480,28 @@ new_buttons = """Row(
                               ],
                             ),"""
 
-content = pattern.sub(new_buttons, content)
+def transform(content: str) -> str:
+    content = content.replace(
+        '  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {',
+        routine_ui + '\n  Widget _buildSuggestedWorkoutsSection(UserProfileManager profile) {',
+    )
+    content = content.replace(
+        '_buildSuggestedWorkoutsSection(profile),',
+        '_buildCustomRoutinesSection(profile),\n                  const SizedBox(height: 16),\n                  _buildSuggestedWorkoutsSection(profile),',
+    )
+    content = content + "\n" + dialog_widgets
+    content = pattern.sub(new_buttons, content)
+    return content
 
-with open('lib/views/quest_board_view.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    path = "lib/views/quest_board_view.dart"
+    with open(path) as f:
+        content = f.read()
+    content = transform(content)
+    with open(path, "w") as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

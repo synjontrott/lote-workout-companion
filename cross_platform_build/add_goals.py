@@ -1,9 +1,5 @@
-import re
-
-with open('lib/models/lote_models.dart', 'r') as f:
-    content = f.read()
-
-advanced_goal_enum = """
+def transform(content: str) -> str:
+    advanced_goal_enum = """
 enum AdvancedWorkoutGoal {
   none,
   handstand,
@@ -87,7 +83,17 @@ class WorkoutProgression {
 
 class SuggestedWorkout {"""
 
-content = content.replace('class SuggestedWorkout {', advanced_goal_enum)
+    return content.replace('class SuggestedWorkout {', advanced_goal_enum)
 
-with open('lib/models/lote_models.dart', 'w') as f:
-    f.write(content)
+
+def main() -> None:
+    path = 'lib/models/lote_models.dart'
+    with open(path, 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open(path, 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()

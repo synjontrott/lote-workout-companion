@@ -1,8 +1,3 @@
-import re
-
-with open('lib/managers/user_profile_manager.dart', 'r') as f:
-    content = f.read()
-
 # Add list of routines
 property_injection = """  List<WorkoutRoutine> _customRoutines = [];
   List<WorkoutRoutine> get customRoutines => _customRoutines;
@@ -25,18 +20,11 @@ property_injection = """  List<WorkoutRoutine> _customRoutines = [];
   }
 """
 
-content = content.replace("  List<LotEQuest> get yearlyQuests => _yearlyQuests;", "  List<LotEQuest> get yearlyQuests => _yearlyQuests;\n\n" + property_injection)
-
 # Save progress
 save_progress = """    await prefs.setString(
         'lote_custom_routines',
         jsonEncode(_customRoutines.map((r) => r.toJson()).toList()),
       );"""
-
-content = content.replace(
-    "await prefs.setString('lote_active_workout_goal', _activeWorkoutGoal.name);",
-    "await prefs.setString('lote_active_workout_goal', _activeWorkoutGoal.name);\n      " + save_progress
-)
 
 # Load progress
 load_progress = """      final routinesJson = prefs.getString('lote_custom_routines');
@@ -47,10 +35,27 @@ load_progress = """      final routinesJson = prefs.getString('lote_custom_routi
         _customRoutines = [];
       }"""
 
-content = content.replace(
-    "final goalStr = prefs.getString('lote_active_workout_goal');",
-    load_progress + "\n\n      final goalStr = prefs.getString('lote_active_workout_goal');"
-)
 
-with open('lib/managers/user_profile_manager.dart', 'w') as f:
-    f.write(content)
+def transform(content: str) -> str:
+    content = content.replace("  List<LotEQuest> get yearlyQuests => _yearlyQuests;", "  List<LotEQuest> get yearlyQuests => _yearlyQuests;\n\n" + property_injection)
+    content = content.replace(
+        "await prefs.setString('lote_active_workout_goal', _activeWorkoutGoal.name);",
+        "await prefs.setString('lote_active_workout_goal', _activeWorkoutGoal.name);\n      " + save_progress
+    )
+    content = content.replace(
+        "final goalStr = prefs.getString('lote_active_workout_goal');",
+        load_progress + "\n\n      final goalStr = prefs.getString('lote_active_workout_goal');"
+    )
+    return content
+
+
+def main() -> None:
+    with open('lib/managers/user_profile_manager.dart', 'r') as f:
+        content = f.read()
+    content = transform(content)
+    with open('lib/managers/user_profile_manager.dart', 'w') as f:
+        f.write(content)
+
+
+if __name__ == "__main__":
+    main()
