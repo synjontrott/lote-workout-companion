@@ -40,6 +40,8 @@ class _QuestBoardViewState extends State<QuestBoardView> {
       TextEditingController();
   final TextEditingController _customWorkoutDurationController =
       TextEditingController();
+  final TextEditingController _customWorkoutWeightVestController =
+      TextEditingController();
   String _customWorkoutDifficulty = "Medium";
   WorkoutCategory _customWorkoutCategory = WorkoutCategory.strength;
 
@@ -3203,6 +3205,58 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                       ),
                     ),
                   ],
+
+                  const SizedBox(height: 12),
+                  Text(
+                    "WEIGHT VEST / BELT (LBS)",
+                    style: GoogleFonts.exo2(
+                      fontSize: 10,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: _customWorkoutWeightVestController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    style: const TextStyle(color: Colors.white, fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: "e.g. 20 (Leave blank if none)",
+                      hintStyle: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withValues(alpha: 0.04),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 8,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: const Icon(
+                          Icons.check_circle_outline,
+                          color: Colors.blueAccent,
+                          size: 18,
+                        ),
+                        onPressed: () =>
+                            FocusManager.instance.primaryFocus?.unfocus(),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.1),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: themeColor),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 20),
 
                   Row(
@@ -3260,6 +3314,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                               reps: reps,
                               difficulty: _customWorkoutDifficulty,
                               durationMinutes: dur,
+                              vestWeightLbs:
+                                  double.tryParse(
+                                    _customWorkoutWeightVestController.text,
+                                  ) ??
+                                  0.0,
                             );
 
                             setState(() {
@@ -3270,6 +3329,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                             _customWorkoutSetsController.clear();
                             _customWorkoutRepsController.clear();
                             _customWorkoutDurationController.clear();
+                            _customWorkoutWeightVestController.clear();
 
                             int xp = 25;
                             int crystals = 10;
@@ -3294,6 +3354,17 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                 xp = 80;
                                 crystals = 35;
                                 break;
+                            }
+
+                            final vestWeightLbs =
+                                double.tryParse(
+                                  _customWorkoutWeightVestController.text,
+                                ) ??
+                                0.0;
+                            if (vestWeightLbs > 0) {
+                              double multiplier = 1.0 + (vestWeightLbs / 50.0);
+                              xp = (xp * multiplier).round();
+                              crystals = (crystals * multiplier).round();
                             }
 
                             _showOutcomeDialog(

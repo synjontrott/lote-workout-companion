@@ -1902,6 +1902,7 @@ class UserProfileManager extends ChangeNotifier {
     required String reps,
     required String difficulty,
     double durationMinutes = 15.0,
+    double vestWeightLbs = 0.0,
   }) {
     final String baseType;
     switch (category) {
@@ -1954,6 +1955,12 @@ class UserProfileManager extends ChangeNotifier {
         crys = 35;
         break;
     }
+    if (vestWeightLbs > 0) {
+      double mult = 1.0 + (vestWeightLbs / 50.0);
+      xp = (xp * mult).round();
+      crys = (crys * mult).round();
+    }
+
 
     addXP(xp);
     earnCrystals(crys);
