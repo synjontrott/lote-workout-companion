@@ -115,6 +115,27 @@ class UserProfileManager extends ChangeNotifier {
   List<LotEQuest> get dailyQuests => _dailyQuests;
   List<LotEQuest> get monthlyQuests => _monthlyQuests;
   List<LotEQuest> get yearlyQuests => _yearlyQuests;
+
+  List<WorkoutRoutine> _customRoutines = [];
+  List<WorkoutRoutine> get customRoutines => _customRoutines;
+
+  void saveCustomRoutine(WorkoutRoutine routine) {
+    final idx = _customRoutines.indexWhere((r) => r.id == routine.id);
+    if (idx != -1) {
+      _customRoutines[idx] = routine;
+    } else {
+      _customRoutines.add(routine);
+    }
+    _save();
+    notifyListeners();
+  }
+
+  void deleteCustomRoutine(String id) {
+    _customRoutines.removeWhere((r) => r.id == id);
+    _save();
+    notifyListeners();
+  }
+
   int get streak => _streak;
   DateTime? get lastActiveDate => _lastActiveDate;
   String get shortTermGoal => _shortTermGoal;
