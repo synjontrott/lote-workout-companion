@@ -637,8 +637,9 @@ class _SettingsViewState extends State<SettingsView> {
                                     controller: _activeMinutesGoalController,
                                     onChanged: (val) {
                                       final d = double.tryParse(val);
-                                      if (d != null)
+                                      if (d != null) {
                                         profile.activeMinutesGoal = d;
+                                      }
                                     },
                                   ),
                                 ),
@@ -1385,6 +1386,7 @@ class _SettingsViewState extends State<SettingsView> {
                                           initialTime: initialTime,
                                         );
                                     if (newTime != null) {
+                                      if (!context.mounted) return;
                                       final timeStr = newTime.format(context);
                                       final newSchedule = profile.schedule
                                           .copyWith(consistentTime: timeStr);

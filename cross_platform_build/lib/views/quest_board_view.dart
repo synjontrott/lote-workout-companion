@@ -1945,7 +1945,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                   const SizedBox(height: 14),
                   SizedBox(
                     width: double.infinity,
@@ -1993,7 +1993,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -2210,10 +2210,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                         )
                                         .toList(),
                                     onChanged: (val) {
-                                      if (val != null)
+                                      if (val != null) {
                                         setState(() {
                                           _tailGender = val;
                                         });
+                                      }
                                     },
                                   ),
                                 ),
@@ -2395,10 +2396,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                             )
                                             .toList(),
                                     onChanged: (val) {
-                                      if (val != null)
+                                      if (val != null) {
                                         setState(() {
                                           _tailEquipment = val;
                                         });
+                                      }
                                     },
                                   ),
                                 ),
@@ -2465,10 +2467,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                             )
                                             .toList(),
                                     onChanged: (val) {
-                                      if (val != null)
+                                      if (val != null) {
                                         setState(() {
                                           _tailDifficulty = val;
                                         });
+                                      }
                                     },
                                   ),
                                 ),
@@ -2524,10 +2527,11 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                         )
                                         .toList(),
                                     onChanged: (val) {
-                                      if (val != null)
+                                      if (val != null) {
                                         setState(() {
                                           _tailMuscleGroup = val;
                                         });
+                                      }
                                     },
                                   ),
                                 ),
@@ -3564,11 +3568,10 @@ class _SuggestedWorkoutLogDialog extends StatefulWidget {
   final Function(int, String, double) onLog;
 
   const _SuggestedWorkoutLogDialog({
-    Key? key,
     required this.profile,
     required this.workout,
     required this.onLog,
-  }) : super(key: key);
+  });
 
   @override
   State<_SuggestedWorkoutLogDialog> createState() =>
@@ -3729,11 +3732,7 @@ class _AddToRoutineDialog extends StatefulWidget {
   final UserProfileManager profile;
   final SuggestedWorkout workout;
 
-  const _AddToRoutineDialog({
-    Key? key,
-    required this.profile,
-    required this.workout,
-  }) : super(key: key);
+  const _AddToRoutineDialog({required this.profile, required this.workout});
 
   @override
   State<_AddToRoutineDialog> createState() => _AddToRoutineDialogState();
@@ -3788,7 +3787,7 @@ class _AddToRoutineDialogState extends State<_AddToRoutineDialog> {
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12),
               );
-            }).toList(),
+            }),
             if (widget.profile.customRoutines.isNotEmpty)
               const SizedBox(height: 16),
             const Text(

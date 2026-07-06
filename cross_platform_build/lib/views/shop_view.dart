@@ -683,19 +683,22 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         if (name.contains("Ignis") ||
             name.contains("Strength") ||
             name.contains("Phoenix") ||
-            name.contains("Volcanic"))
+            name.contains("Volcanic")) {
           return Colors.red;
+        }
         if (name.contains("Crystalline") ||
             name.contains("Gale") ||
             name.contains("Cyber") ||
             name.contains("Neon") ||
-            name.contains("Glitch"))
+            name.contains("Glitch")) {
           return Colors.cyan;
+        }
         if (name.contains("Umbral") ||
             name.contains("Abyssal") ||
             name.contains("Mind") ||
-            name.contains("Wisdom"))
+            name.contains("Wisdom")) {
           return Colors.purple;
+        }
         return Colors.yellow;
       case 2:
         return Colors.grey;
@@ -703,8 +706,9 @@ class ItemPixelSpriteWidget extends StatelessWidget {
         if (name.contains("Strength")) return Colors.red;
         if (name.contains("Gale")) return Colors.cyan;
         if (name.contains("Marrow")) return Colors.orange;
-        if (name.contains("Mind") || name.contains("Wisdom"))
+        if (name.contains("Mind") || name.contains("Wisdom")) {
           return Colors.purple;
+        }
         return Colors.orange;
       case 4:
         return Colors.yellow;

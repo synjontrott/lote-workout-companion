@@ -580,7 +580,9 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child: Text(
-                          "ROLL $statName ($modStr)",
+                          profile.trialsCompletedToday >= 3 
+                              ? "DAILY LIMIT REACHED (3/3)"
+                              : "ROLL $statName ($modStr)",
                           style: GoogleFonts.orbitron(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -608,6 +610,19 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
     int dc,
     Color themeColor,
   ) {
+    if (profile.trialsCompletedToday >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "You have completed your 3 Oracle Trials for today. Rest and return tomorrow.",
+            style: GoogleFonts.exo2(),
+          ),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
     import_math.Random rand = import_math.Random();
     int roll = rand.nextInt(20) + 1;
     int total = roll + mod;
@@ -676,6 +691,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
             TextButton(
               onPressed: () {
                 Navigator.of(ctx).pop();
+                profile.recordTrialCompleted();
                 if (success) {
                   profile.earnCrystals(5);
                 }

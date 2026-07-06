@@ -26,6 +26,7 @@ class UserProfileManager extends ChangeNotifier {
   String _longTermGoal = 'Reach Krenpowen Apprentice tier rank.';
   bool _hasCompletedInitialQuiz = false;
   int _healthyMealsLoggedToday = 0;
+  int _trialsCompletedToday = 0;
   String _homePlanet = 'Warrion';
   AdvancedWorkoutGoal _activeWorkoutGoal = AdvancedWorkoutGoal.none;
   List<MealEntry> _loggedMeals = [];
@@ -151,6 +152,7 @@ class UserProfileManager extends ChangeNotifier {
   String get longTermGoal => _longTermGoal;
   bool get hasCompletedInitialQuiz => _hasCompletedInitialQuiz;
   int get healthyMealsLoggedToday => _healthyMealsLoggedToday;
+  int get trialsCompletedToday => _trialsCompletedToday;
   String get homePlanet => _homePlanet;
   AdvancedWorkoutGoal get activeWorkoutGoal => _activeWorkoutGoal;
 
@@ -1048,8 +1050,9 @@ class UserProfileManager extends ChangeNotifier {
         try {
           final List<dynamic> raw = jsonDecode(focusesJson);
           _selectedFocuses = raw.map((f) {
-            if (f == 'weightGain' || f == 'bulking')
+            if (f == 'weightGain' || f == 'bulking') {
               return TrainingFocus.bulking;
+            }
             return TrainingFocus.values.firstWhere(
               (e) => e.name == f,
               orElse: () => TrainingFocus.cardio,
@@ -1132,14 +1135,18 @@ class UserProfileManager extends ChangeNotifier {
           _personalRecords = raw.map(
             (k, v) => MapEntry(k, (v as num).toDouble()),
           );
-          if (!_personalRecords.containsKey("Bench Press"))
+          if (!_personalRecords.containsKey("Bench Press")) {
             _personalRecords["Bench Press"] = 135.0;
-          if (!_personalRecords.containsKey("Deadlift"))
+          }
+          if (!_personalRecords.containsKey("Deadlift")) {
             _personalRecords["Deadlift"] = 185.0;
-          if (!_personalRecords.containsKey("Barbell Squat"))
+          }
+          if (!_personalRecords.containsKey("Barbell Squat")) {
             _personalRecords["Barbell Squat"] = 155.0;
-          if (!_personalRecords.containsKey("Overhead Press"))
+          }
+          if (!_personalRecords.containsKey("Overhead Press")) {
             _personalRecords["Overhead Press"] = 95.0;
+          }
         } catch (_) {}
       }
 
@@ -1290,6 +1297,8 @@ class UserProfileManager extends ChangeNotifier {
         _lastRefreshDate = null;
       }
 
+      _trialsCompletedToday = prefs.getInt('lote_trials_today') ?? 0;
+
       _shortTermGoal =
           prefs.getString('lote_short_goal') ??
           'Complete at least one Cardio Patrol this week.';
@@ -1361,7 +1370,11 @@ class UserProfileManager extends ChangeNotifier {
           'lote_last_refresh_ms',
           _lastRefreshDate!.millisecondsSinceEpoch,
         );
+      } else {
+        await prefs.remove('lote_last_refresh_ms');
       }
+
+      await prefs.setInt('lote_trials_today', _trialsCompletedToday);
       await prefs.setString('lote_short_goal', _shortTermGoal);
       await prefs.setString('lote_long_goal', _longTermGoal);
       await prefs.setBool('lote_has_quiz', _hasCompletedInitialQuiz);
@@ -1763,8 +1776,9 @@ class UserProfileManager extends ChangeNotifier {
         : (isMonthly ? _monthlyQuests[foundIndex] : _yearlyQuests[foundIndex]);
 
     if (questToComplete.isCompleted) return false;
-    if (questToComplete.progressCount < questToComplete.targetCount)
+    if (questToComplete.progressCount < questToComplete.targetCount) {
       return false;
+    }
 
     if (isDaily) {
       _dailyQuests[foundIndex].isCompleted = true;
@@ -2382,6 +2396,7 @@ class UserProfileManager extends ChangeNotifier {
 
       if (today.difference(lastRefreshDay).inDays > 0) {
         _healthyMealsLoggedToday = 0;
+        _trialsCompletedToday = 0;
         _todayWaterIntake = 0.0;
         _hasClaimedDistanceGoalReward = false;
         final elementName =
@@ -2662,6 +2677,12 @@ class UserProfileManager extends ChangeNotifier {
     list.add(PREntry(date: DateTime.now(), value: value));
     _prHistory[key] = list;
     regenerateDailyQuests();
+    _save();
+    notifyListeners();
+  }
+
+  void recordTrialCompleted() {
+    _trialsCompletedToday++;
     _save();
     notifyListeners();
   }

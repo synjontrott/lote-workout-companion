@@ -1241,9 +1241,9 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
       }
     });
     setState(() {
-      if (bestIndex == 0)
+      if (bestIndex == 0) {
         _selectedProfile = CognitiveProfile.adhd;
-      else if (bestIndex == 1)
+      } else if (bestIndex == 1)
         _selectedProfile = CognitiveProfile.autistic;
       else if (bestIndex == 2)
         _selectedProfile = CognitiveProfile.audhd;
@@ -1255,9 +1255,9 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
 
   void _showMindsetQuizCompleteDialog() {
     String profileName = "";
-    if (_selectedProfile == CognitiveProfile.adhd)
+    if (_selectedProfile == CognitiveProfile.adhd) {
       profileName = "Hunter (ADHD)";
-    else if (_selectedProfile == CognitiveProfile.autistic)
+    } else if (_selectedProfile == CognitiveProfile.autistic)
       profileName = "Vanguard (Autistic)";
     else if (_selectedProfile == CognitiveProfile.audhd)
       profileName = "Revenant (AuDHD)";

@@ -141,28 +141,7 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
   Color _activeHairColor() => hexToColor(_hairHex(_hairColorPreset));
   Color _activeOutfitColor() => hexToColor(_outfitColorHex(_outfitColorPreset));
 
-  Color _colorForPixelValue(int val, UserProfileManager profile) {
-    switch (val) {
-      case 1:
-        return _activeSkinColor();
-      case 2:
-        return _activeHairColor();
-      case 3:
-        return profile.currentElement.primaryColor;
-      case 4:
-        return _activeOutfitColor();
-      case 5:
-        return profile.currentElement.accentColor;
-      default:
-        return Colors.white.withValues(alpha: 0.08);
-    }
-  }
 
-  void _paintPixel(int r, int c) {
-    setState(() {
-      _pixelGrid[r][c] = _selectedToolColor;
-    });
-  }
 
   void _handlePaintGesture(Offset localPosition, double boxSize) {
     final int gridSize = _pixelGrid.length;
