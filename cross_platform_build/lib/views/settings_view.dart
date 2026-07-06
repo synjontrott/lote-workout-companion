@@ -1283,7 +1283,7 @@ class _SettingsViewState extends State<SettingsView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "ROUTINE FLOW TIME (ADHD/AuDHD)",
+                                  "ROUTINE FLOW TIME",
                                   style: GoogleFonts.exo2(
                                     fontSize: 10,
                                     color: Colors.grey,
