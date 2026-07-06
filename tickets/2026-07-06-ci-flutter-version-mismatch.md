@@ -1,10 +1,10 @@
 ---
 title: "Flutter CI pinned to a Dart SDK older than pubspec requires — pub get fails"
-status: open
+status: done
 severity: high
 category: "Build & CI"
 created: 2026-07-06
-completed:
+completed: 2026-07-06
 ---
 
 ## Symptom
