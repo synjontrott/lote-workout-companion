@@ -48,9 +48,13 @@ or delete the file — the closed tickets are the project's history.
 |-------------|---------------------------------|----------------------------------------|
 | `title`     | quoted string                   | Human-readable summary                 |
 | `status`    | `open` \| `in-progress` \| `done` | Current state                        |
+| `severity`  | `critical` \| `high` \| `medium` \| `low` | Optional; use on bug tickets |
 | `category`  | quoted string                   | e.g. Workouts & Quests, RPG & Gamification |
 | `created`   | `YYYY-MM-DD`                    | When the ticket was raised             |
 | `completed` | `YYYY-MM-DD` or empty          | When it was closed                     |
+
+Bug tickets typically use body sections `## Symptom`, `## Repro`, `## Root
+cause` (with `file:line`), and `## Suggested fix`.
 
 ## Finding tickets
 
