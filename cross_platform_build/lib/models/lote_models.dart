@@ -1984,6 +1984,7 @@ List<LotEQuest> generateQuests(
   QuestCadence cadence, {
   Map<String, double> prs = const {},
   double waterGoal = 3.0,
+  AdvancedWorkoutGoal activeGoal = AdvancedWorkoutGoal.none,
 }) {
   List<LotEQuest> quests = [];
 
@@ -2311,6 +2312,37 @@ List<LotEQuest> generateQuests(
         ),
       );
     }
+
+    if (activeGoal != AdvancedWorkoutGoal.none && quests.isNotEmpty) {
+      final progression = WorkoutProgression.all.firstWhere(
+        (p) => p.goal == activeGoal,
+        orElse: () => WorkoutProgression.all.first,
+      );
+      if (progression.goal == activeGoal) {
+        final workoutId = progression.prerequisiteWorkoutIds.first;
+        final workout = SuggestedWorkout.allWorkouts.firstWhere(
+          (w) => w.id == workoutId,
+          orElse: () => SuggestedWorkout.allWorkouts.first,
+        );
+
+        quests[0] = LotEQuest(
+          id: UniqueKey().toString(),
+          title: "Goal Training: ${workout.name}",
+          questDescription:
+              "Path to ${progression.title}: Complete ${workout.name} (${workout.sets} sets x ${workout.reps}).",
+          workoutType: WorkoutCategory.strength,
+          difficultyRoll: 15,
+          rewardXP: 100,
+          rewardCrystals: 50,
+          statReward: StatType.strength,
+          statValue: 2,
+          cadence: QuestCadence.daily,
+          progressCount: 0,
+          targetCount: workout.sets,
+          requiredMinutes: 0.0,
+        );
+      }
+    }
   } else if (cadence == QuestCadence.monthly) {
     for (int i = 0; i < 2; i++) {
       final adjective = themeWords[(i + 4) % themeWords.length];
@@ -2522,6 +2554,87 @@ enum MuscleGroup {
 
   final String displayName;
   const MuscleGroup(this.displayName);
+}
+
+enum AdvancedWorkoutGoal {
+  none,
+  handstand,
+  muscleUp,
+  dragonFlag,
+  pistolSquat,
+  frontLever,
+}
+
+class WorkoutProgression {
+  final AdvancedWorkoutGoal goal;
+  final String title;
+  final String description;
+  final List<String> prerequisiteWorkoutIds;
+
+  const WorkoutProgression({
+    required this.goal,
+    required this.title,
+    required this.description,
+    required this.prerequisiteWorkoutIds,
+  });
+
+  static const List<WorkoutProgression> all = [
+    WorkoutProgression(
+      goal: AdvancedWorkoutGoal.handstand,
+      title: "Handstand Mastery",
+      description: "Master the free-standing handstand.",
+      prerequisiteWorkoutIds: [
+        "pike_pushups_foundation",
+        "wall_walk_handstand_hold_foundation",
+        "wall_handstand_pushups_foundation",
+        "freestanding_handstand_attempts_foundation",
+      ],
+    ),
+    WorkoutProgression(
+      goal: AdvancedWorkoutGoal.muscleUp,
+      title: "Muscle Up",
+      description: "The ultimate upper body pull and push combination.",
+      prerequisiteWorkoutIds: [
+        "pullups_foundation",
+        "straight_bar_dips_foundation",
+        "explosive_pullups_foundation",
+        "muscle_up_negatives_foundation",
+      ],
+    ),
+    WorkoutProgression(
+      goal: AdvancedWorkoutGoal.dragonFlag,
+      title: "Dragon Flag",
+      description: "Bruce Lee's legendary core test.",
+      prerequisiteWorkoutIds: [
+        "lying_leg_raises_foundation",
+        "hollow_body_hold_foundation",
+        "dragon_flag_negatives_foundation",
+        "full_dragon_flag_foundation",
+      ],
+    ),
+    WorkoutProgression(
+      goal: AdvancedWorkoutGoal.pistolSquat,
+      title: "Pistol Squat",
+      description: "The ultimate single-leg strength test.",
+      prerequisiteWorkoutIds: [
+        "bulgarian_split_squats_foundation",
+        "assisted_pistol_squats_foundation",
+        "pistol_squat_negatives_foundation",
+        "full_pistol_squat_foundation",
+      ],
+    ),
+    WorkoutProgression(
+      goal: AdvancedWorkoutGoal.frontLever,
+      title: "Front Lever",
+      description: "A gravity-defying display of back and core strength.",
+      prerequisiteWorkoutIds: [
+        "tuck_front_lever_foundation",
+        "advanced_tuck_front_lever_foundation",
+        "straddle_front_lever_foundation",
+        "full_front_lever_foundation",
+      ],
+    ),
+  ];
 }
 
 class SuggestedWorkout {

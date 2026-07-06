@@ -27,6 +27,7 @@ class UserProfileManager extends ChangeNotifier {
   bool _hasCompletedInitialQuiz = false;
   int _healthyMealsLoggedToday = 0;
   String _homePlanet = 'Warrion';
+  AdvancedWorkoutGoal _activeWorkoutGoal = AdvancedWorkoutGoal.none;
   List<MealEntry> _loggedMeals = [];
   List<MealEntry> _savedMeals = [];
 
@@ -121,6 +122,14 @@ class UserProfileManager extends ChangeNotifier {
   bool get hasCompletedInitialQuiz => _hasCompletedInitialQuiz;
   int get healthyMealsLoggedToday => _healthyMealsLoggedToday;
   String get homePlanet => _homePlanet;
+  AdvancedWorkoutGoal get activeWorkoutGoal => _activeWorkoutGoal;
+
+  set activeWorkoutGoal(AdvancedWorkoutGoal val) {
+    _activeWorkoutGoal = val;
+    _save();
+    notifyListeners();
+  }
+
   List<MealEntry> get loggedMeals => _loggedMeals;
   List<MealEntry> get savedMeals => _savedMeals;
 
@@ -1157,6 +1166,7 @@ class UserProfileManager extends ChangeNotifier {
             elementName,
             _selectedFocuses,
             QuestCadence.daily,
+            activeGoal: _activeWorkoutGoal,
           );
         }
       } else {
@@ -1165,6 +1175,7 @@ class UserProfileManager extends ChangeNotifier {
           elementName,
           _selectedFocuses,
           QuestCadence.daily,
+          activeGoal: _activeWorkoutGoal,
         );
       }
 
@@ -1179,6 +1190,7 @@ class UserProfileManager extends ChangeNotifier {
             elementName,
             _selectedFocuses,
             QuestCadence.monthly,
+            activeGoal: _activeWorkoutGoal,
           );
         }
       } else {
@@ -1187,6 +1199,7 @@ class UserProfileManager extends ChangeNotifier {
           elementName,
           _selectedFocuses,
           QuestCadence.monthly,
+          activeGoal: _activeWorkoutGoal,
         );
       }
 
@@ -1201,6 +1214,7 @@ class UserProfileManager extends ChangeNotifier {
             elementName,
             _selectedFocuses,
             QuestCadence.yearly,
+            activeGoal: _activeWorkoutGoal,
           );
         }
       } else {
@@ -1209,6 +1223,7 @@ class UserProfileManager extends ChangeNotifier {
           elementName,
           _selectedFocuses,
           QuestCadence.yearly,
+          activeGoal: _activeWorkoutGoal,
         );
       }
 
@@ -1309,6 +1324,7 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setBool('lote_has_quiz', _hasCompletedInitialQuiz);
       await prefs.setInt('lote_meals_today', _healthyMealsLoggedToday);
       await prefs.setString('lote_home_planet', _homePlanet);
+      await prefs.setString('lote_workout_goal', _activeWorkoutGoal.toString());
       await prefs.setString(
         'lote_notification_frequency',
         _notificationFrequency,
@@ -1961,7 +1977,6 @@ class UserProfileManager extends ChangeNotifier {
       crys = (crys * mult).round();
     }
 
-
     addXP(xp);
     earnCrystals(crys);
 
@@ -2330,6 +2345,7 @@ class UserProfileManager extends ChangeNotifier {
           QuestCadence.daily,
           prs: _personalRecords,
           waterGoal: _waterIntakeGoal,
+          activeGoal: _activeWorkoutGoal,
         );
 
         if (_lastRefreshDate!.month != now.month) {
@@ -2340,6 +2356,7 @@ class UserProfileManager extends ChangeNotifier {
             QuestCadence.monthly,
             prs: _personalRecords,
             waterGoal: _waterIntakeGoal,
+            activeGoal: _activeWorkoutGoal,
           );
         }
         if (_lastRefreshDate!.year != now.year) {
@@ -2349,6 +2366,7 @@ class UserProfileManager extends ChangeNotifier {
             QuestCadence.yearly,
             prs: _personalRecords,
             waterGoal: _waterIntakeGoal,
+            activeGoal: _activeWorkoutGoal,
           );
         }
 
@@ -2416,6 +2434,7 @@ class UserProfileManager extends ChangeNotifier {
       QuestCadence.daily,
       prs: _personalRecords,
       waterGoal: _waterIntakeGoal,
+      activeGoal: _activeWorkoutGoal,
     );
     _monthlyQuests = generateQuests(
       elementName,
@@ -2423,6 +2442,7 @@ class UserProfileManager extends ChangeNotifier {
       QuestCadence.monthly,
       prs: _personalRecords,
       waterGoal: _waterIntakeGoal,
+      activeGoal: _activeWorkoutGoal,
     );
     _yearlyQuests = generateQuests(
       elementName,
@@ -2430,6 +2450,7 @@ class UserProfileManager extends ChangeNotifier {
       QuestCadence.yearly,
       prs: _personalRecords,
       waterGoal: _waterIntakeGoal,
+      activeGoal: _activeWorkoutGoal,
     );
     _save();
     notifyListeners();
