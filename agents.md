@@ -65,39 +65,39 @@ flutter test
 ### Master List of Tickets to be Resolved
 
 **Psychological Profiles & Onboarding**
-- [ ] Differentiate UI/UX: Make the ADHD, AuDHD, Neurotypical, and Autism interfaces distinctly different and effective.
+- [x] Differentiate UI/UX: Make the ADHD, AuDHD, Neurotypical, and Autism interfaces distinctly different and effective.
 - [x] Rename the 4 profile types (e.g., Vanguard, Hunter, Warrior, Revenant).
-- [ ] Differentiate motivation types and notification text between the 4 profile types.
-- [ ] Allow swapping between the 4 profile types.
-- [ ] Add a quiz for the 4 types to assist with auto-assignments.
+- [x] Differentiate motivation types and notification text between the 4 profile types.
+- [x] Allow swapping between the 4 profile types.
+- [x] Add a quiz for the 4 types to assist with auto-assignments.
 - [x] Initial Quiz Additions: Ask for user's age to pull from that info later.
 - [x] Body measurements should be optional for profile creation, not mandatory.
 - [x] Make all goal and measurement boxes empty by default if they aren't pulling from HealthKit.
 - [x] Identity Configuration: Change the "Home planet" input from a text box to a drop-down selector.
 
 **Notifications & Scheduling**
-- [ ] Notification System: Support consistent workout times for Neurotypical/Autistic, and flow schedules (morning/night) for ADHD/AuDHD.
-- [ ] Week Tracker: Add a week tracker to input routines on specific days, schedule rest days, and tailor daily notifications accordingly.
+- [x] Notification System: Support consistent workout times for Neurotypical/Autistic, and flow schedules (morning/night) for ADHD/AuDHD.
+- [x] Week Tracker: Add a week tracker to input routines on specific days, schedule rest days, and tailor daily notifications accordingly.
 
 **Workouts & Quests**
 - [x] Stand Goal Tracking: Fix stand goal tracking (currently too slow; double check what it's actually doing). *Technical Note: In `health_manager.dart` line 125, it divides `totalStand` by 3600.0, assuming seconds, but Apple Stand Time is in minutes. This causes it to track 60x slower. Needs to be divided by 60.0 instead.*
 - [x] Rep-Based Quests: Ensure rep-based workout quests (like pushups/squats) are actually reps/sets based, not time based.
 - [x] Rename "Tailored suggested workouts" to "Workout Library".
-- [ ] Workout Library updates: Needs customizable reps and sets, and needs to pull weight from HealthKit.
-- [ ] Routine Creation: Allow users to create routines in the Workout Library (e.g., 1 set/10 rep pike pushup, followed by 2 set/5 reps standard pullups), log them, and complete them multiple times per day (fixes the empty label issue).
+- [x] Workout Library updates: Needs customizable reps and sets, and needs to pull weight from HealthKit.
+- [x] Routine Creation: Allow users to create routines in the Workout Library (e.g., 1 set/10 rep pike pushup, followed by 2 set/5 reps standard pullups), log them, and complete them multiple times per day (fixes the empty label issue).
 - [x] Back Workouts (Bodyweight): Ensure all back workouts in the bodyweight-only category actually require no equipment.
 - [x] PRs: Add an "I don't know" option for PRs for those who have never lifted or done pull-ups.
-- [ ] Weight Vest/Belt: Add an option to log when/how heavy a user is using a weight vest or weight belt for workouts, and adjust XP and coin accordingly.
+- [x] Weight Vest/Belt: Add an option to log when/how heavy a user is using a weight vest or weight belt for workouts, and adjust XP and coin accordingly.
 - [x] Quests Page: Remove "Healthy food inventory" from the quests page (now handled by the feast log).
-- [ ] Workout Goals: Allow users to set a specific advanced workout as a goal (e.g., Handstand, Dragon Flag, Muscle Up).
-- [ ] Workout Progressions Engine: Map advanced workouts to a sequence of easier progressive prerequisite workouts (e.g., Pike Pushups -> Wall Handstand -> Handstand).
-- [ ] Goal-Oriented Recommendations: Modify the suggested workouts and daily quests to recommend the necessary progressive steps to help the user achieve their active workout goal.
+- [x] Workout Goals: Allow users to set a specific advanced workout as a goal (e.g., Handstand, Dragon Flag, Muscle Up).
+- [x] Workout Progressions Engine: Map advanced workouts to a sequence of easier progressive prerequisite workouts (e.g., Pike Pushups -> Wall Handstand -> Handstand).
+- [x] Goal-Oriented Recommendations: Modify the suggested workouts and daily quests to recommend the necessary progressive steps to help the user achieve their active workout goal.
 
 **Nutrition & Health**
-- [ ] Feast Log: Allow saving particular meals for easy input (e.g., morning oatmeal custom meal for quick-logging).
+- [x] Feast Log: Allow saving particular meals for easy input (e.g., morning oatmeal custom meal for quick-logging).
 
 **RPG & Gamification**
-- [ ] D&D Stats Purpose: Add a purpose for the D&D stats (e.g., mock battles or a minigame involving the character).
+- [x] D&D Stats Purpose: Add a purpose for the D&D stats (e.g., mock battles or a minigame involving the character).
 - [x] Stat Curve Adjustment: Address the stat improvement curve so stats don't max out by level 10.
 - [x] Gender Options: Restrict genders to male and female; remove "other" from suggested workouts.
 ---
@@ -125,3 +125,6 @@ See `GEMINI.md` → "Credit-Saving: Qwen 3.6:27b Offloading via Ollama" for full
 
 <!-- Trigger Xcode Cloud Webhook: 2026-07-02T14:20:00-05:00 -->
 
+
+**Dynamic Health Metrics**
+- [x] Dynamic Energy Core: Hide specific metrics (e.g., stand hours) from the Elsaither Energy Core if they aren't tracked. Hide the entire Core if no smartwatch/tracker is connected. Expand to show additional tracked metrics if available.
