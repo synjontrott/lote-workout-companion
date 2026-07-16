@@ -81,6 +81,7 @@ class _QuestBoardViewState extends State<QuestBoardView> {
     _workoutSearchController.dispose();
     _tailAgeController.dispose();
     _tailWeightController.dispose();
+    _customWorkoutWeightVestController.dispose();
     super.dispose();
   }
 
@@ -3482,6 +3483,12 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                   0.0,
                             );
 
+                            final vestWeightLbs =
+                                double.tryParse(
+                                  _customWorkoutWeightVestController.text,
+                                ) ??
+                                0.0;
+
                             setState(() {
                               _showingCustomWorkoutLog = false;
                             });
@@ -3516,12 +3523,6 @@ class _QuestBoardViewState extends State<QuestBoardView> {
                                 crystals = 35;
                                 break;
                             }
-
-                            final vestWeightLbs =
-                                double.tryParse(
-                                  _customWorkoutWeightVestController.text,
-                                ) ??
-                                0.0;
                             if (vestWeightLbs > 0) {
                               double multiplier = 1.0 + (vestWeightLbs / 50.0);
                               xp = (xp * multiplier).round();

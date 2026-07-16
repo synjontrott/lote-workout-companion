@@ -1,10 +1,10 @@
 ---
 title: "Oracle Stat Trials: DC/stat check bypassed by dismissing failed rolls"
-status: open
+status: done
 severity: medium
 category: "RPG & Gamification"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

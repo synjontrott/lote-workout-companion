@@ -1,10 +1,10 @@
 ---
 title: "Advanced workout goal is saved but never loaded — resets to none on restart"
-status: open
+status: done
 severity: medium
 category: "Data & Persistence"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

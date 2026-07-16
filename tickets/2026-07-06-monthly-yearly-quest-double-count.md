@@ -1,10 +1,10 @@
 ---
 title: "Monthly/yearly quest progress double-counts on manual Log Session → Claim"
-status: open
+status: done
 severity: medium
 category: "Workouts & Quests"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

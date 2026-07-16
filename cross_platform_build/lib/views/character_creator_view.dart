@@ -141,8 +141,6 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
   Color _activeHairColor() => hexToColor(_hairHex(_hairColorPreset));
   Color _activeOutfitColor() => hexToColor(_outfitColorHex(_outfitColorPreset));
 
-
-
   void _handlePaintGesture(Offset localPosition, double boxSize) {
     final int gridSize = _pixelGrid.length;
     if (gridSize == 0) return;
@@ -155,6 +153,7 @@ class _CharacterCreatorViewState extends State<CharacterCreatorView> {
       if (_pixelGrid[row][col] != _selectedToolColor) {
         setState(() {
           _pixelGrid[row][col] = _selectedToolColor;
+          _pixelGrid = _pixelGrid.map((row) => List<int>.from(row)).toList();
         });
       }
     }

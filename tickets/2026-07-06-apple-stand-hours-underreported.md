@@ -1,10 +1,10 @@
 ---
 title: "Apple Stand metric under-reports vs. the Watch Stand ring"
-status: open
+status: done
 severity: medium
 category: "Dynamic Health Metrics"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

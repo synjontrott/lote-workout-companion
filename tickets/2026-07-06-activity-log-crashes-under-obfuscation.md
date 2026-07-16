@@ -1,10 +1,10 @@
 ---
 title: "Activity Log crashes in obfuscated release builds (runtimeType.toString check)"
-status: open
+status: done
 severity: medium
 category: "UI & Rendering"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

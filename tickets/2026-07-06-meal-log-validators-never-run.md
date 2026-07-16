@@ -1,10 +1,10 @@
 ---
 title: "Meal-log form validators are dead code — empty/invalid meals log successfully"
-status: open
+status: done
 severity: low
 category: "Nutrition & Health"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

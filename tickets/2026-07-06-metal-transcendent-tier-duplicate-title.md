@@ -1,10 +1,10 @@
 ---
 title: "Metal element shows \"Forge Master\" at both level 35 and level 100"
-status: open
+status: done
 severity: low
 category: "RPG & Gamification"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

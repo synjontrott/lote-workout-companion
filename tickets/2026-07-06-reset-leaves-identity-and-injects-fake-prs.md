@@ -1,10 +1,10 @@
 ---
 title: "Reset All Progress leaves identity/customizations intact and injects fake PRs"
-status: open
+status: done
 severity: high
 category: "Data & Persistence"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

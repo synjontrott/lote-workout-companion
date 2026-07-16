@@ -102,11 +102,10 @@ class _DashboardViewState extends State<DashboardView>
         _sprintTimerActive = true;
       });
       _sprintTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (_sprintTimeRemaining > 0) {
-          setState(() {
-            _sprintTimeRemaining--;
-          });
-        } else {
+        setState(() {
+          _sprintTimeRemaining--;
+        });
+        if (_sprintTimeRemaining <= 0) {
           timer.cancel();
           setState(() {
             _sprintTimerActive = false;
@@ -2767,7 +2766,7 @@ void showActivityHistory(BuildContext context, UserProfileManager profile) {
                         itemCount: combined.length,
                         itemBuilder: (ctx, idx) {
                           final item = combined[idx];
-                          if (item.runtimeType.toString() == 'WorkoutSession') {
+                          if (item is WorkoutSession) {
                             return ListTile(
                               leading: Icon(
                                 Icons.fitness_center,

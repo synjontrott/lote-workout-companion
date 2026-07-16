@@ -1,10 +1,10 @@
 ---
 title: "Focus-burst timer runs ~301 seconds and sits at 00:00 for a second"
-status: open
+status: done
 severity: low
 category: "UI & Rendering"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

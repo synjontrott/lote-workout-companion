@@ -1,10 +1,10 @@
 ---
 title: "Custom-workout confirmation understates rewards when a weight vest is used"
-status: open
+status: done
 severity: medium
 category: "Workouts & Quests"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

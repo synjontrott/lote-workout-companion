@@ -1,10 +1,10 @@
 ---
 title: "Character Forge freehand drawing does not render while you draw"
-status: open
+status: done
 severity: high
 category: "UI & Rendering"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

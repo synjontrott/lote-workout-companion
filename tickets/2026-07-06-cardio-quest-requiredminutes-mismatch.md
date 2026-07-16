@@ -1,10 +1,10 @@
 ---
 title: "Cardio daily quest stores requiredMinutes=20 but text says 15-minute run"
-status: open
+status: done
 severity: low
 category: "Workouts & Quests"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

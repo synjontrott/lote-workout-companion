@@ -1,10 +1,10 @@
 ---
 title: "Metric onboarding silently corrupts all body metrics, goals, and PRs"
-status: open
+status: done
 severity: high
 category: "Psychological Profiles & Onboarding"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

@@ -1,10 +1,10 @@
 ---
 title: "Weight-goal reward becomes permanently unclaimable after setting a new goal"
-status: open
+status: done
 severity: medium
 category: "Nutrition & Health"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

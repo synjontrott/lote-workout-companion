@@ -119,14 +119,16 @@ class HealthManager extends ChangeNotifier {
             startTime: startOfDay,
             endTime: now,
           );
-          double totalStand = 0.0;
+          // Count distinct hours with standing activity to match Apple's
+          // Stand ring (not total standing minutes / 60).
+          final Set<int> standHourSlots = {};
           for (var p in standData) {
             final val = p.value;
-            if (val is NumericHealthValue) {
-              totalStand += val.numericValue.toDouble();
+            if (val is NumericHealthValue && val.numericValue.toDouble() > 0) {
+              standHourSlots.add(p.dateFrom.hour);
             }
           }
-          _todayStandHours = totalStand / 60.0;
+          _todayStandHours = standHourSlots.length.toDouble();
         } else {
           _todayStandHours = 0.0;
         }

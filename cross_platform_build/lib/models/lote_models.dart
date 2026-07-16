@@ -266,7 +266,7 @@ enum WarriorTier {
           case WarriorTier.mythic:
             return "Titanium Legend";
           case WarriorTier.transcendent:
-            return "Forge Master";
+            return "Eternal Forge";
         }
       case 'Ice':
         switch (this) {
@@ -2308,7 +2308,30 @@ List<LotEQuest> generateQuests(
               (wType == WorkoutCategory.nutrition ||
                   wType == WorkoutCategory.strength)
               ? 0.0
-              : (wType == WorkoutCategory.cardio ? 20.0 : 15.0),
+              : (wType == WorkoutCategory.cardio ? 15.0 : 15.0),
+        ),
+      );
+    }
+
+    // Hydration daily quest — uses the waterGoal parameter
+    if (waterGoal > 0) {
+      final hydroAdj = themeWords[(quests.length + 2) % themeWords.length];
+      quests.add(
+        LotEQuest(
+          id: UniqueKey().toString(),
+          title: "$hydroAdj Hydration Patrol",
+          questDescription:
+              "Drink ${waterGoal.toStringAsFixed(1)} L of water today to stay hydrated and boost recovery.",
+          workoutType: WorkoutCategory.nutrition,
+          difficultyRoll: 5,
+          rewardXP: 30,
+          rewardCrystals: 15,
+          statReward: StatType.constitution,
+          statValue: 1,
+          cadence: QuestCadence.daily,
+          progressCount: 0,
+          targetCount: 1,
+          requiredMinutes: 0.0,
         ),
       );
     }
@@ -2550,7 +2573,8 @@ enum MuscleGroup {
   core('Core & Abs'),
   legs('Legs & Glutes'),
   fullBody('Full Body'),
-  cardio('Cardio & Conditioning');
+  cardio('Cardio & Conditioning'),
+  flexibility('Flexibility & Mobility');
 
   final String displayName;
   const MuscleGroup(this.displayName);
@@ -2584,10 +2608,10 @@ class WorkoutProgression {
       title: "Handstand Mastery",
       description: "Master the free-standing handstand.",
       prerequisiteWorkoutIds: [
-        "pike_pushups_foundation",
-        "wall_walk_handstand_hold_foundation",
-        "wall_handstand_pushups_foundation",
-        "freestanding_handstand_attempts_foundation",
+        "pike_pushups_base",
+        "handstand_hold_against_wall",
+        "handstand_pushups_wall_assist",
+        "freestanding_handstand_pushup",
       ],
     ),
     WorkoutProgression(
@@ -2595,10 +2619,10 @@ class WorkoutProgression {
       title: "Muscle Up",
       description: "The ultimate upper body pull and push combination.",
       prerequisiteWorkoutIds: [
-        "pullups_foundation",
-        "straight_bar_dips_foundation",
-        "explosive_pullups_foundation",
-        "muscle_up_negatives_foundation",
+        "regular_pullups_lats_focus",
+        "straight_bar_chest_dips",
+        "kipping_pullups_flow",
+        "muscle_up_bar_transition",
       ],
     ),
     WorkoutProgression(
@@ -2606,10 +2630,10 @@ class WorkoutProgression {
       title: "Dragon Flag",
       description: "Bruce Lee's legendary core test.",
       prerequisiteWorkoutIds: [
-        "lying_leg_raises_foundation",
-        "hollow_body_hold_foundation",
-        "dragon_flag_negatives_foundation",
-        "full_dragon_flag_foundation",
+        "hanging_leg_raises",
+        "hollow_body_hold",
+        "l_sit_progressions",
+        "dragon_flags_absolute_control",
       ],
     ),
     WorkoutProgression(
@@ -2617,10 +2641,10 @@ class WorkoutProgression {
       title: "Pistol Squat",
       description: "The ultimate single-leg strength test.",
       prerequisiteWorkoutIds: [
-        "bulgarian_split_squats_foundation",
-        "assisted_pistol_squats_foundation",
-        "pistol_squat_negatives_foundation",
-        "full_pistol_squat_foundation",
+        "bulgarian_split_squats",
+        "bar_assisted_pistol_squats",
+        "shrimp_squat_leg_destroy",
+        "pistol_squat_progression",
       ],
     ),
     WorkoutProgression(
@@ -2628,10 +2652,10 @@ class WorkoutProgression {
       title: "Front Lever",
       description: "A gravity-defying display of back and core strength.",
       prerequisiteWorkoutIds: [
-        "tuck_front_lever_foundation",
-        "advanced_tuck_front_lever_foundation",
-        "straddle_front_lever_foundation",
-        "full_front_lever_foundation",
+        "bodyweight_inverted_rows",
+        "l_sit_pullups_back_control",
+        "archer_pullups_pull",
+        "front_lever_pull_up_transitions",
       ],
     ),
   ];
@@ -2701,8 +2725,8 @@ class SuggestedWorkout {
     switch (muscleGroup) {
       case MuscleGroup.cardio:
         return WorkoutCategory.cardio;
-      case MuscleGroup.fullBody:
-        return WorkoutCategory.strength;
+      case MuscleGroup.flexibility:
+        return WorkoutCategory.flexibility;
       default:
         return WorkoutCategory.strength;
     }
@@ -4689,7 +4713,7 @@ class SuggestedWorkout {
     SuggestedWorkout(
       id: "downward_dog_flow",
       name: "Downward Dog Flow",
-      muscleGroup: MuscleGroup.fullBody,
+      muscleGroup: MuscleGroup.flexibility,
       difficulty: "Easy",
       equipment: "Bodyweight Only",
       description:
@@ -4706,7 +4730,7 @@ class SuggestedWorkout {
     SuggestedWorkout(
       id: "cobra_stretch_flow",
       name: "Cobra Stretch Flow",
-      muscleGroup: MuscleGroup.fullBody,
+      muscleGroup: MuscleGroup.flexibility,
       difficulty: "Medium",
       equipment: "Bodyweight Only",
       description: "Decompress lower back and open chest dynamically.",
@@ -4722,7 +4746,7 @@ class SuggestedWorkout {
     SuggestedWorkout(
       id: "world_greatest_stretch",
       name: "World Greatest Stretch",
-      muscleGroup: MuscleGroup.fullBody,
+      muscleGroup: MuscleGroup.flexibility,
       difficulty: "Hard",
       equipment: "Bodyweight Only",
       description:
@@ -4739,7 +4763,7 @@ class SuggestedWorkout {
     SuggestedWorkout(
       id: "inverted_pike_stretch",
       name: "Inverted Pike Stretch",
-      muscleGroup: MuscleGroup.fullBody,
+      muscleGroup: MuscleGroup.flexibility,
       difficulty: "Legend",
       equipment: "Bodyweight Only",
       description: "Active shoulder opening and hamstring length developer.",
@@ -4755,7 +4779,7 @@ class SuggestedWorkout {
     SuggestedWorkout(
       id: "bridge_pose_back_extension",
       name: "Bridge Pose Back Extension",
-      muscleGroup: MuscleGroup.fullBody,
+      muscleGroup: MuscleGroup.flexibility,
       difficulty: "Master",
       equipment: "Bodyweight Only",
       description: "Full body posterior extension bridging off floor.",

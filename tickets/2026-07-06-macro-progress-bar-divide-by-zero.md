@@ -1,10 +1,10 @@
 ---
 title: "Nutrition macro progress bar divides by zero when a macro target is 0"
-status: open
+status: done
 severity: medium
 category: "Nutrition & Health"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

@@ -1,10 +1,10 @@
 ---
 title: "Leaked TextEditingControllers (age field, custom-workout weight vest)"
-status: open
+status: done
 severity: low
 category: "UI & Rendering"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

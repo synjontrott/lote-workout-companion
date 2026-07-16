@@ -1,10 +1,10 @@
 ---
 title: "Monthly quest reset compares only the month number, ignoring the year"
-status: open
+status: done
 severity: low
 category: "Workouts & Quests"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

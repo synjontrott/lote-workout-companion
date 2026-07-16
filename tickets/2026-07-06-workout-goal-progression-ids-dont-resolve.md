@@ -1,10 +1,10 @@
 ---
 title: "Advanced Workout Goal progressions reference workout IDs that don't exist"
-status: open
+status: done
 severity: high
 category: "Workouts & Quests"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

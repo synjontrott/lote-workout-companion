@@ -1,10 +1,10 @@
 ---
 title: "Day rollover past midnight doesn't refresh the UI (missing notifyListeners)"
-status: open
+status: done
 severity: medium
 category: "Data & Persistence"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

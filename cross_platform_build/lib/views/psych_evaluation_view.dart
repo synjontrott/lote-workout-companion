@@ -101,8 +101,18 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     _squatPRController.dispose();
     _deadliftPRController.dispose();
     _ohpPRController.dispose();
+    _ageController.dispose();
     super.dispose();
   }
+
+  /// Convert a metric length input (cm) to imperial-canonical (inches).
+  double _toImperialLength(double val) => _useImperial ? val : val / 2.54;
+
+  /// Convert a metric weight input (kg) to imperial-canonical (lbs).
+  double _toImperialWeight(double val) => _useImperial ? val : val / 0.45359237;
+
+  /// Convert a metric distance input (km) to imperial-canonical (miles).
+  double _toImperialDistance(double val) => _useImperial ? val : val / 1.609344;
 
   void _confirmProfile(UserProfileManager profile) {
     profile.useImperialUnits = _useImperial;
@@ -112,25 +122,56 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     profile.selectedElementIndex = _tempElementIdx;
     profile.cognitiveProfile = _selectedProfile;
     profile.selectedFocuses = _tempSelectedFocuses.toList();
-    profile.height = double.tryParse(_heightController.text) ?? 0.0;
-    profile.weight = double.tryParse(_weightController.text) ?? 0.0;
-    profile.chest = double.tryParse(_chestController.text) ?? 0.0;
-    profile.arms = double.tryParse(_armsController.text) ?? 0.0;
-    profile.waist = double.tryParse(_waistController.text) ?? 0.0;
-    profile.hips = double.tryParse(_hipsController.text) ?? 0.0;
-    profile.legs = double.tryParse(_legsController.text) ?? 0.0;
+
+    // Storage is imperial-canonical — convert metric inputs before storing.
+    profile.height = _toImperialLength(
+      double.tryParse(_heightController.text) ?? 0.0,
+    );
+    profile.weight = _toImperialWeight(
+      double.tryParse(_weightController.text) ?? 0.0,
+    );
+    profile.chest = _toImperialLength(
+      double.tryParse(_chestController.text) ?? 0.0,
+    );
+    profile.arms = _toImperialLength(
+      double.tryParse(_armsController.text) ?? 0.0,
+    );
+    profile.waist = _toImperialLength(
+      double.tryParse(_waistController.text) ?? 0.0,
+    );
+    profile.hips = _toImperialLength(
+      double.tryParse(_hipsController.text) ?? 0.0,
+    );
+    profile.legs = _toImperialLength(
+      double.tryParse(_legsController.text) ?? 0.0,
+    );
 
     // Goals and PRs
-    profile.startWeight = double.tryParse(_weightController.text) ?? 0.0;
-    profile.goalWeight = double.tryParse(_weightGoalController.text) ?? 0.0;
-    profile.distanceGoal = double.tryParse(_distanceGoalController.text) ?? 0.0;
+    profile.startWeight = _toImperialWeight(
+      double.tryParse(_weightController.text) ?? 0.0,
+    );
+    profile.goalWeight = _toImperialWeight(
+      double.tryParse(_weightGoalController.text) ?? 0.0,
+    );
+    profile.distanceGoal = _toImperialDistance(
+      double.tryParse(_distanceGoalController.text) ?? 0.0,
+    );
     profile.waterIntakeGoal = double.tryParse(_waterGoalController.text) ?? 0.0;
 
     final prs = Map<String, double>.from(profile.personalRecords);
-    prs["Bench Press"] = double.tryParse(_benchPRController.text) ?? 0.0;
-    prs["Barbell Squat"] = double.tryParse(_squatPRController.text) ?? 0.0;
-    prs["Deadlift"] = double.tryParse(_deadliftPRController.text) ?? 0.0;
-    prs["Overhead Press"] = double.tryParse(_ohpPRController.text) ?? 0.0;
+    // PR weight fields are stored in imperial (lbs)
+    prs["Bench Press"] = _toImperialWeight(
+      double.tryParse(_benchPRController.text) ?? 0.0,
+    );
+    prs["Barbell Squat"] = _toImperialWeight(
+      double.tryParse(_squatPRController.text) ?? 0.0,
+    );
+    prs["Deadlift"] = _toImperialWeight(
+      double.tryParse(_deadliftPRController.text) ?? 0.0,
+    );
+    prs["Overhead Press"] = _toImperialWeight(
+      double.tryParse(_ohpPRController.text) ?? 0.0,
+    );
     profile.personalRecords = prs;
 
     // Only reset progress on first-time onboarding — re-running the quiz
@@ -1243,12 +1284,13 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     setState(() {
       if (bestIndex == 0) {
         _selectedProfile = CognitiveProfile.adhd;
-      } else if (bestIndex == 1)
+      } else if (bestIndex == 1) {
         _selectedProfile = CognitiveProfile.autistic;
-      else if (bestIndex == 2)
+      } else if (bestIndex == 2) {
         _selectedProfile = CognitiveProfile.audhd;
-      else
+      } else {
         _selectedProfile = CognitiveProfile.neurotypical;
+      }
       _showingMindsetQuiz = false;
     });
   }
@@ -1257,12 +1299,13 @@ class _PsychEvaluationViewState extends State<PsychEvaluationView> {
     String profileName = "";
     if (_selectedProfile == CognitiveProfile.adhd) {
       profileName = "Hunter (ADHD)";
-    } else if (_selectedProfile == CognitiveProfile.autistic)
-      profileName = "Vanguard (Autistic)";
-    else if (_selectedProfile == CognitiveProfile.audhd)
-      profileName = "Revenant (AuDHD)";
-    else
-      profileName = "Warrior (Neurotypical)";
+    } else if (_selectedProfile == CognitiveProfile.autistic) {
+      profileName = "Revenant (Autistic)";
+    } else if (_selectedProfile == CognitiveProfile.audhd) {
+      profileName = "Warrior (AuDHD)";
+    } else {
+      profileName = "Vanguard (Neurotypical)";
+    }
 
     showDialog(
       context: context,

@@ -8,12 +8,12 @@ void main() {
     test('daily generation returns 4 unique quests', () {
       final quests = generateQuests('Fire', const [], QuestCadence.daily);
 
-      expect(quests.length, 4);
-      expect(quests.map((q) => q.id).toSet().length, 4);
+      expect(quests.length, 5);
+      expect(quests.map((q) => q.id).toSet().length, 5);
       // Guideline #5: no two identical quests in a day.
       expect(
         quests.map((q) => q.title).toSet().length,
-        4,
+        5,
         reason: 'Duplicate quest titles generated for a single day',
       );
       for (final q in quests) {
@@ -26,8 +26,8 @@ void main() {
         TrainingFocus.cardio,
       ], QuestCadence.daily);
 
-      expect(quests.length, 4);
-      expect(quests.map((q) => q.title).toSet().length, 4);
+      expect(quests.length, 5);
+      expect(quests.map((q) => q.title).toSet().length, 5);
     });
 
     test('monthly generation returns 2 quests tagged monthly', () {
@@ -45,7 +45,7 @@ void main() {
         const [],
         QuestCadence.daily,
       );
-      expect(quests.length, 4);
+      expect(quests.length, 5);
     });
   });
 }

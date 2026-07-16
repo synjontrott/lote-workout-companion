@@ -441,6 +441,7 @@ class UserProfileManager extends ChangeNotifier {
   set goalWeight(double val) {
     _goalWeight = val;
     _startWeight = _weight;
+    _hasClaimedWeightGoalReward = false;
     _save();
     notifyListeners();
   }
@@ -1205,6 +1206,12 @@ class UserProfileManager extends ChangeNotifier {
         _measurementHistory = [];
       }
 
+      final savedGoal = prefs.getString('lote_workout_goal');
+      _activeWorkoutGoal = AdvancedWorkoutGoal.values.firstWhere(
+        (e) => e.name == savedGoal,
+        orElse: () => AdvancedWorkoutGoal.none,
+      );
+
       final questsJson = prefs.getString('lote_daily_quests');
       if (questsJson != null) {
         try {
@@ -1380,7 +1387,7 @@ class UserProfileManager extends ChangeNotifier {
       await prefs.setBool('lote_has_quiz', _hasCompletedInitialQuiz);
       await prefs.setInt('lote_meals_today', _healthyMealsLoggedToday);
       await prefs.setString('lote_home_planet', _homePlanet);
-      await prefs.setString('lote_workout_goal', _activeWorkoutGoal.toString());
+      await prefs.setString('lote_workout_goal', _activeWorkoutGoal.name);
       await prefs.setString(
         'lote_notification_frequency',
         _notificationFrequency,
@@ -1955,20 +1962,6 @@ class UserProfileManager extends ChangeNotifier {
 
     evaluateQuestsCompletion();
 
-    for (int i = 0; i < _monthlyQuests.length; i++) {
-      if (_monthlyQuests[i].workoutType == category &&
-          !_monthlyQuests[i].isCompleted) {
-        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1)
-            .clamp(0, _monthlyQuests[i].targetCount);
-      }
-    }
-    for (int i = 0; i < _yearlyQuests.length; i++) {
-      if (_yearlyQuests[i].workoutType == category &&
-          !_yearlyQuests[i].isCompleted) {
-        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1)
-            .clamp(0, _yearlyQuests[i].targetCount);
-      }
-    }
     _save();
     notifyListeners();
   }
@@ -2044,20 +2037,6 @@ class UserProfileManager extends ChangeNotifier {
 
     evaluateQuestsCompletion();
 
-    for (int i = 0; i < _monthlyQuests.length; i++) {
-      if (_monthlyQuests[i].workoutType == category &&
-          !_monthlyQuests[i].isCompleted) {
-        _monthlyQuests[i].progressCount = (_monthlyQuests[i].progressCount + 1)
-            .clamp(0, _monthlyQuests[i].targetCount);
-      }
-    }
-    for (int i = 0; i < _yearlyQuests.length; i++) {
-      if (_yearlyQuests[i].workoutType == category &&
-          !_yearlyQuests[i].isCompleted) {
-        _yearlyQuests[i].progressCount = (_yearlyQuests[i].progressCount + 1)
-            .clamp(0, _yearlyQuests[i].targetCount);
-      }
-    }
     _save();
     notifyListeners();
   }
@@ -2083,6 +2062,9 @@ class UserProfileManager extends ChangeNotifier {
     _loggedMeals.add(entry);
     _healthyMealsLoggedToday += 1;
     logWorkout(WorkoutCategory.nutrition);
+    addXP(15);
+    earnCrystals(10);
+    _stats.increase(StatType.constitution, 1);
     _save();
     notifyListeners();
   }
@@ -2324,6 +2306,7 @@ class UserProfileManager extends ChangeNotifier {
   }
 
   void resetProgress() {
+    // RPG progression
     _currentLevel = 1;
     _currentXP = 0;
     _crystals = 100;
@@ -2332,52 +2315,79 @@ class UserProfileManager extends ChangeNotifier {
     _stats = DNDStats();
     _unlockedBadges = [];
     _unlockedShopItems = [];
-    _loggedMeals = [];
-    _healthyMealsLoggedToday = 0;
-    _hasClaimedWeightGoalReward = false;
-    _hasClaimedDistanceGoalReward = false;
-    _loggedWorkoutSessions = [];
     _totalQuestsCompleted = 0;
     _monthlyChallengeProgress = 0.0;
+
+    // Identity & customization — the dialog promises "character customizations"
+    _characterName = 'Recruit';
+    _age = 25;
+    _homePlanet = 'Warrion';
+    _sprite = CharacterSprite(grid: CharacterSprite.defaultGrid);
+    _selectedElementIndex = 0;
+    _cognitiveProfile = null;
+    _selectedFocuses = [
+      TrainingFocus.calisthenics,
+      TrainingFocus.cardio,
+      TrainingFocus.cutting,
+    ];
+    _hasCompletedInitialQuiz = false;
+
+    // Body measurements
+    _height = 0.0;
+    _weight = 0.0;
+    _chest = 0.0;
+    _arms = 0.0;
+    _waist = 0.0;
+    _hips = 0.0;
+    _legs = 0.0;
+
+    // Goals
+    _startWeight = 0.0;
+    _goalWeight = 0.0;
+    _distanceGoal = 0.0;
+    _waterIntakeGoal = 3.0;
+    _hasClaimedWeightGoalReward = false;
+    _hasClaimedDistanceGoalReward = false;
+
+    // Logged data
+    _loggedMeals = [];
+    _healthyMealsLoggedToday = 0;
+    _loggedWorkoutSessions = [];
     _todayWaterIntake = 0.0;
     _measurementHistory = [];
     _weightHistory = [];
 
-    // Reset equipped cosmetics to defaults
+    // Equipped cosmetics
     _equippedFrame = 'None';
     _equippedTitle = 'None';
     _equippedAura = 'None';
     _equippedBackground = 'None';
     _equippedAccessory = 'None';
 
+    // Personal records — clear to zero, not fabricated data
     _personalRecords = {
-      "Pullups": 5.0,
-      "Pushups": 20.0,
-      "Squats": 30.0,
-      "Dips": 8.0,
-      "Run (Miles)": 1.0,
-      "Handstand Hold (Sec)": 15.0,
-      "Bench Press": 135.0,
-      "Deadlift": 185.0,
-      "Barbell Squat": 155.0,
-      "Overhead Press": 95.0,
+      "Pullups": 0.0,
+      "Pushups": 0.0,
+      "Squats": 0.0,
+      "Dips": 0.0,
+      "Run (Miles)": 0.0,
+      "Handstand Hold (Sec)": 0.0,
+      "Bench Press": 0.0,
+      "Deadlift": 0.0,
+      "Barbell Squat": 0.0,
+      "Overhead Press": 0.0,
     };
+    _prHistory = {};
 
-    final daysAgo = DateTime.now().subtract(const Duration(days: 3));
-    _prHistory = {
-      "Pullups": [PREntry(date: daysAgo, value: 5.0)],
-      "Pushups": [PREntry(date: daysAgo, value: 20.0)],
-      "Squats": [PREntry(date: daysAgo, value: 30.0)],
-      "Dips": [PREntry(date: daysAgo, value: 8.0)],
-      "Run (Miles)": [PREntry(date: daysAgo, value: 1.0)],
-      "Handstand Hold (Sec)": [PREntry(date: daysAgo, value: 15.0)],
-      "Bench Press": [PREntry(date: daysAgo, value: 135.0)],
-      "Deadlift": [PREntry(date: daysAgo, value: 185.0)],
-      "Barbell Squat": [PREntry(date: daysAgo, value: 155.0)],
-      "Overhead Press": [PREntry(date: daysAgo, value: 95.0)],
-    };
+    // Streak dates
+    _lastActiveDate = null;
+    _lastRefreshDate = null;
 
+    // Regenerate all quest tiers — not just daily
     regenerateDailyQuests();
+    _monthlyQuests = [];
+    _yearlyQuests = [];
+
     _save();
     notifyListeners();
   }
@@ -2411,7 +2421,8 @@ class UserProfileManager extends ChangeNotifier {
           activeGoal: _activeWorkoutGoal,
         );
 
-        if (_lastRefreshDate!.month != now.month) {
+        if (_lastRefreshDate!.month != now.month ||
+            _lastRefreshDate!.year != now.year) {
           _monthlyChallengeProgress = 0.0;
           _monthlyQuests = generateQuests(
             elementName,
@@ -2447,6 +2458,7 @@ class UserProfileManager extends ChangeNotifier {
 
         _lastRefreshDate = now;
         _save();
+        notifyListeners();
       }
     } else {
       _lastRefreshDate = now;
@@ -2525,6 +2537,7 @@ class UserProfileManager extends ChangeNotifier {
       _crystals -= 100;
       _streak = _previousStreak + 1;
       _previousStreak = 0;
+      _lastActiveDate = DateTime.now();
       _save();
       notifyListeners();
       return true;

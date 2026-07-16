@@ -580,7 +580,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                         ),
                         child: Text(
-                          profile.trialsCompletedToday >= 3 
+                          profile.trialsCompletedToday >= 3
                               ? "DAILY LIMIT REACHED (3/3)"
                               : "ROLL $statName ($modStr)",
                           style: GoogleFonts.orbitron(
@@ -630,6 +630,7 @@ class _CharacterStatsViewState extends State<CharacterStatsView> {
 
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext ctx) {
         return AlertDialog(
           backgroundColor: const Color(0xFF0F0F0F),

@@ -1,10 +1,10 @@
 ---
 title: "recoverStreak() wastes 100 crystals — recovered streak is wiped by next activity"
-status: open
+status: done
 severity: high
 category: "RPG & Gamification"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

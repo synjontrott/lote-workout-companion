@@ -754,7 +754,7 @@ class _NutritionViewState extends State<NutritionView> {
     required Color color,
     required IconData icon,
   }) {
-    final progress = (current / target).clamp(0.0, 1.0);
+    final progress = target > 0 ? (current / target).clamp(0.0, 1.0) : 0.0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -802,6 +802,7 @@ class _NutritionViewState extends State<NutritionView> {
     _mealCarbs = "";
     _mealFats = "";
     _mealSugar = "";
+    _saveAsTemplate = false;
     showDialog(
       context: context,
       builder: (context) {
@@ -1107,6 +1108,7 @@ class _NutritionViewState extends State<NutritionView> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () {
+                          if (!_formKey.currentState!.validate()) return;
                           final cal = double.tryParse(_mealCalories) ?? 0;
                           final prot = double.tryParse(_mealProtein) ?? 0;
                           final carb = double.tryParse(_mealCarbs) ?? 0;
@@ -1148,6 +1150,7 @@ class _NutritionViewState extends State<NutritionView> {
                           _mealCarbs = "";
                           _mealFats = "";
                           _mealSugar = "";
+                          _saveAsTemplate = false;
 
                           Navigator.of(context).pop();
                           setState(() {});

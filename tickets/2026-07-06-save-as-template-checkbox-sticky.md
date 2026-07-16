@@ -1,10 +1,10 @@
 ---
 title: "\"Save as template\" checkbox never resets, silently re-saving every later meal"
-status: open
+status: done
 severity: medium
 category: "Nutrition & Health"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom

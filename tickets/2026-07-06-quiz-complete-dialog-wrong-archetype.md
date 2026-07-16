@@ -1,10 +1,10 @@
 ---
 title: "Cognitive quiz completion dialog reports the wrong archetype name"
-status: open
+status: done
 severity: medium
 category: "Psychological Profiles & Onboarding"
 created: 2026-07-06
-completed:
+completed: 2026-07-16
 ---
 
 ## Symptom
